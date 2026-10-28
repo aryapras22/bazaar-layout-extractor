@@ -595,12 +595,42 @@ func isNearWhite(_ c: (UInt8, UInt8, UInt8)) -> Bool {
     (255 - Int(c.0)) + (255 - Int(c.1)) + (255 - Int(c.2)) < 30
 }
 
+// A legend swatch is a block of one colour that is bigger than a line and smaller than the page.
+// Flood fill from a seed: a thin rule stays tiny, the page background runs into the image border.
+func isSwatch(_ px: Pixels, seedX: Int, seedY: Int, textHeight: Int) -> Bool {
+    let (w, h) = (px.width, px.height)
+    let seed = lab(px.rgb(seedX, seedY))
+    let maxArea = 100 * textHeight * textHeight
+    var seen = Set<Int>([seedY * w + seedX])
+    var stack = [seedY * w + seedX]
+    var x0 = seedX, x1 = seedX, y0 = seedY, y1 = seedY
+    while let i = stack.popLast() {
+        let x = i % w, y = i / w
+        if x == 0 || y == 0 || x == w - 1 || y == h - 1 || seen.count > maxArea { return false }
+        x0 = min(x0, x); x1 = max(x1, x); y0 = min(y0, y); y1 = max(y1, y)
+        for j in [i - 1, i + 1, i - w, i + w] where !seen.contains(j) {
+            if distance(lab(px.rgb(j % w, j / w)), seed) < 6 { seen.insert(j); stack.append(j) }
+        }
+    }
+    return min(x1 - x0, y1 - y0) + 1 >= textHeight / 2
+}
+
 func readLegend(_ image: CGImage) async throws -> [LegendClass] {
     let px = pixels(of: image)
     let size = CGSize(width: image.width, height: image.height)
     var classes: [LegendClass] = []
+    var boxes: [CGRect] = []
+    var wrapped: [(text: String, box: CGRect)] = []
+    // The legend may sit on a tinted ground, so the most common colour counts as blank, not only white.
+    var counts: [UInt32: Int] = [:]
+    for i in stride(from: 0, to: px.width * px.height, by: 7) {
+        counts[UInt32(px.rgba[i * 4] >> 3) << 16 | UInt32(px.rgba[i * 4 + 1] >> 3) << 8 | UInt32(px.rgba[i * 4 + 2] >> 3), default: 0] += 1
+    }
+    let ground = counts.max { $0.value < $1.value }?.key ?? 0x1F1F1F
+    let groundLab = lab((UInt8(ground >> 16) << 3 | 4, UInt8((ground >> 8) & 31) << 3 | 4, UInt8(ground & 31) << 3 | 4))
     for observation in try await makeTextRequest().perform(on: image) {
-        let name = foldLookalikes(observation.transcript).trimmingCharacters(in: .whitespaces)
+        let name = foldLookalikes(observation.transcript)
+            .trimmingCharacters(in: CharacterSet.whitespaces.union(CharacterSet(charactersIn: ":")))
         guard !name.isEmpty,
               !classes.contains(where: { $0.name.lowercased() == name.lowercased() })
         else { continue }
@@ -608,10 +638,26 @@ func readLegend(_ image: CGImage) async throws -> [LegendClass] {
         let y = Int(box.midY)
         guard y >= 0, y < px.height else { continue }
         var x = Int(box.minX) - 1
-        while x > 8, isNearWhite(px.rgb(x, y)) { x -= 1 }
+        while x > 8, isNearWhite(px.rgb(x, y)) || distance(lab(px.rgb(x, y)), groundLab) < 8 { x -= 1 }
         guard x > 8 else { continue }
         let color = px.rgb(x - 8, y)
-        classes.append(LegendClass(name: name, rgb: color, lab: lab(color)))
+        if isSwatch(px, seedX: x - 8, seedY: y, textHeight: max(1, Int(box.height))) {
+            classes.append(LegendClass(name: name, rgb: color, lab: lab(color)))
+            boxes.append(box)
+        } else {
+            wrapped.append((name, box))
+        }
+    }
+    // A line with no swatch that sits just under an entry is that entry's second line. Anything else is a title.
+    for line in wrapped.sorted(by: { $0.box.minY < $1.box.minY }) {
+        let h = line.box.height
+        guard let owner = boxes.indices.filter({
+            let gap = line.box.minY - boxes[$0].maxY
+            return gap > -h / 2 && gap < 1.2 * h
+                && line.box.minX > boxes[$0].minX - h && line.box.minX < boxes[$0].minX + 3 * h
+        }).max(by: { boxes[$0].maxY < boxes[$1].maxY }) else { continue }
+        classes[owner] = LegendClass(name: classes[owner].name + " " + line.text, rgb: classes[owner].rgb, lab: classes[owner].lab)
+        boxes[owner] = boxes[owner].union(line.box)
     }
     return classes
 }
