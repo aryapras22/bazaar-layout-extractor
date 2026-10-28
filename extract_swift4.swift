@@ -1173,12 +1173,35 @@ func outsideLayer(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> [Ite
         items.append(outsideItem("pillar", rect, review: true, reason: "solid shape, confirm it is a pillar"))
     }
 
+    // Hollow squares are closed small loops. Filling them and opening past the wall-line
+    // thickness leaves a solid core even where a wall line runs through the square.
+    var loopInk = rawInk
+    for i in 0..<n where inText[i] { loopInk[i] = false }
+    let filled = fillHoles(loopInk, w: w, h: h, maxHole: Int(pow(0.02 * Double(mx), 2)), seamLength: longest)
+    let coreRadius = max(3, Int((0.002 * Double(mx)).rounded()))
+    let cores = morph(morph(filled, w: w, h: h, rx: coreRadius, ry: coreRadius, erode: true),
+                      w: w, h: h, rx: coreRadius, ry: coreRadius, erode: false)
+    var hollow = [Bool](repeating: false, count: n)
+    for reg in components(cores, w: w, h: h, eight: true) {
+        let side = Double(max(reg.width, reg.height))
+        guard side >= 0.005 * Double(mx), side <= 0.02 * Double(mx),
+              Double(max(reg.width, reg.height)) <= 1.5 * Double(min(reg.width, reg.height)),
+              reg.fill >= 0.8,
+              reg.pixels.filter({ loopInk[$0] }).count * 10 < reg.area * 8 else { continue }
+        let center = CGPoint(x: Double(reg.minX + reg.maxX) / 2, y: Double(reg.minY + reg.maxY) / 2)
+        if textBoxes.contains(where: { $0.contains(center) }) { continue }
+        for i in reg.pixels { hollow[i] = true }
+        let rect = CGRect(x: reg.minX, y: reg.minY, width: reg.width, height: reg.height)
+        items.append(outsideItem("pillar", rect, review: true, reason: "hollow square, confirm it is a pillar"))
+    }
+
     var strokes = [Bool](repeating: false, count: n)
     for i in 0..<n { strokes[i] = hs[i] || vs[i] || thick[i] }
     let strokesNear = morph(strokes, w: w, h: h, rx: 3, ry: 3, erode: false)
     let pillarNear = morph(compact, w: w, h: h, rx: 4, ry: 4, erode: false)
+    let hollowNear = morph(hollow, w: w, h: h, rx: 4, ry: 4, erode: false)
     var rest = [Bool](repeating: false, count: n)
-    for i in 0..<n { rest[i] = ink[i] && !strokesNear[i] && !pillarNear[i] && !inText[i] }
+    for i in 0..<n { rest[i] = ink[i] && !strokesNear[i] && !pillarNear[i] && !hollowNear[i] && !inText[i] }
     let restNear = morph(rest, w: w, h: h, rx: 2, ry: 2, erode: false)
 
     struct Candidate { var rect: CGRect; var longSide: Double; var shortSide: Double; var fill: Double; var poly: [[Int]]? }
