@@ -1077,7 +1077,7 @@ func outsideLayer(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> [Ite
     var textBoxes: [CGRect] = []
     let size = CGSize(width: w, height: h)
     if let found = try? await makeTextRequest().perform(on: image) {
-        for o in found {
+        for o in found where o.confidence >= 0.5 {
             textBoxes.append(o.boundingBox.toImageCoordinates(size, origin: .upperLeft).insetBy(dx: -3, dy: -3))
         }
     }
