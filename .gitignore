@@ -1,6 +1,5 @@
 .build/
 .DS_Store
 .vscode/
-extract_swift3
-extract_swift4
-render_swift4
+bin/
+output/

@@ -1,6 +1,6 @@
 """Score extract_swift4 output against the hand-checked truth files.
 
-usage: score.py [layout.json truth.json]...   (default: the three swift4 outputs)
+usage: score.py [layout.json truth.json]...   (default: the three swift4 outputs, run from the project root)
 
 Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Walls are
 thin and fragmented, so they use pixel coverage instead of box IoU.
@@ -11,9 +11,9 @@ import sys
 import numpy as np
 
 PAIRS = [
-    ("out_swift4/layout.json", "truth.json"),
-    ("out2_swift4/layout.json", "truth_2.json"),
-    ("out3_swift4/layout.json", "truth_3.json"),
+    ("output/swift4/plan1/layout.json", "data/plan1/truth.json"),
+    ("output/swift4/plan2/layout.json", "data/plan2/truth.json"),
+    ("output/swift4/plan3/layout.json", "data/plan3/truth.json"),
 ]
 NON_TILE = {"object", "wall", "pillar", "door", "symbol"}
 WALL_SLACK = 6

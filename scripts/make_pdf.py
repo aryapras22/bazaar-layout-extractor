@@ -1,4 +1,4 @@
-"""Write layouts_swift4.pdf: for each output folder, the input plan then render.png."""
+"""Write output/swift4/layouts.pdf: for each plan, the input image then its render.png. Run from the project root."""
 import matplotlib
 
 matplotlib.use("Agg")
@@ -8,11 +8,11 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 WIDTH_IN = 11
 DPI = 320
-PLANS = [("out_swift4", "layout.png"), ("out2_swift4", "layout_2.png"), ("out3_swift4", "layout_3.png")]
+PLANS = [(f"plan{n}", f"data/plan{n}/layout.png") for n in (1, 2, 3)]
 
-with PdfPages("layouts_swift4.pdf") as pdf:
+with PdfPages("output/swift4/layouts.pdf") as pdf:
     for out_dir, plan in PLANS:
-        for title, path in [("input", plan), ("render", f"{out_dir}/render.png")]:
+        for title, path in [("input", plan), ("render", f"output/swift4/{out_dir}/render.png")]:
             image = mpimg.imread(path)
             height, width = image.shape[:2]
             fig = plt.figure(figsize=(WIDTH_IN, WIDTH_IN * height / width + 0.5))

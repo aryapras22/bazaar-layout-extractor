@@ -2033,7 +2033,7 @@ func repairIds(_ items: inout [Item], classPrefixes: [String: String], ruleCount
 struct Options {
     var planPath: String
     var legendPath: String
-    var outDir: String = "out_swift4"
+    var outDir: String = "output/swift4/plan1"
     var repair: Bool = true
     var reread: Bool = true
     var bridge: Bool = true
@@ -2044,7 +2044,7 @@ struct Options {
 
 func parseOptions(_ args: [String]) -> Options? {
     var positional: [String] = []
-    var outDir = "out_swift4"
+    var outDir = "output/swift4/plan1"
     var repair = true
     var reread = true
     var bridge = true

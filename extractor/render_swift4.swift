@@ -75,7 +75,7 @@ struct RenderSwift4 {
         }
 
         if paths.isEmpty {
-            let defaults = ["out_swift4", "out2_swift4", "out3_swift4"]
+            let defaults = ["output/swift4/plan1", "output/swift4/plan2", "output/swift4/plan3"]
             let existing = defaults.filter { FileManager.default.fileExists(atPath: ($0 as NSString).appendingPathComponent("layout.json")) }
             if existing.isEmpty {
                 printUsage()
@@ -134,7 +134,7 @@ struct RenderSwift4 {
         let gridStep: Int
         if let g = gridOverride {
             gridStep = g
-        } else if inputPath.contains("out2") || inputPath.contains("layout_2") {
+        } else if inputPath.contains("plan2") {
             gridStep = 60
         } else {
             gridStep = 33
