@@ -818,6 +818,45 @@ func makeMaskedUpscaledCrop(_ image: CGImage, item: Item, scale: Int) -> CGImage
     return ctx.makeImage()
 }
 
+// Booths drawn as light boxes on a coloured zone have no legend colour of their own, so they are
+// found as closed light regions of booth size and kept only when an ID reads inside.
+func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item]) async -> [Item] {
+    let (w, h) = (px.width, px.height)
+    let mx = max(w, h)
+    let scale = Double(mx) / 2000
+    let outlines = morph(darkPixels(px, below: 60), w: w, h: h, rx: 1, ry: 1, erode: false)
+    let minSide = Int(0.008 * Double(mx)), maxSide = Int(0.07 * Double(mx))
+    var items: [Item] = []
+    for face in components(outlines.map { !$0 }, w: w, h: h, eight: false) {
+        guard min(face.width, face.height) >= minSide, max(face.width, face.height) <= maxSide,
+              face.minX > 0, face.minY > 0, face.maxX < w - 1, face.maxY < h - 1,
+              face.fill >= 0.6, face.fill < 0.98
+        else { continue }
+        let light = face.pixels.filter { i in
+            let c = px.rgb(i % w, i / w)
+            return min(c.0, min(c.1, c.2)) >= 235
+        }.count
+        guard Double(light) >= 0.7 * Double(face.area) else { continue }
+        let rect = CGRect(x: face.minX, y: face.minY, width: face.width, height: face.height)
+            .insetBy(dx: -2 * scale, dy: -2 * scale)
+        guard !existing.contains(where: { boxIoU($0.box, box(rect)) >= 0.3 }) else { continue }
+        var tile = outsideItem("Booth", rect, review: false, reason: nil)
+        guard let crop = makeMaskedUpscaledCrop(image, item: tile, scale: 3),
+              let found = try? await makeTextRequest().perform(on: crop),
+              let read = found.sorted(by: { $0.confidence > $1.confidence })
+                  .compactMap({ obs in cleanLabel(obs.transcript).map { (obs.transcript, $0) } }).first
+        else { continue }
+        tile.cls = "Booth " + String(read.1.prefix { $0.isLetter })
+        tile.fillRgb = [255, 255, 255]
+        tile.legendRgb = [255, 255, 255]
+        tile.text = read.0
+        tile.id = read.1
+        tile.source = "outlined"
+        items.append(tile)
+    }
+    return items
+}
+
 func rereadTiles(
     _ image: CGImage,
     items: inout [Item],
@@ -827,7 +866,13 @@ func rereadTiles(
     apply: Bool,
     ruleCounts: inout [String: Int]
 ) async throws -> RereadStats {
-    let blankIndices = items.indices.filter { labelledClasses.contains(items[$0].cls) && items[$0].id == nil }
+    let idShorts = items.filter { $0.id != nil }.map(\.shortSide).sorted()
+    let medianIdShort = idShorts.isEmpty ? 0 : idShorts[idShorts.count / 2]
+    let blankIndices = items.indices.filter { i in
+        guard items[i].id == nil else { return false }
+        if labelledClasses.contains(items[i].cls) { return true }
+        return medianIdShort > 0 && (0.5...2.5).contains(items[i].shortSide / medianIdShort)
+    }
     let cropsDir = outDir.appendingPathComponent("crops")
     try FileManager.default.createDirectory(at: cropsDir, withIntermediateDirectories: true)
     let bounds = CGRect(x: 0, y: 0, width: image.width, height: image.height)
@@ -2117,6 +2162,7 @@ struct Tool {
 
         let legendOut = try await legendLayer(planImage, px, legend: classes)
         var legendItems = legendOut.items
+        legendItems += await outlinedLayer(planImage, px, existing: legendItems)
 
         var claimed = [Bool](repeating: false, count: w * h)
         let largeTile = { (item: Item) in item.rect.width * item.rect.height > 0.01 * Double(w * h) }

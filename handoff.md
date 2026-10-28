@@ -54,8 +54,8 @@ Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use gree
 
 | | Plan 1 | Plan 2 | Plan 3 | Plan 6 (not tuned on) |
 |---|---|---|---|---|
-| Tiles found, precision | 160/160, 95% | 211/211, 99% | 68/68, 92% | 11/281, 24% |
-| Tile IDs exact | 154/154 | 208/209 | 67/67 | 0/281 |
+| Tiles found, precision | 160/160, 95% | 211/211, 99% | 68/68, 92% | 281/281, 88% |
+| Tile IDs exact | 154/154 | 208/209 | 67/67 | 271/281 |
 | Objects | 134/141, precision 79% | 26/26, 59% | 8/11, 40% | no truth |
 | Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth |
 | Doors | 0/10 | 0/4 | 0/1 | no truth |
@@ -64,7 +64,7 @@ Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use gree
 Before this session's changes: plan 1 objects 122/141 at 56% precision, pillars 0/23; plan 3 objects 0/11, pillars 25/31.
 
 Notes on reading the table:
-- Tiles match on box and ID only. Precision counts every engine tile, including real legend tiles the truth does not list: 9 `ENTRANCE` on plan 1, 3 `Seating` on plan 2, 6 `Tenant space` on plan 3. Class names equal the truth on every matched tile of plans 1 to 3 and on 0 of 11 on plan 6.
+- Tiles match on box and ID only. Precision counts every engine tile, including real legend tiles the truth does not list: 9 `ENTRANCE` on plan 1, 3 `Seating` on plan 2, 6 `Tenant space` on plan 3. Class names equal the truth on every matched tile of plans 1 to 3 and on 270 of 281 on plan 6.
 - Plan 6 truth is generated from the PDF vector data by `scripts/make_plan6_truth.py`: 281 booths, not checked by eye. It leaves out two rectangles that hold two labels each and the sponsor boxes with no label. The plan prints `B38` and `B39` twice and the truth keeps both.
 - The one plan 2 ID miss is `FI` read for printed `F1` (flagged as `suggested_id`). Plan 1 has a `prefix-conflict` suggestion on the plan's printed `D6` in the `C6` slot.
 - Plan 3 truth has 8 tenant boundary regions, now classed `boundary` and not scored, and one `wall` that is the stairwell box. The plan 3 wall number is therefore meaningless until walls get real truth.
@@ -72,6 +72,9 @@ Notes on reading the table:
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session
+
+5. Light booths: `outlinedLayer` finds closed light regions of booth size between dark outlines and keeps those where OCR reads an ID (for example `W12`). Plan 6 went from 11 to 281 of 281 tiles and from 0 to 271 of 281 exact IDs, with plans 1 to 3 unchanged. It adds about 45 ms per booth (plan 6 takes about 20 s, was 3 s).
+6. The ID retry pass (`rereadTiles`) now also covers unlabelled tiles between 0.5 and 2.5 times the median size of tiles that have IDs. It recovered one plan 6 ID (`M15`).
 
 1. Hollow square pillars: fill small closed holes in the ink, open past the wall-line width, keep square cores (`outsideLayer`). Five north-wall squares on layout 1 stay missed because the `ENTRANCE` tile covers their bottom edge.
 2. Area floor of 160 px² (at 2000 px max side, scaled by area) on object candidates.
@@ -89,6 +92,9 @@ macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27. Con
 ## Open items
 
 - Judge output never reaches `layout.json`: `runJudge` takes `items` by value and returns only a report. `agreed_with_rule` is 0 and `compared_with_rule` is 1 on layout 1, so nothing yet measures whether the judge is right. Decision pending after the object noise work above; current recommendation is to keep it report-only.
+- Plan 6 sponsor booths: 10 black booths keep no ID. The legend-colour pass outlines only fragments of each black box because the white text splits it, so the retry crops are mostly blank. Inverting dark crops for OCR made no difference and was backed out. A fix needs the whole black rectangle, for example by filling holes in the black mask.
+- Plan 6 extra tiles (37) are mostly real legend tiles the truth does not list (22 `FACILITIES`, 6 sponsor boxes, 4 `GRID NETWORK`), plus `M21` and `B75`, which are real booths the truth skipped as ambiguous.
+- Plans 4 and 5 have no truth, and the legend parser still turns titles and wrapped lines into classes.
 - Doors need a detector for door-leaf symbols (see above).
 - Object precision is still 40% to 79%. Layout 3 misses 3 of 11 objects.
 - Layout 1 pillars: 5 north-wall squares missed behind `ENTRANCE` tiles, 4 false pillars at wall corners and the south wall.

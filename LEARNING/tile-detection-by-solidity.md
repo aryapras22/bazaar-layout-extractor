@@ -32,6 +32,10 @@ Pillars in layout 1 are 20 px hollow squares with a double wall line running thr
 
 The method needs a closed loop. Five north-wall squares in layout 1 have the ENTRANCE tile drawn over their bottom edge, so the loop is open in the pixels and they are missed.
 
+## Light booths with no legend colour
+
+Plan 6 draws booths as white boxes on coloured zones, so the legend colour test finds nothing. The fallback takes the regions between dark outlines, keeps those of booth size that are mostly near-white and have text holes, and runs OCR on each. A region counts as a booth only when the text parses as an ID such as W12. The ID is the filter: empty boxes, rooms and table icons fail it, and plans 1 to 3 are unchanged.
+
 ## Terms
 
 - Convex hull: the smallest convex polygon that contains the shape.
