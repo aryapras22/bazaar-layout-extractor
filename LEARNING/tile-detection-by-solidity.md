@@ -26,6 +26,12 @@ The cost is that a ragged but compact shape also passes, and that a hole above t
 
 A box cannot describe a trapezoid. The tool also finds the dark outlines (pixels with luminance under 60, grown by one pixel to close small gaps) and labels the connected areas between them as faces. Each tile takes the face that holds most of its colour pixels, builds the convex hull of that face, and simplifies the hull with Douglas-Peucker at 2 px so a slanted edge becomes two corner points. The result is written as `polygon` next to `box`. The polygon lies inside the outline, and a tile whose outline is broken keeps only its box.
 
+## Hollow squares on a wall
+
+Pillars in layout 1 are 20 px hollow squares with a double wall line running through them. Fill every small closed hole in the ink mask, then open the result with a kernel wider than the wall line. The square cells fill in, the wall lines are thinner than the kernel and vanish, and a solid core is left where each square was. A core counts as a pillar when it is roughly square, between 0.5% and 2% of the longest image side, and under 80% ink in the original mask, which separates it from the solid black pillars the solidity test already finds.
+
+The method needs a closed loop. Five north-wall squares in layout 1 have the ENTRANCE tile drawn over their bottom edge, so the loop is open in the pixels and they are missed.
+
 ## Terms
 
 - Convex hull: the smallest convex polygon that contains the shape.
