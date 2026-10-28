@@ -11,7 +11,7 @@ Swift 4 (`extract_swift4.swift` + `Judge.swift`) and `render_swift4.swift` are t
 ## What is in the folder
 
 - `extract_swift4.swift` and `Judge.swift`, compiled together into `extract_swift4`
-- `render_swift4.swift`, compiled into `render_swift4`, plus `render_swift4.ipynb` and the 6-page `layouts_swift4.pdf` (the PDF and notebook predate this session's changes and need regenerating)
+- `render_swift4.swift`, compiled into `render_swift4`, plus `render_swift4.ipynb` (predates this session's changes) and `make_pdf.py`, which writes the 6-page `layouts_swift4.pdf` (input then render for each layout)
 - `score.py`, the scorer. Run it with the `floor-plan-extractor-apple` env python. It is the source of every number below.
 - `extract_swift3.swift` and its binary (old baseline, not used by swift 4)
 - `layout.png` + `legend.png` (layout 1, 2349 x 2871), `layout_2.png` + `legend_2.png` (layout 2, 1750 x 2106), `layout_3.png` + `legend_3.png` (layout 3, 3413 x 988)
@@ -32,10 +32,11 @@ swiftc -O -parse-as-library render_swift4.swift -o render_swift4
 ./extract_swift4 layout_3.png legend_3.png --out out3_swift4 --feature-print
 ./render_swift4 out_swift4 out2_swift4 out3_swift4
 
+/Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python make_pdf.py
 /Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python score.py
 ```
 
-Add `--judge mlx` for the VLM pass (about 26 s for all three layouts together, conda env `floor-plan-vlm-bench`). If that env path is missing, the judge records `missing-env-floor-plan-vlm-bench` in `report_diff.json` and the run carries on without an error. The `--judge fm` mode only compiles with Swift 6.4 or later.
+Add `--judge mlx` for the VLM pass (24 s, 22 s, and 15 s for layouts 1 to 3, conda env `floor-plan-vlm-bench`). If that env path is missing, the judge records `missing-env-floor-plan-vlm-bench` in `report_diff.json` and the run carries on without an error. The `--judge fm` mode only compiles with Swift 6.4 or later.
 
 ## Scores (from `score.py`, current outputs)
 
@@ -81,6 +82,6 @@ macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27. Con
 - Object precision is still 40% to 79%. Layout 3 misses 3 of 11 objects.
 - Layout 1 pillars: 5 north-wall squares missed behind `ENTRANCE` tiles, 4 false pillars at wall corners and the south wall.
 - `symbol` items (7, 4, 4 in the truth files) are never emitted and are not scored.
-- `layouts_swift4.pdf` and `render_swift4.ipynb` need regenerating from the new outputs.
+- `render_swift4.ipynb` still holds outputs from before this session; rerun it or drop it in favour of `render_swift4`.
 - `Package.swift` and `Tests/` are unverified; run `swift test` before relying on them.
 - `.archived/`, the swift 3 outputs, and the two PDFs and notebooks are not tracked in git.
