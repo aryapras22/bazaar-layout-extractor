@@ -2127,39 +2127,6 @@
    "label": "column_round"
   },
   {
-   "class": "pillar",
-   "box": [
-    1383,
-    904,
-    66,
-    66
-   ],
-   "id": null,
-   "label": "pillar_block_c9"
-  },
-  {
-   "class": "pillar",
-   "box": [
-    1383,
-    1511,
-    66,
-    66
-   ],
-   "id": null,
-   "label": "pillar_block_c5"
-  },
-  {
-   "class": "pillar",
-   "box": [
-    1720,
-    1578,
-    133,
-    66
-   ],
-   "id": null,
-   "label": "pillar_block_f15"
-  },
-  {
    "class": "object",
    "box": [
     527,

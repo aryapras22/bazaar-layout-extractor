@@ -13,7 +13,8 @@ Swift 4 (`extractor/extract_swift4.swift` + `extractor/Judge.swift`) and `extrac
 ```
 data/plan{1,2,3}/      layout.png, legend.png, truth.json (inputs and hand-checked ground truth)
 data/plan4/            more-market: source.png (rotated scan), layout.png, legend.png; no truth yet (scripts/make_plan4.py)
-data/plan5/, plan6/    cosmo and women-fest: source.pdf (vector), layout.png, legend.png; no truth yet (scripts/make_pdf_plans.py)
+data/plan5/            cosmo: source.pdf (vector), layout.png, legend.png; no truth yet (scripts/make_pdf_plans.py)
+data/plan6/            women-fest: source.pdf, layout.png, legend.png, truth.json generated from the PDF (scripts/make_plan6_truth.py)
 extractor/             extract_swift4.swift, Judge.swift, render_swift4.swift
 scripts/               score.py (scorer), make_pdf.py (writes output/swift4/layouts.pdf)
 notebooks/             render_swift4.ipynb (predates this session's changes)
@@ -24,7 +25,7 @@ LEARNING/              notes on tile detection, polygon-masked OCR with monotone
 .archived/             swift 1 to 3, old notebooks and outputs, SAM3 experiment (mostly untracked)
 ```
 
-Plan 1 is 2349 x 2871 (358 truth items), plan 2 is 1750 x 2106 (255), plan 3 is 3413 x 988 (124). `scripts/score.py` is the source of every number below. Plans 4 to 6 were not used to tune anything, and swift 4 does badly on them: it finds few tiles and reads no IDs, because their tiles do not match the legend colours (plan 4), the legend lists zones not booths (plans 5 and 6), or the booths are white boxes (plan 6). Plan 6 has 284 white booth rectangles with 283 ID labels in the PDF, so its truth can be generated from the vector data. `cluster.ipynb`, `map.json`, and `map.svg` in the root belong to a separate clustering experiment, not to swift 4.
+Plan 1 is 2349 x 2871 (358 truth items), plan 2 is 1750 x 2106 (255), plan 3 is 3413 x 988 (124). `scripts/score.py` is the source of every number below. Plans 4 to 6 were not used to tune anything, and swift 4 does badly on them: it finds few tiles and reads no IDs, because their tiles do not match the legend colours (plan 4), the legend lists zones not booths (plans 5 and 6), or the booths are white boxes (plan 6). Plan 6's truth is generated from its PDF vector data. Plan 5 (cosmo) draws most booths another way and still needs a truth approach. `cluster.ipynb`, `map.json`, and `map.svg` in the root belong to a separate clustering experiment, not to swift 4.
 
 ## How to run
 
@@ -51,22 +52,23 @@ Add `--judge mlx` for the VLM pass (25 s, 22 s, and 16 s for plans 1 to 3, conda
 
 Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use greedy matching at IoU of at least 0.3. Walls use pixel coverage within 6 px. Precision is matches divided by engine items of that class.
 
-| | Layout 1 | Layout 2 | Layout 3 |
-|---|---|---|---|
-| Tiles found | 160/160, precision 100% | 211/211, 100% | 68/68, 100% |
-| Tile IDs exact | 154/154 | 208/209 | 67/67 |
-| Objects | 134/141, precision 79% | 26/26, 59% | 8/11, 40% |
-| Pillars | 18/26, precision 78% | 0/0, 1 false | 30/31, precision 94% |
-| Doors | 0/10 | 0/4 | 0/1 |
-| Walls, pixel recall / precision | 86% / 80% | 92% / 88% | 10% / 71% |
+| | Plan 1 | Plan 2 | Plan 3 | Plan 6 (not tuned on) |
+|---|---|---|---|---|
+| Tiles found, precision | 160/160, 95% | 211/211, 99% | 68/68, 92% | 11/281, 24% |
+| Tile IDs exact | 154/154 | 208/209 | 67/67 | 0/281 |
+| Objects | 134/141, precision 79% | 26/26, 59% | 8/11, 40% | no truth |
+| Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth |
+| Doors | 0/10 | 0/4 | 0/1 | no truth |
+| Walls, pixel recall / precision | 86% / 80% | 92% / 88% | not meaningful, see notes | no truth |
 
-Before this session's changes: Layout 1 objects 122/141 at 56% precision, pillars 0/26; Layout 3 objects 0/11, pillars 25/31.
+Before this session's changes: plan 1 objects 122/141 at 56% precision, pillars 0/23; plan 3 objects 0/11, pillars 25/31.
 
 Notes on reading the table:
-- Tile precision ignores engine tiles in classes the truth does not list: 9 `ENTRANCE` on layout 1, 3 `Seating` on layout 2, 6 `Tenant space` on layout 3. They are real legend tiles.
-- The one layout 2 ID miss is `FI` read for printed `F1` (flagged as `suggested_id`). Layout 1 has a `prefix-conflict` suggestion on the plan's printed `D6` in the `C6` slot.
-- Layout 3 truth `wall` items are the tenant boundary boxes, not wall lines, so its wall number is not a measure of wall detection.
-- `truth.json` lists three pillars at [1383,904], [1383,1511], and [1720,1578] that sit exactly on the three `Blocked` legend tiles. They cannot match as pillars, so layout 1 pillar recall tops out at 23/26 until the truth is corrected.
+- Tiles match on box and ID only. Precision counts every engine tile, including real legend tiles the truth does not list: 9 `ENTRANCE` on plan 1, 3 `Seating` on plan 2, 6 `Tenant space` on plan 3. Class names equal the truth on every matched tile of plans 1 to 3 and on 0 of 11 on plan 6.
+- Plan 6 truth is generated from the PDF vector data by `scripts/make_plan6_truth.py`: 281 booths, not checked by eye. It leaves out two rectangles that hold two labels each and the sponsor boxes with no label. The plan prints `B38` and `B39` twice and the truth keeps both.
+- The one plan 2 ID miss is `FI` read for printed `F1` (flagged as `suggested_id`). Plan 1 has a `prefix-conflict` suggestion on the plan's printed `D6` in the `C6` slot.
+- Plan 3 truth has 8 tenant boundary regions, now classed `boundary` and not scored, and one `wall` that is the stairwell box. The plan 3 wall number is therefore meaningless until walls get real truth.
+- The truth cleanup removed three plan 1 pillars that duplicated the `Blocked` tiles, so plan 1 pillar truth is 23.
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session

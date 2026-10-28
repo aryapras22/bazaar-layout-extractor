@@ -1,9 +1,9 @@
-"""Score extract_swift4 output against the hand-checked truth files.
+"""Score extract_swift4 output against the truth files.
 
-usage: score.py [layout.json truth.json]...   (default: the three swift4 outputs, run from the project root)
+usage: score.py [layout.json truth.json]...   (default: the swift4 outputs for plans 1 to 3 and 6, run from the project root)
 
-Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Walls are
-thin and fragmented, so they use pixel coverage instead of box IoU.
+Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Tiles match on box and ID only,
+and class names are counted separately. Walls are thin and fragmented, so they use pixel coverage.
 """
 import json
 import sys
@@ -14,8 +14,9 @@ PAIRS = [
     ("output/swift4/plan1/layout.json", "data/plan1/truth.json"),
     ("output/swift4/plan2/layout.json", "data/plan2/truth.json"),
     ("output/swift4/plan3/layout.json", "data/plan3/truth.json"),
+    ("output/swift4/plan6/layout.json", "data/plan6/truth.json"),
 ]
-NON_TILE = {"object", "wall", "pillar", "door", "symbol"}
+NON_TILE = {"object", "wall", "pillar", "door", "symbol", "boundary"}
 WALL_SLACK = 6
 
 
@@ -74,12 +75,11 @@ def score(layout_path, truth_path):
     print(f"{layout_path} vs {truth_path}")
 
     t_tiles = [i for i in truth_items if i["class"] not in NON_TILE]
-    truth_tile_classes = {i["class"] for i in t_tiles}
-    e_tiles_all = [i for i in engine_items if i["class"] not in NON_TILE]
-    e_tiles = [i for i in e_tiles_all if i["class"] in truth_tile_classes]
-    skipped = len(e_tiles_all) - len(e_tiles)
+    e_tiles = [i for i in engine_items if i["class"] not in NON_TILE]
     pairs = greedy_match(t_tiles, e_tiles, 0.5)
-    print(row("tiles", len(pairs), len(t_tiles), len(e_tiles)) + f"   ({skipped} engine tiles in classes the truth does not list)")
+    print(row("tiles", len(pairs), len(t_tiles), len(e_tiles)))
+    same_class = sum(1 for ti, ei in pairs if t_tiles[ti]["class"] == e_tiles[ei]["class"])
+    print(f"  tile class names equal {same_class}/{len(pairs)}")
     ids_truth = [t for t in t_tiles if t.get("id")]
     exact = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and e_tiles[ei].get("id") == t_tiles[ti]["id"])
     print(f"  tile ids exact {exact}/{len(ids_truth)}")

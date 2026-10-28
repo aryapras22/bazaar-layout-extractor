@@ -1202,7 +1202,7 @@
    "label": "gate_label_symbol"
   },
   {
-   "class": "wall",
+   "class": "boundary",
    "box": [
     114,
     14,
@@ -1213,7 +1213,7 @@
    "label": "tenant_boundary_top_1"
   },
   {
-   "class": "wall",
+   "class": "boundary",
    "box": [
     834,
     14,
@@ -1224,7 +1224,7 @@
    "label": "tenant_boundary_top_2"
   },
   {
-   "class": "wall",
+   "class": "boundary",
    "box": [
     1968,
     14,
@@ -1235,7 +1235,7 @@
    "label": "tenant_boundary_top_3"
   },
   {
-   "class": "wall",
+   "class": "boundary",
    "box": [
     3300,
     14,
@@ -1246,7 +1246,7 @@
    "label": "tenant_boundary_top_4"
   },
   {
-   "class": "wall",
+   "class": "boundary",
    "box": [
     818,
     804,
@@ -1257,7 +1257,7 @@
    "label": "tenant_boundary_mr_diy"
   },
   {
-   "class": "wall",
+   "class": "boundary",
    "box": [
     318,
     804,
@@ -1268,7 +1268,7 @@
    "label": "tenant_boundary_bottom_left"
   },
   {
-   "class": "wall",
+   "class": "boundary",
    "box": [
     4,
     380,
@@ -1279,7 +1279,7 @@
    "label": "tenant_boundary_far_left"
   },
   {
-   "class": "wall",
+   "class": "boundary",
    "box": [
     3268,
     172,
