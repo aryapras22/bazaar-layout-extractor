@@ -1,0 +1,11381 @@
+{
+  "image" : {
+    "height" : 2871,
+    "origin" : "top-left",
+    "unit" : "px",
+    "width" : 2349
+  },
+  "items" : [
+    {
+      "area" : 2079,
+      "box" : [
+        1682,
+        41,
+        63,
+        33
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 1, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        275,
+        61,
+        26,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        609,
+        61,
+        27,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        944,
+        61,
+        26,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        1279,
+        61,
+        26,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        1614,
+        61,
+        26,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        1948,
+        61,
+        27,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 676,
+      "box" : [
+        2283,
+        61,
+        26,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 3, 4 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 1752,
+      "box" : [
+        52,
+        70,
+        219,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 280,
+      "box" : [
+        271,
+        70,
+        140,
+        2
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 648,
+      "box" : [
+        411,
+        70,
+        81,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 250,
+      "box" : [
+        492,
+        70,
+        125,
+        2
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 2464,
+      "box" : [
+        636,
+        70,
+        308,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 2472,
+      "box" : [
+        970,
+        70,
+        309,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 127,
+      "box" : [
+        1296,
+        70,
+        127,
+        1
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 648,
+      "box" : [
+        1423,
+        70,
+        81,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 364,
+      "box" : [
+        1504,
+        70,
+        182,
+        2
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 1608,
+      "box" : [
+        1747,
+        70,
+        201,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 2464,
+      "box" : [
+        1975,
+        70,
+        308,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 120,
+      "box" : [
+        1645,
+        75,
+        40,
+        3
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 2732,
+      "box" : [
+        1305,
+        80,
+        108,
+        33
+      ],
+      "class" : "ENTRANCE",
+      "fill_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "reason" : "color is nearly as close to \"DECOR\"",
+      "text" : ""
+    },
+    {
+      "area" : 756,
+      "box" : [
+        60,
+        81,
+        27,
+        28
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 3, 4 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2919,
+      "box" : [
+        280,
+        81,
+        121,
+        32
+      ],
+      "class" : "ENTRANCE",
+      "fill_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "reason" : "color is nearly as close to \"DECOR\"",
+      "text" : ""
+    },
+    {
+      "area" : 2528,
+      "box" : [
+        501,
+        81,
+        106,
+        31
+      ],
+      "class" : "ENTRANCE",
+      "fill_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "reason" : "color is nearly as close to \"DECOR\"",
+      "text" : ""
+    },
+    {
+      "area" : 114,
+      "box" : [
+        617,
+        81,
+        19,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 5, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 93,
+      "box" : [
+        871,
+        81,
+        3,
+        31
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 6, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4464,
+      "box" : [
+        885,
+        81,
+        144,
+        31
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 93,
+      "box" : [
+        1041,
+        81,
+        3,
+        31
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 6, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 102,
+      "box" : [
+        1279,
+        81,
+        17,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 2945,
+      "box" : [
+        1513,
+        81,
+        122,
+        32
+      ],
+      "class" : "ENTRANCE",
+      "fill_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "reason" : "color is nearly as close to \"DECOR\"",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        1948,
+        81,
+        27,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        2292,
+        87,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1053,
+      "box" : [
+        411,
+        89,
+        81,
+        13
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 9, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 1053,
+      "box" : [
+        1423,
+        89,
+        81,
+        13
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 9, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 1736,
+      "box" : [
+        49,
+        112,
+        8,
+        217
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        411,
+        115,
+        81,
+        2
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 346,
+      "box" : [
+        871,
+        115,
+        173,
+        2
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        1423,
+        115,
+        81,
+        2
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 6108,
+      "box" : [
+        121,
+        142,
+        2036,
+        3
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 6021,
+      "box" : [
+        121,
+        142,
+        3,
+        2007
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 849,
+      "box" : [
+        2154,
+        142,
+        3,
+        283
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        40,
+        329,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 182,
+      "box" : [
+        60,
+        329,
+        7,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 10, 7 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2283,
+        329,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2303,
+        329,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 6046,
+      "box" : [
+        393,
+        332,
+        98,
+        65
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H8",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          393,
+          332
+        ],
+        [
+          491,
+          332
+        ],
+        [
+          491,
+          396
+        ],
+        [
+          393,
+          396
+        ]
+      ],
+      "text" : "H8"
+    },
+    {
+      "area" : 6114,
+      "box" : [
+        494,
+        332,
+        98,
+        65
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H7",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          494,
+          332
+        ],
+        [
+          592,
+          332
+        ],
+        [
+          592,
+          396
+        ],
+        [
+          494,
+          396
+        ]
+      ],
+      "text" : "H7"
+    },
+    {
+      "area" : 6059,
+      "box" : [
+        595,
+        332,
+        98,
+        65
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H6",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          595,
+          332
+        ],
+        [
+          693,
+          332
+        ],
+        [
+          693,
+          396
+        ],
+        [
+          595,
+          396
+        ]
+      ],
+      "text" : "H6"
+    },
+    {
+      "area" : 6145,
+      "box" : [
+        696,
+        332,
+        99,
+        65
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H5",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          696,
+          332
+        ],
+        [
+          794,
+          332
+        ],
+        [
+          794,
+          396
+        ],
+        [
+          696,
+          396
+        ]
+      ],
+      "text" : "H5"
+    },
+    {
+      "area" : 6141,
+      "box" : [
+        797,
+        332,
+        99,
+        65
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H4",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          798,
+          332
+        ],
+        [
+          895,
+          332
+        ],
+        [
+          895,
+          396
+        ],
+        [
+          798,
+          396
+        ]
+      ],
+      "text" : "H4"
+    },
+    {
+      "area" : 6139,
+      "box" : [
+        898,
+        332,
+        99,
+        65
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : true,
+      "polygon" : [
+        [
+          899,
+          332
+        ],
+        [
+          996,
+          332
+        ],
+        [
+          996,
+          396
+        ],
+        [
+          899,
+          396
+        ]
+      ],
+      "reason" : "no label found",
+      "text" : ""
+    },
+    {
+      "area" : 6138,
+      "box" : [
+        999,
+        332,
+        99,
+        65
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H2",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1000,
+          332
+        ],
+        [
+          1097,
+          332
+        ],
+        [
+          1098,
+          396
+        ],
+        [
+          1000,
+          396
+        ]
+      ],
+      "text" : "H2"
+    },
+    {
+      "area" : 6195,
+      "box" : [
+        1100,
+        332,
+        99,
+        65
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H1",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1101,
+          332
+        ],
+        [
+          1199,
+          332
+        ],
+        [
+          1199,
+          396
+        ],
+        [
+          1101,
+          396
+        ]
+      ],
+      "text" : "H1"
+    },
+    {
+      "area" : 12781,
+      "box" : [
+        1317,
+        332,
+        132,
+        99
+      ],
+      "class" : "Booth A",
+      "fill_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "id" : "A9",
+      "legend_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          333
+        ],
+        [
+          1448,
+          333
+        ],
+        [
+          1448,
+          430
+        ],
+        [
+          1317,
+          430
+        ]
+      ],
+      "text" : "A9"
+    },
+    {
+      "area" : 9353,
+      "box" : [
+        1451,
+        332,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B26",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1452,
+          333
+        ],
+        [
+          1549,
+          333
+        ],
+        [
+          1549,
+          430
+        ],
+        [
+          1452,
+          430
+        ]
+      ],
+      "text" : "B26"
+    },
+    {
+      "area" : 9259,
+      "box" : [
+        1552,
+        332,
+        98,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B25",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1552,
+          333
+        ],
+        [
+          1650,
+          333
+        ],
+        [
+          1650,
+          430
+        ],
+        [
+          1552,
+          430
+        ]
+      ],
+      "text" : "B25"
+    },
+    {
+      "area" : 9281,
+      "box" : [
+        1653,
+        332,
+        98,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B24",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1653,
+          333
+        ],
+        [
+          1751,
+          333
+        ],
+        [
+          1751,
+          430
+        ],
+        [
+          1653,
+          430
+        ]
+      ],
+      "text" : "B24"
+    },
+    {
+      "area" : 9385,
+      "box" : [
+        1753,
+        332,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B23",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1754,
+          333
+        ],
+        [
+          1852,
+          333
+        ],
+        [
+          1852,
+          430
+        ],
+        [
+          1754,
+          430
+        ]
+      ],
+      "text" : "B23"
+    },
+    {
+      "area" : 9365,
+      "box" : [
+        1854,
+        332,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B22",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1855,
+          333
+        ],
+        [
+          1952,
+          333
+        ],
+        [
+          1952,
+          430
+        ],
+        [
+          1855,
+          430
+        ]
+      ],
+      "text" : "B22"
+    },
+    {
+      "area" : 12774,
+      "box" : [
+        1955,
+        332,
+        132,
+        99
+      ],
+      "class" : "Booth A",
+      "fill_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "id" : "A8",
+      "legend_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "needs_review" : false,
+      "text" : "A8"
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        49,
+        355,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        2292,
+        355,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 3873,
+      "box" : [
+        2089,
+        434,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C21",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2090,
+          434
+        ],
+        [
+          2154,
+          434
+        ],
+        [
+          2154,
+          498
+        ],
+        [
+          2090,
+          498
+        ]
+      ],
+      "text" : "C21"
+    },
+    {
+      "area" : 3817,
+      "box" : [
+        2089,
+        501,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C20",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2090,
+          501
+        ],
+        [
+          2154,
+          501
+        ],
+        [
+          2154,
+          565
+        ],
+        [
+          2090,
+          565
+        ]
+      ],
+      "text" : "C20"
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        518,
+        503,
+        100,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        623,
+        503,
+        100,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2064,
+      "box" : [
+        863,
+        503,
+        48,
+        43
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 12, 3 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 6579,
+      "box" : [
+        916,
+        503,
+        153,
+        43
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        338,
+        522,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        398,
+        522,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 6125,
+      "box" : [
+        211,
+        523,
+        65,
+        99
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H9",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          212,
+          524
+        ],
+        [
+          276,
+          524
+        ],
+        [
+          276,
+          621
+        ],
+        [
+          212,
+          621
+        ]
+      ],
+      "text" : "H9"
+    },
+    {
+      "area" : 25000,
+      "box" : [
+        1451,
+        534,
+        166,
+        166
+      ],
+      "class" : "Large booth X",
+      "fill_rgb" : [
+        241,
+        91,
+        80
+      ],
+      "id" : "X3",
+      "legend_rgb" : [
+        241,
+        91,
+        80
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1452,
+          535
+        ],
+        [
+          1616,
+          535
+        ],
+        [
+          1616,
+          699
+        ],
+        [
+          1452,
+          699
+        ]
+      ],
+      "text" : "X3"
+    },
+    {
+      "area" : 25005,
+      "box" : [
+        1686,
+        534,
+        166,
+        166
+      ],
+      "class" : "Large booth X",
+      "fill_rgb" : [
+        241,
+        91,
+        80
+      ],
+      "id" : "X2",
+      "legend_rgb" : [
+        241,
+        91,
+        80
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1687,
+          535
+        ],
+        [
+          1851,
+          535
+        ],
+        [
+          1851,
+          699
+        ],
+        [
+          1687,
+          699
+        ]
+      ],
+      "text" : "X2"
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        518,
+        560,
+        100,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        623,
+        560,
+        100,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 3863,
+      "box" : [
+        2089,
+        568,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C19",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2090,
+          568
+        ],
+        [
+          2154,
+          568
+        ],
+        [
+          2154,
+          632
+        ],
+        [
+          2090,
+          632
+        ]
+      ],
+      "text" : "C19"
+    },
+    {
+      "area" : 156,
+      "box" : [
+        40,
+        597,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 182,
+      "box" : [
+        60,
+        597,
+        7,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 10, 7 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2283,
+        597,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2303,
+        597,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        518,
+        617,
+        100,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4848,
+      "box" : [
+        623,
+        617,
+        101,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        49,
+        623,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        2292,
+        623,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 6023,
+      "box" : [
+        211,
+        624,
+        65,
+        99
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H10",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          212,
+          624
+        ],
+        [
+          276,
+          625
+        ],
+        [
+          276,
+          722
+        ],
+        [
+          212,
+          722
+        ]
+      ],
+      "text" : "H10"
+    },
+    {
+      "area" : 3849,
+      "box" : [
+        2089,
+        635,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C18",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2090,
+          635
+        ],
+        [
+          2153,
+          635
+        ],
+        [
+          2154,
+          699
+        ],
+        [
+          2090,
+          699
+        ]
+      ],
+      "text" : "C18"
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        338,
+        680,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        398,
+        680,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 3905,
+      "box" : [
+        2089,
+        702,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C17",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2090,
+          702
+        ],
+        [
+          2153,
+          702
+        ],
+        [
+          2154,
+          766
+        ],
+        [
+          2090,
+          766
+        ]
+      ],
+      "text" : "C17"
+    },
+    {
+      "area" : 3792,
+      "box" : [
+        521,
+        708,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G22",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          522,
+          709
+        ],
+        [
+          586,
+          709
+        ],
+        [
+          586,
+          772
+        ],
+        [
+          522,
+          773
+        ]
+      ],
+      "text" : "G22"
+    },
+    {
+      "area" : 3869,
+      "box" : [
+        589,
+        708,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F26",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          589,
+          709
+        ],
+        [
+          654,
+          709
+        ],
+        [
+          654,
+          772
+        ],
+        [
+          589,
+          773
+        ]
+      ],
+      "text" : "F26"
+    },
+    {
+      "area" : 3787,
+      "box" : [
+        657,
+        708,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G23",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          657,
+          709
+        ],
+        [
+          721,
+          709
+        ],
+        [
+          721,
+          773
+        ],
+        [
+          657,
+          773
+        ]
+      ],
+      "text" : "G23"
+    },
+    {
+      "area" : 3774,
+      "box" : [
+        859,
+        708,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G24",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          860,
+          709
+        ],
+        [
+          924,
+          709
+        ],
+        [
+          924,
+          772
+        ],
+        [
+          860,
+          773
+        ]
+      ],
+      "text" : "G24"
+    },
+    {
+      "area" : 3910,
+      "box" : [
+        927,
+        708,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F27",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          927,
+          709
+        ],
+        [
+          991,
+          709
+        ],
+        [
+          991,
+          773
+        ],
+        [
+          927,
+          773
+        ]
+      ],
+      "text" : "F27"
+    },
+    {
+      "area" : 3766,
+      "box" : [
+        995,
+        708,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G25",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          995,
+          709
+        ],
+        [
+          1059,
+          709
+        ],
+        [
+          1059,
+          773
+        ],
+        [
+          995,
+          773
+        ]
+      ],
+      "text" : "G25"
+    },
+    {
+      "area" : 6091,
+      "box" : [
+        211,
+        725,
+        65,
+        99
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H11",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          212,
+          725
+        ],
+        [
+          276,
+          726
+        ],
+        [
+          276,
+          823
+        ],
+        [
+          212,
+          823
+        ]
+      ],
+      "text" : "H11"
+    },
+    {
+      "area" : 3868,
+      "box" : [
+        2089,
+        769,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C16",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2090,
+          769
+        ],
+        [
+          2154,
+          770
+        ],
+        [
+          2153,
+          834
+        ],
+        [
+          2090,
+          834
+        ]
+      ],
+      "text" : "C16"
+    },
+    {
+      "area" : 3836,
+      "box" : [
+        521,
+        775,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G21",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          522,
+          776
+        ],
+        [
+          586,
+          776
+        ],
+        [
+          586,
+          840
+        ],
+        [
+          522,
+          840
+        ]
+      ],
+      "text" : "G21"
+    },
+    {
+      "area" : 3851,
+      "box" : [
+        589,
+        775,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F25",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          589,
+          776
+        ],
+        [
+          654,
+          776
+        ],
+        [
+          654,
+          840
+        ],
+        [
+          589,
+          840
+        ]
+      ],
+      "text" : "F25"
+    },
+    {
+      "area" : 3760,
+      "box" : [
+        657,
+        775,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G20",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          657,
+          776
+        ],
+        [
+          721,
+          776
+        ],
+        [
+          721,
+          840
+        ],
+        [
+          657,
+          840
+        ]
+      ],
+      "text" : "G20"
+    },
+    {
+      "area" : 3809,
+      "box" : [
+        859,
+        775,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G19",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          860,
+          776
+        ],
+        [
+          924,
+          776
+        ],
+        [
+          924,
+          839
+        ],
+        [
+          860,
+          840
+        ]
+      ],
+      "text" : "G19"
+    },
+    {
+      "area" : 3859,
+      "box" : [
+        927,
+        775,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F24",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          927,
+          776
+        ],
+        [
+          991,
+          776
+        ],
+        [
+          991,
+          840
+        ],
+        [
+          927,
+          840
+        ]
+      ],
+      "text" : "F24"
+    },
+    {
+      "area" : 3811,
+      "box" : [
+        995,
+        775,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G18",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          995,
+          776
+        ],
+        [
+          1059,
+          776
+        ],
+        [
+          1059,
+          840
+        ],
+        [
+          995,
+          840
+        ]
+      ],
+      "text" : "G18"
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        338,
+        789,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        398,
+        789,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 12696,
+      "box" : [
+        1317,
+        803,
+        132,
+        98
+      ],
+      "class" : "Booth A",
+      "fill_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "id" : "A7",
+      "legend_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          803
+        ],
+        [
+          1448,
+          803
+        ],
+        [
+          1448,
+          901
+        ],
+        [
+          1317,
+          901
+        ]
+      ],
+      "text" : "A7"
+    },
+    {
+      "area" : 9323,
+      "box" : [
+        1451,
+        803,
+        99,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B21",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1452,
+          803
+        ],
+        [
+          1549,
+          803
+        ],
+        [
+          1549,
+          901
+        ],
+        [
+          1452,
+          901
+        ]
+      ],
+      "text" : "B21"
+    },
+    {
+      "area" : 9251,
+      "box" : [
+        1552,
+        803,
+        99,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B20",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1552,
+          804
+        ],
+        [
+          1650,
+          803
+        ],
+        [
+          1650,
+          901
+        ],
+        [
+          1552,
+          901
+        ]
+      ],
+      "text" : "B20"
+    },
+    {
+      "area" : 9298,
+      "box" : [
+        1653,
+        803,
+        99,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B19",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1653,
+          804
+        ],
+        [
+          1751,
+          803
+        ],
+        [
+          1751,
+          901
+        ],
+        [
+          1653,
+          901
+        ]
+      ],
+      "text" : "B19"
+    },
+    {
+      "area" : 9183,
+      "box" : [
+        1754,
+        803,
+        98,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B18",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1754,
+          803
+        ],
+        [
+          1852,
+          803
+        ],
+        [
+          1852,
+          901
+        ],
+        [
+          1754,
+          901
+        ]
+      ],
+      "text" : "B18"
+    },
+    {
+      "area" : 12652,
+      "box" : [
+        1855,
+        803,
+        132,
+        98
+      ],
+      "class" : "Booth A",
+      "fill_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "id" : "A6",
+      "legend_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1855,
+          803
+        ],
+        [
+          1986,
+          803
+        ],
+        [
+          1986,
+          901
+        ],
+        [
+          1855,
+          901
+        ]
+      ],
+      "text" : "A6"
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        1135,
+        811,
+        48,
+        100
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        1195,
+        811,
+        48,
+        100
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 5967,
+      "box" : [
+        211,
+        826,
+        65,
+        98
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H12",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          212,
+          826
+        ],
+        [
+          276,
+          826
+        ],
+        [
+          276,
+          924
+        ],
+        [
+          212,
+          924
+        ]
+      ],
+      "text" : "H12"
+    },
+    {
+      "area" : 3870,
+      "box" : [
+        2089,
+        837,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C15",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2090,
+          837
+        ],
+        [
+          2154,
+          837
+        ],
+        [
+          2154,
+          901
+        ],
+        [
+          2090,
+          901
+        ]
+      ],
+      "text" : "C15"
+    },
+    {
+      "area" : 156,
+      "box" : [
+        40,
+        865,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 182,
+      "box" : [
+        60,
+        865,
+        7,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 10, 7 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2283,
+        865,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2303,
+        865,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 9888,
+      "box" : [
+        523,
+        884,
+        206,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        861,
+        884,
+        100,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4848,
+      "box" : [
+        966,
+        884,
+        101,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 704,
+      "box" : [
+        49,
+        891,
+        8,
+        88
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        2292,
+        891,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 4692,
+      "box" : [
+        1383,
+        902,
+        68,
+        69
+      ],
+      "class" : "Blocked",
+      "fill_rgb" : [
+        0,
+        0,
+        0
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        0,
+        0,
+        0
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 4062,
+      "box" : [
+        1317,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F1",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          905
+        ],
+        [
+          1381,
+          905
+        ],
+        [
+          1381,
+          969
+        ],
+        [
+          1317,
+          969
+        ]
+      ],
+      "text" : "F1"
+    },
+    {
+      "area" : 4002,
+      "box" : [
+        1452,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth D",
+      "fill_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "id" : "D1",
+      "legend_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1452,
+          905
+        ],
+        [
+          1516,
+          905
+        ],
+        [
+          1516,
+          969
+        ],
+        [
+          1452,
+          969
+        ]
+      ],
+      "text" : "D1"
+    },
+    {
+      "area" : 3944,
+      "box" : [
+        1519,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth D",
+      "fill_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "id" : "D2",
+      "legend_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1519,
+          905
+        ],
+        [
+          1583,
+          905
+        ],
+        [
+          1583,
+          969
+        ],
+        [
+          1519,
+          969
+        ]
+      ],
+      "text" : "D2"
+    },
+    {
+      "area" : 3943,
+      "box" : [
+        1586,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth D",
+      "fill_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "id" : "D3",
+      "legend_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "needs_review" : false,
+      "text" : "D3"
+    },
+    {
+      "area" : 3932,
+      "box" : [
+        1653,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth D",
+      "fill_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "id" : "D4",
+      "legend_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "needs_review" : false,
+      "text" : "D4"
+    },
+    {
+      "area" : 3924,
+      "box" : [
+        1720,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth D",
+      "fill_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "id" : "D5",
+      "legend_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1721,
+          905
+        ],
+        [
+          1785,
+          905
+        ],
+        [
+          1785,
+          969
+        ],
+        [
+          1721,
+          969
+        ]
+      ],
+      "text" : "D5"
+    },
+    {
+      "area" : 3924,
+      "box" : [
+        1787,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth D",
+      "fill_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "id" : "D6",
+      "legend_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "needs_review" : true,
+      "polygon" : [
+        [
+          1788,
+          905
+        ],
+        [
+          1852,
+          905
+        ],
+        [
+          1852,
+          969
+        ],
+        [
+          1788,
+          969
+        ]
+      ],
+      "reason" : "duplicate id",
+      "text" : "D6"
+    },
+    {
+      "area" : 3973,
+      "box" : [
+        1855,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth D",
+      "fill_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "id" : "D7",
+      "legend_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1855,
+          905
+        ],
+        [
+          1920,
+          905
+        ],
+        [
+          1920,
+          968
+        ],
+        [
+          1855,
+          969
+        ]
+      ],
+      "text" : "D7"
+    },
+    {
+      "area" : 3917,
+      "box" : [
+        1923,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth D",
+      "fill_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "id" : "D8",
+      "legend_rgb" : [
+        255,
+        187,
+        125
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1923,
+          905
+        ],
+        [
+          1987,
+          905
+        ],
+        [
+          1987,
+          969
+        ],
+        [
+          1923,
+          969
+        ]
+      ],
+      "text" : "D8"
+    },
+    {
+      "area" : 3865,
+      "box" : [
+        2089,
+        904,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C14",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2090,
+          905
+        ],
+        [
+          2154,
+          905
+        ],
+        [
+          2154,
+          969
+        ],
+        [
+          2090,
+          969
+        ]
+      ],
+      "text" : "C14"
+    },
+    {
+      "area" : 4848,
+      "box" : [
+        1135,
+        916,
+        48,
+        101
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4848,
+      "box" : [
+        1195,
+        916,
+        48,
+        101
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 5997,
+      "box" : [
+        211,
+        927,
+        65,
+        98
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H13",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          212,
+          927
+        ],
+        [
+          276,
+          927
+        ],
+        [
+          275,
+          1025
+        ],
+        [
+          212,
+          1025
+        ]
+      ],
+      "text" : "H13"
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        338,
+        947,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        398,
+        947,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 3981,
+      "box" : [
+        1317,
+        972,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F2",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          972
+        ],
+        [
+          1381,
+          972
+        ],
+        [
+          1381,
+          1036
+        ],
+        [
+          1317,
+          1036
+        ]
+      ],
+      "text" : "F2"
+    },
+    {
+      "area" : 3880,
+      "box" : [
+        1384,
+        972,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C13",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1384,
+          973
+        ],
+        [
+          1448,
+          973
+        ],
+        [
+          1448,
+          1037
+        ],
+        [
+          1385,
+          1037
+        ]
+      ],
+      "text" : "C13"
+    },
+    {
+      "area" : 5359,
+      "box" : [
+        2159,
+        972,
+        61,
+        104
+      ],
+      "class" : "ENTRANCE",
+      "fill_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "reason" : "color is nearly as close to \"DECOR\"",
+      "text" : ""
+    },
+    {
+      "area" : 3844,
+      "box" : [
+        521,
+        978,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G14",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          522,
+          978
+        ],
+        [
+          585,
+          978
+        ],
+        [
+          586,
+          1042
+        ],
+        [
+          522,
+          1042
+        ]
+      ],
+      "text" : "G14"
+    },
+    {
+      "area" : 3849,
+      "box" : [
+        589,
+        978,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F22",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          589,
+          979
+        ],
+        [
+          653,
+          978
+        ],
+        [
+          654,
+          1042
+        ],
+        [
+          589,
+          1042
+        ]
+      ],
+      "text" : "F22"
+    },
+    {
+      "area" : 3805,
+      "box" : [
+        657,
+        978,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G15",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          657,
+          979
+        ],
+        [
+          721,
+          978
+        ],
+        [
+          721,
+          1042
+        ],
+        [
+          657,
+          1042
+        ]
+      ],
+      "text" : "G15"
+    },
+    {
+      "area" : 3813,
+      "box" : [
+        859,
+        978,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G16",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          860,
+          978
+        ],
+        [
+          923,
+          978
+        ],
+        [
+          924,
+          1042
+        ],
+        [
+          860,
+          1042
+        ]
+      ],
+      "text" : "G16"
+    },
+    {
+      "area" : 3855,
+      "box" : [
+        927,
+        978,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F23",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          927,
+          978
+        ],
+        [
+          991,
+          978
+        ],
+        [
+          991,
+          1042
+        ],
+        [
+          927,
+          1042
+        ]
+      ],
+      "text" : "F23"
+    },
+    {
+      "area" : 3856,
+      "box" : [
+        995,
+        978,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G17",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          995,
+          978
+        ],
+        [
+          1059,
+          978
+        ],
+        [
+          1059,
+          1042
+        ],
+        [
+          995,
+          1042
+        ]
+      ],
+      "text" : "G17"
+    },
+    {
+      "area" : 2079,
+      "box" : [
+        54,
+        980,
+        33,
+        63
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 1, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 6065,
+      "box" : [
+        211,
+        1027,
+        65,
+        99
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H14",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          212,
+          1028
+        ],
+        [
+          276,
+          1028
+        ],
+        [
+          275,
+          1126
+        ],
+        [
+          212,
+          1126
+        ]
+      ],
+      "text" : "H14"
+    },
+    {
+      "area" : 3982,
+      "box" : [
+        1317,
+        1039,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F3",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          1040
+        ],
+        [
+          1381,
+          1040
+        ],
+        [
+          1381,
+          1104
+        ],
+        [
+          1317,
+          1104
+        ]
+      ],
+      "text" : "F3"
+    },
+    {
+      "area" : 3870,
+      "box" : [
+        1384,
+        1040,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C12",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1384,
+          1040
+        ],
+        [
+          1448,
+          1040
+        ],
+        [
+          1448,
+          1104
+        ],
+        [
+          1384,
+          1104
+        ]
+      ],
+      "text" : "C12"
+    },
+    {
+      "area" : 704,
+      "box" : [
+        49,
+        1045,
+        8,
+        88
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 3839,
+      "box" : [
+        521,
+        1045,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G13",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          522,
+          1045
+        ],
+        [
+          585,
+          1045
+        ],
+        [
+          586,
+          1109
+        ],
+        [
+          522,
+          1109
+        ]
+      ],
+      "text" : "G13"
+    },
+    {
+      "area" : 3926,
+      "box" : [
+        589,
+        1045,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F21",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          589,
+          1046
+        ],
+        [
+          653,
+          1045
+        ],
+        [
+          654,
+          1109
+        ],
+        [
+          589,
+          1109
+        ]
+      ],
+      "text" : "F21"
+    },
+    {
+      "area" : 3848,
+      "box" : [
+        657,
+        1045,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G12",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          657,
+          1046
+        ],
+        [
+          721,
+          1045
+        ],
+        [
+          721,
+          1109
+        ],
+        [
+          657,
+          1109
+        ]
+      ],
+      "text" : "G12"
+    },
+    {
+      "area" : 3870,
+      "box" : [
+        859,
+        1045,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : true,
+      "polygon" : [
+        [
+          860,
+          1045
+        ],
+        [
+          923,
+          1045
+        ],
+        [
+          924,
+          1109
+        ],
+        [
+          860,
+          1109
+        ]
+      ],
+      "reason" : "no label found",
+      "text" : ""
+    },
+    {
+      "area" : 3843,
+      "box" : [
+        927,
+        1045,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F20",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          927,
+          1045
+        ],
+        [
+          991,
+          1045
+        ],
+        [
+          991,
+          1109
+        ],
+        [
+          927,
+          1109
+        ]
+      ],
+      "text" : "F20"
+    },
+    {
+      "area" : 3819,
+      "box" : [
+        995,
+        1045,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G10",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          995,
+          1045
+        ],
+        [
+          1059,
+          1045
+        ],
+        [
+          1059,
+          1109
+        ],
+        [
+          995,
+          1109
+        ]
+      ],
+      "text" : "G10"
+    },
+    {
+      "area" : 2160,
+      "box" : [
+        338,
+        1058,
+        48,
+        45
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 12, 3 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2160,
+      "box" : [
+        398,
+        1058,
+        48,
+        45
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 12, 3 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        1135,
+        1080,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        1195,
+        1080,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 9418,
+      "box" : [
+        1552,
+        1080,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B12",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B12"
+    },
+    {
+      "area" : 9413,
+      "box" : [
+        1653,
+        1080,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B13",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B13"
+    },
+    {
+      "area" : 9323,
+      "box" : [
+        1754,
+        1080,
+        98,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B14",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B14"
+    },
+    {
+      "area" : 9321,
+      "box" : [
+        1855,
+        1080,
+        98,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B15",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B15"
+    },
+    {
+      "area" : 9419,
+      "box" : [
+        1955,
+        1080,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B16",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B16"
+    },
+    {
+      "area" : 9454,
+      "box" : [
+        2056,
+        1080,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B17",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B17"
+    },
+    {
+      "area" : 3985,
+      "box" : [
+        1317,
+        1107,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F4",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          1107
+        ],
+        [
+          1381,
+          1107
+        ],
+        [
+          1381,
+          1171
+        ],
+        [
+          1317,
+          1171
+        ]
+      ],
+      "text" : "F4"
+    },
+    {
+      "area" : 3906,
+      "box" : [
+        1384,
+        1107,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C11",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1384,
+          1108
+        ],
+        [
+          1448,
+          1108
+        ],
+        [
+          1448,
+          1172
+        ],
+        [
+          1385,
+          1172
+        ]
+      ],
+      "text" : "C11"
+    },
+    {
+      "area" : 6039,
+      "box" : [
+        211,
+        1128,
+        65,
+        99
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H15",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          212,
+          1129
+        ],
+        [
+          276,
+          1129
+        ],
+        [
+          275,
+          1227
+        ],
+        [
+          212,
+          1227
+        ]
+      ],
+      "text" : "H15"
+    },
+    {
+      "area" : 156,
+      "box" : [
+        40,
+        1133,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 182,
+      "box" : [
+        60,
+        1133,
+        7,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 10, 7 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2283,
+        1133,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2303,
+        1133,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        523,
+        1153,
+        100,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4848,
+      "box" : [
+        628,
+        1153,
+        101,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        49,
+        1159,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        2292,
+        1159,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 4464,
+      "box" : [
+        338,
+        1171,
+        48,
+        93
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4464,
+      "box" : [
+        398,
+        1171,
+        48,
+        93
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 3970,
+      "box" : [
+        1317,
+        1174,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F5",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          1175
+        ],
+        [
+          1381,
+          1175
+        ],
+        [
+          1381,
+          1239
+        ],
+        [
+          1317,
+          1239
+        ]
+      ],
+      "text" : "F5"
+    },
+    {
+      "area" : 3919,
+      "box" : [
+        1384,
+        1174,
+        65,
+        66
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C10",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1384,
+          1175
+        ],
+        [
+          1448,
+          1175
+        ],
+        [
+          1448,
+          1239
+        ],
+        [
+          1384,
+          1239
+        ]
+      ],
+      "text" : "C10"
+    },
+    {
+      "area" : 9374,
+      "box" : [
+        1552,
+        1181,
+        99,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B11",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1553,
+          1181
+        ],
+        [
+          1650,
+          1181
+        ],
+        [
+          1650,
+          1279
+        ],
+        [
+          1553,
+          1279
+        ]
+      ],
+      "text" : "B11"
+    },
+    {
+      "area" : 9314,
+      "box" : [
+        1653,
+        1181,
+        99,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B10",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B10"
+    },
+    {
+      "area" : 9294,
+      "box" : [
+        1754,
+        1181,
+        98,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B9",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B9"
+    },
+    {
+      "area" : 9285,
+      "box" : [
+        1855,
+        1181,
+        98,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B8",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B8"
+    },
+    {
+      "area" : 9343,
+      "box" : [
+        1955,
+        1181,
+        98,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B7",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B7"
+    },
+    {
+      "area" : 9395,
+      "box" : [
+        2056,
+        1181,
+        99,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B6",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "text" : "B6"
+    },
+    {
+      "area" : 6038,
+      "box" : [
+        211,
+        1229,
+        65,
+        99
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H16",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          212,
+          1230
+        ],
+        [
+          276,
+          1230
+        ],
+        [
+          276,
+          1327
+        ],
+        [
+          212,
+          1327
+        ]
+      ],
+      "text" : "H16"
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1135,
+        1238,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1195,
+        1238,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 3971,
+      "box" : [
+        1317,
+        1242,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F6",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          1242
+        ],
+        [
+          1381,
+          1242
+        ],
+        [
+          1381,
+          1306
+        ],
+        [
+          1317,
+          1306
+        ]
+      ],
+      "text" : "F6"
+    },
+    {
+      "area" : 3945,
+      "box" : [
+        1384,
+        1242,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C9",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1384,
+          1243
+        ],
+        [
+          1448,
+          1242
+        ],
+        [
+          1448,
+          1307
+        ],
+        [
+          1385,
+          1307
+        ]
+      ],
+      "text" : "C9"
+    },
+    {
+      "area" : 3903,
+      "box" : [
+        521,
+        1248,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G6",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          522,
+          1248
+        ],
+        [
+          585,
+          1248
+        ],
+        [
+          586,
+          1312
+        ],
+        [
+          522,
+          1312
+        ]
+      ],
+      "text" : "G6"
+    },
+    {
+      "area" : 3886,
+      "box" : [
+        589,
+        1248,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F18",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          589,
+          1248
+        ],
+        [
+          653,
+          1248
+        ],
+        [
+          654,
+          1312
+        ],
+        [
+          589,
+          1312
+        ]
+      ],
+      "text" : "F18"
+    },
+    {
+      "area" : 3951,
+      "box" : [
+        657,
+        1248,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G7",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          657,
+          1248
+        ],
+        [
+          721,
+          1248
+        ],
+        [
+          721,
+          1312
+        ],
+        [
+          657,
+          1312
+        ]
+      ],
+      "text" : "G7"
+    },
+    {
+      "area" : 3892,
+      "box" : [
+        859,
+        1249,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G8",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          860,
+          1250
+        ],
+        [
+          924,
+          1250
+        ],
+        [
+          924,
+          1313
+        ],
+        [
+          860,
+          1314
+        ]
+      ],
+      "text" : "G8"
+    },
+    {
+      "area" : 3884,
+      "box" : [
+        927,
+        1249,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F19",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          927,
+          1250
+        ],
+        [
+          991,
+          1250
+        ],
+        [
+          991,
+          1314
+        ],
+        [
+          927,
+          1314
+        ]
+      ],
+      "text" : "F19"
+    },
+    {
+      "area" : 3908,
+      "box" : [
+        995,
+        1249,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G9",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          995,
+          1250
+        ],
+        [
+          1059,
+          1250
+        ],
+        [
+          1059,
+          1314
+        ],
+        [
+          995,
+          1314
+        ]
+      ],
+      "text" : "G9"
+    },
+    {
+      "area" : 12777,
+      "box" : [
+        1552,
+        1281,
+        99,
+        132
+      ],
+      "class" : "Booth A",
+      "fill_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "id" : "A5",
+      "legend_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "needs_review" : false,
+      "text" : "A5"
+    },
+    {
+      "area" : 6756,
+      "box" : [
+        2159,
+        1282,
+        61,
+        127
+      ],
+      "class" : "ENTRANCE",
+      "fill_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "reason" : "color is nearly as close to \"DECOR\"",
+      "text" : ""
+    },
+    {
+      "area" : 4027,
+      "box" : [
+        1317,
+        1309,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F7",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          1310
+        ],
+        [
+          1381,
+          1309
+        ],
+        [
+          1381,
+          1374
+        ],
+        [
+          1318,
+          1374
+        ]
+      ],
+      "text" : "F7"
+    },
+    {
+      "area" : 3996,
+      "box" : [
+        1384,
+        1309,
+        65,
+        66
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C8",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1384,
+          1310
+        ],
+        [
+          1448,
+          1310
+        ],
+        [
+          1448,
+          1374
+        ],
+        [
+          1384,
+          1374
+        ]
+      ],
+      "text" : "C8"
+    },
+    {
+      "area" : 3900,
+      "box" : [
+        521,
+        1315,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G5",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          522,
+          1315
+        ],
+        [
+          585,
+          1315
+        ],
+        [
+          586,
+          1379
+        ],
+        [
+          522,
+          1379
+        ]
+      ],
+      "text" : "G5"
+    },
+    {
+      "area" : 3941,
+      "box" : [
+        589,
+        1315,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F17",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          589,
+          1315
+        ],
+        [
+          653,
+          1315
+        ],
+        [
+          654,
+          1379
+        ],
+        [
+          589,
+          1379
+        ]
+      ],
+      "text" : "F17"
+    },
+    {
+      "area" : 3906,
+      "box" : [
+        657,
+        1315,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G4",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          657,
+          1315
+        ],
+        [
+          721,
+          1315
+        ],
+        [
+          721,
+          1379
+        ],
+        [
+          657,
+          1379
+        ]
+      ],
+      "text" : "G4"
+    },
+    {
+      "area" : 3913,
+      "box" : [
+        859,
+        1316,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G3",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          860,
+          1317
+        ],
+        [
+          924,
+          1317
+        ],
+        [
+          924,
+          1381
+        ],
+        [
+          860,
+          1381
+        ]
+      ],
+      "text" : "G3"
+    },
+    {
+      "area" : 3962,
+      "box" : [
+        927,
+        1316,
+        65,
+        66
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F16",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          927,
+          1317
+        ],
+        [
+          991,
+          1317
+        ],
+        [
+          991,
+          1381
+        ],
+        [
+          927,
+          1381
+        ]
+      ],
+      "text" : "F16"
+    },
+    {
+      "area" : 3920,
+      "box" : [
+        995,
+        1316,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G2",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          995,
+          1317
+        ],
+        [
+          1059,
+          1317
+        ],
+        [
+          1059,
+          1381
+        ],
+        [
+          995,
+          1381
+        ]
+      ],
+      "text" : "G2"
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        338,
+        1328,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        398,
+        1328,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 6082,
+      "box" : [
+        211,
+        1330,
+        65,
+        99
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H17",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          212,
+          1331
+        ],
+        [
+          276,
+          1331
+        ],
+        [
+          276,
+          1428
+        ],
+        [
+          212,
+          1428
+        ]
+      ],
+      "text" : "H17"
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        1135,
+        1350,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        1195,
+        1350,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4022,
+      "box" : [
+        1317,
+        1376,
+        65,
+        66
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F8",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          1377
+        ],
+        [
+          1381,
+          1377
+        ],
+        [
+          1381,
+          1441
+        ],
+        [
+          1317,
+          1441
+        ]
+      ],
+      "text" : "F8"
+    },
+    {
+      "area" : 3986,
+      "box" : [
+        1384,
+        1377,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C7",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1384,
+          1378
+        ],
+        [
+          1448,
+          1377
+        ],
+        [
+          1448,
+          1441
+        ],
+        [
+          1384,
+          1441
+        ]
+      ],
+      "text" : "C7"
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        338,
+        1381,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        398,
+        1381,
+        48,
+        153
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        40,
+        1401,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 182,
+      "box" : [
+        60,
+        1401,
+        7,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 10, 7 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2283,
+        1401,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        2303,
+        1401,
+        6,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 25272,
+      "box" : [
+        1788,
+        1411,
+        166,
+        165
+      ],
+      "class" : "Large booth X",
+      "fill_rgb" : [
+        241,
+        91,
+        80
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        241,
+        91,
+        80
+      ],
+      "needs_review" : true,
+      "polygon" : [
+        [
+          1788,
+          1412
+        ],
+        [
+          1953,
+          1411
+        ],
+        [
+          1953,
+          1576
+        ],
+        [
+          1788,
+          1576
+        ]
+      ],
+      "reason" : "no label found",
+      "text" : ""
+    },
+    {
+      "area" : 3920,
+      "box" : [
+        2154,
+        1419,
+        80,
+        49
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        522,
+        1423,
+        153,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        680,
+        1423,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        860,
+        1423,
+        153,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1018,
+        1423,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        49,
+        1427,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        2292,
+        1427,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 6072,
+      "box" : [
+        211,
+        1431,
+        65,
+        99
+      ],
+      "class" : "Booth H",
+      "fill_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "id" : "H18",
+      "legend_rgb" : [
+        245,
+        205,
+        71
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          211,
+          1432
+        ],
+        [
+          275,
+          1432
+        ],
+        [
+          275,
+          1529
+        ],
+        [
+          211,
+          1529
+        ]
+      ],
+      "text" : "H18"
+    },
+    {
+      "area" : 3974,
+      "box" : [
+        1317,
+        1444,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F9",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          1445
+        ],
+        [
+          1381,
+          1444
+        ],
+        [
+          1381,
+          1509
+        ],
+        [
+          1318,
+          1509
+        ]
+      ],
+      "text" : "F9"
+    },
+    {
+      "area" : 3933,
+      "box" : [
+        1384,
+        1444,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "D6",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : true,
+      "polygon" : [
+        [
+          1384,
+          1445
+        ],
+        [
+          1448,
+          1445
+        ],
+        [
+          1448,
+          1509
+        ],
+        [
+          1385,
+          1509
+        ]
+      ],
+      "reason" : "duplicate id",
+      "text" : "D6"
+    },
+    {
+      "area" : 12899,
+      "box" : [
+        2056,
+        1477,
+        99,
+        133
+      ],
+      "class" : "Booth A",
+      "fill_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "id" : "A4",
+      "legend_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2057,
+          1478
+        ],
+        [
+          2154,
+          1478
+        ],
+        [
+          2154,
+          1609
+        ],
+        [
+          2057,
+          1609
+        ]
+      ],
+      "text" : "A4"
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        522,
+        1484,
+        153,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        680,
+        1484,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 7344,
+      "box" : [
+        860,
+        1484,
+        153,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 14, 14 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1018,
+        1484,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1135,
+        1508,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1195,
+        1508,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4624,
+      "box" : [
+        1383,
+        1510,
+        68,
+        68
+      ],
+      "class" : "Blocked",
+      "fill_rgb" : [
+        0,
+        0,
+        0
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        0,
+        0,
+        0
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 3875,
+      "box" : [
+        1317,
+        1511,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F10",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          1512
+        ],
+        [
+          1381,
+          1512
+        ],
+        [
+          1381,
+          1576
+        ],
+        [
+          1317,
+          1576
+        ]
+      ],
+      "text" : "F10"
+    },
+    {
+      "area" : 4011,
+      "box" : [
+        1451,
+        1512,
+        66,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C5",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1452,
+          1512
+        ],
+        [
+          1516,
+          1512
+        ],
+        [
+          1516,
+          1576
+        ],
+        [
+          1452,
+          1576
+        ]
+      ],
+      "text" : "C5"
+    },
+    {
+      "area" : 3951,
+      "box" : [
+        1519,
+        1512,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C4",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1519,
+          1512
+        ],
+        [
+          1583,
+          1512
+        ],
+        [
+          1583,
+          1576
+        ],
+        [
+          1519,
+          1576
+        ]
+      ],
+      "text" : "C4"
+    },
+    {
+      "area" : 3959,
+      "box" : [
+        1586,
+        1512,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C3",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1586,
+          1512
+        ],
+        [
+          1650,
+          1512
+        ],
+        [
+          1650,
+          1576
+        ],
+        [
+          1586,
+          1576
+        ]
+      ],
+      "text" : "CЗ"
+    },
+    {
+      "area" : 3962,
+      "box" : [
+        1653,
+        1512,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C2",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1653,
+          1513
+        ],
+        [
+          1718,
+          1512
+        ],
+        [
+          1718,
+          1576
+        ],
+        [
+          1653,
+          1576
+        ]
+      ],
+      "text" : "C2"
+    },
+    {
+      "area" : 4012,
+      "box" : [
+        1720,
+        1512,
+        65,
+        65
+      ],
+      "class" : "Booth C",
+      "fill_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "id" : "C1",
+      "legend_rgb" : [
+        253,
+        152,
+        145
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1721,
+          1512
+        ],
+        [
+          1785,
+          1512
+        ],
+        [
+          1785,
+          1576
+        ],
+        [
+          1721,
+          1576
+        ]
+      ],
+      "text" : "C1"
+    },
+    {
+      "area" : 3216,
+      "box" : [
+        520,
+        1566,
+        536,
+        6
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 2268,
+      "box" : [
+        520,
+        1566,
+        6,
+        378
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 1200,
+      "box" : [
+        1051,
+        1566,
+        5,
+        240
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 9180,
+      "box" : [
+        1719,
+        1577,
+        135,
+        68
+      ],
+      "class" : "Blocked",
+      "fill_rgb" : [
+        0,
+        0,
+        0
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        0,
+        0,
+        0
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 3963,
+      "box" : [
+        1317,
+        1579,
+        65,
+        65
+      ],
+      "class" : "Booth G",
+      "fill_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "id" : "G1",
+      "legend_rgb" : [
+        42,
+        187,
+        127
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1317,
+          1580
+        ],
+        [
+          1381,
+          1579
+        ],
+        [
+          1381,
+          1643
+        ],
+        [
+          1317,
+          1643
+        ]
+      ],
+      "text" : "G1"
+    },
+    {
+      "area" : 3946,
+      "box" : [
+        1384,
+        1579,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F11",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1385,
+          1579
+        ],
+        [
+          1449,
+          1579
+        ],
+        [
+          1449,
+          1643
+        ],
+        [
+          1385,
+          1643
+        ]
+      ],
+      "text" : "F11"
+    },
+    {
+      "area" : 3973,
+      "box" : [
+        1451,
+        1579,
+        66,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F12",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1452,
+          1579
+        ],
+        [
+          1516,
+          1579
+        ],
+        [
+          1516,
+          1643
+        ],
+        [
+          1452,
+          1643
+        ]
+      ],
+      "text" : "F12"
+    },
+    {
+      "area" : 3893,
+      "box" : [
+        1519,
+        1579,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F13",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1519,
+          1579
+        ],
+        [
+          1583,
+          1579
+        ],
+        [
+          1583,
+          1643
+        ],
+        [
+          1519,
+          1643
+        ]
+      ],
+      "text" : "F13"
+    },
+    {
+      "area" : 3893,
+      "box" : [
+        1586,
+        1579,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F14",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1586,
+          1579
+        ],
+        [
+          1650,
+          1579
+        ],
+        [
+          1650,
+          1643
+        ],
+        [
+          1586,
+          1643
+        ]
+      ],
+      "text" : "F14"
+    },
+    {
+      "area" : 3887,
+      "box" : [
+        1653,
+        1579,
+        65,
+        65
+      ],
+      "class" : "Booth F",
+      "fill_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "id" : "F15",
+      "legend_rgb" : [
+        126,
+        226,
+        184
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1653,
+          1580
+        ],
+        [
+          1717,
+          1579
+        ],
+        [
+          1717,
+          1643
+        ],
+        [
+          1653,
+          1643
+        ]
+      ],
+      "text" : "F15"
+    },
+    {
+      "area" : 12793,
+      "box" : [
+        1855,
+        1579,
+        99,
+        132
+      ],
+      "class" : "Booth A",
+      "fill_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "id" : "A3",
+      "legend_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1855,
+          1580
+        ],
+        [
+          1953,
+          1579
+        ],
+        [
+          1952,
+          1711
+        ],
+        [
+          1855,
+          1710
+        ]
+      ],
+      "text" : "АЗ"
+    },
+    {
+      "area" : 35496,
+      "box" : [
+        588,
+        1599,
+        174,
+        204
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 18, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 35496,
+      "box" : [
+        819,
+        1599,
+        174,
+        204
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 18, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 9476,
+      "box" : [
+        2056,
+        1612,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B5",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2057,
+          1612
+        ],
+        [
+          2154,
+          1612
+        ],
+        [
+          2154,
+          1710
+        ],
+        [
+          2057,
+          1710
+        ]
+      ],
+      "text" : "B5"
+    },
+    {
+      "area" : 16161,
+      "box" : [
+        1720,
+        1646,
+        132,
+        132
+      ],
+      "class" : "Large booth XX",
+      "fill_rgb" : [
+        247,
+        151,
+        210
+      ],
+      "id" : "XX1",
+      "legend_rgb" : [
+        247,
+        151,
+        210
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1721,
+          1646
+        ],
+        [
+          1852,
+          1646
+        ],
+        [
+          1852,
+          1777
+        ],
+        [
+          1721,
+          1777
+        ]
+      ],
+      "text" : "XX1"
+    },
+    {
+      "area" : 162,
+      "box" : [
+        40,
+        1668,
+        6,
+        27
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 189,
+      "box" : [
+        60,
+        1668,
+        7,
+        27
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 10, 7 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        2283,
+        1668,
+        6,
+        27
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        2303,
+        1668,
+        6,
+        27
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 1928,
+      "box" : [
+        49,
+        1695,
+        8,
+        241
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1928,
+      "box" : [
+        2292,
+        1695,
+        8,
+        241
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 9500,
+      "box" : [
+        1855,
+        1713,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B2",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1855,
+          1714
+        ],
+        [
+          1953,
+          1714
+        ],
+        [
+          1953,
+          1811
+        ],
+        [
+          1855,
+          1811
+        ]
+      ],
+      "text" : "B2"
+    },
+    {
+      "area" : 9493,
+      "box" : [
+        2056,
+        1713,
+        99,
+        99
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B4",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2057,
+          1714
+        ],
+        [
+          2154,
+          1714
+        ],
+        [
+          2154,
+          1811
+        ],
+        [
+          2057,
+          1811
+        ]
+      ],
+      "text" : "B4"
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1133,
+        1730,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1193,
+        1730,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1267,
+        1730,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1327,
+        1730,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1401,
+        1730,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1461,
+        1730,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 15943,
+      "box" : [
+        1720,
+        1780,
+        132,
+        132
+      ],
+      "class" : "Large booth XX",
+      "fill_rgb" : [
+        247,
+        151,
+        210
+      ],
+      "id" : "XX2",
+      "legend_rgb" : [
+        247,
+        151,
+        210
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1721,
+          1780
+        ],
+        [
+          1852,
+          1780
+        ],
+        [
+          1852,
+          1911
+        ],
+        [
+          1721,
+          1911
+        ]
+      ],
+      "text" : "XX2"
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        1133,
+        1783,
+        48,
+        100
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        1193,
+        1783,
+        48,
+        100
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        1267,
+        1783,
+        48,
+        100
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        1327,
+        1783,
+        48,
+        100
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        1401,
+        1783,
+        48,
+        100
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4800,
+      "box" : [
+        1461,
+        1783,
+        48,
+        100
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 11, 22 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 9432,
+      "box" : [
+        1855,
+        1814,
+        99,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B1",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1855,
+          1815
+        ],
+        [
+          1953,
+          1814
+        ],
+        [
+          1953,
+          1911
+        ],
+        [
+          1855,
+          1911
+        ]
+      ],
+      "text" : "B1"
+    },
+    {
+      "area" : 9405,
+      "box" : [
+        2056,
+        1814,
+        99,
+        98
+      ],
+      "class" : "Booth B",
+      "fill_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "id" : "B3",
+      "legend_rgb" : [
+        179,
+        223,
+        114
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2057,
+          1814
+        ],
+        [
+          2154,
+          1814
+        ],
+        [
+          2154,
+          1912
+        ],
+        [
+          2057,
+          1912
+        ]
+      ],
+      "text" : "ВЗ"
+    },
+    {
+      "area" : 9056,
+      "box" : [
+        741,
+        1845,
+        100,
+        99
+      ],
+      "class" : "Stage",
+      "fill_rgb" : [
+        170,
+        170,
+        170
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        170,
+        170,
+        170
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1133,
+        1888,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1193,
+        1888,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1267,
+        1888,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1327,
+        1888,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1401,
+        1888,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 2304,
+      "box" : [
+        1461,
+        1888,
+        48,
+        48
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 15, 26 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 15930,
+      "box" : [
+        1720,
+        1914,
+        132,
+        132
+      ],
+      "class" : "Large booth XX",
+      "fill_rgb" : [
+        247,
+        151,
+        210
+      ],
+      "id" : "XX3",
+      "legend_rgb" : [
+        247,
+        151,
+        210
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1721,
+          1914
+        ],
+        [
+          1852,
+          1914
+        ],
+        [
+          1852,
+          2045
+        ],
+        [
+          1721,
+          2045
+        ]
+      ],
+      "text" : "XX3"
+    },
+    {
+      "area" : 12839,
+      "box" : [
+        1855,
+        1914,
+        99,
+        132
+      ],
+      "class" : "Booth A",
+      "fill_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "id" : "A1",
+      "legend_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1855,
+          1914
+        ],
+        [
+          1953,
+          1914
+        ],
+        [
+          1953,
+          2045
+        ],
+        [
+          1855,
+          2045
+        ]
+      ],
+      "text" : "A1"
+    },
+    {
+      "area" : 12805,
+      "box" : [
+        2056,
+        1914,
+        99,
+        132
+      ],
+      "class" : "Booth A",
+      "fill_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "id" : "A2",
+      "legend_rgb" : [
+        184,
+        172,
+        246
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          2057,
+          1915
+        ],
+        [
+          2154,
+          1915
+        ],
+        [
+          2154,
+          2046
+        ],
+        [
+          2057,
+          2046
+        ]
+      ],
+      "text" : "A2"
+    },
+    {
+      "area" : 162,
+      "box" : [
+        40,
+        1936,
+        6,
+        27
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 189,
+      "box" : [
+        60,
+        1936,
+        7,
+        27
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 10, 7 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        2283,
+        1936,
+        6,
+        27
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        2303,
+        1936,
+        6,
+        27
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 79365,
+      "box" : [
+        590,
+        1944,
+        402,
+        202
+      ],
+      "class" : "Stage",
+      "fill_rgb" : [
+        170,
+        170,
+        170
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        170,
+        170,
+        170
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1744,
+      "box" : [
+        49,
+        1962,
+        8,
+        218
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1936,
+      "box" : [
+        2292,
+        1962,
+        8,
+        242
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 14320,
+      "box" : [
+        1654,
+        2048,
+        165,
+        99
+      ],
+      "class" : "Booth J",
+      "fill_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "polygon" : [
+        [
+          1654,
+          2049
+        ],
+        [
+          1819,
+          2049
+        ],
+        [
+          1819,
+          2146
+        ],
+        [
+          1654,
+          2146
+        ]
+      ],
+      "reason" : "text \"DOORPRIZE\" is not a readable id",
+      "text" : "DOORPRIZE"
+    },
+    {
+      "area" : 11755,
+      "box" : [
+        1824,
+        2048,
+        129,
+        99
+      ],
+      "class" : "ENTRANCE",
+      "fill_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "polygon" : [
+        [
+          1822,
+          2049
+        ],
+        [
+          1953,
+          2048
+        ],
+        [
+          1953,
+          2146
+        ],
+        [
+          1822,
+          2146
+        ]
+      ],
+      "reason" : "color is nearly as close to \"DECOR\"",
+      "text" : ""
+    },
+    {
+      "area" : 8583,
+      "box" : [
+        2056,
+        2048,
+        97,
+        99
+      ],
+      "class" : "ENTRANCE",
+      "fill_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "polygon" : [
+        [
+          2057,
+          2049
+        ],
+        [
+          2155,
+          2049
+        ],
+        [
+          2155,
+          2146
+        ],
+        [
+          2057,
+          2146
+        ]
+      ],
+      "reason" : "color is nearly as close to \"DECOR\"",
+      "text" : ""
+    },
+    {
+      "area" : 1380,
+      "box" : [
+        121,
+        2146,
+        460,
+        3
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 1929,
+      "box" : [
+        1002,
+        2146,
+        643,
+        3
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 222,
+      "box" : [
+        1469,
+        2181,
+        3,
+        74
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 4234,
+      "box" : [
+        1475,
+        2181,
+        58,
+        73
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 222,
+      "box" : [
+        1536,
+        2181,
+        3,
+        74
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 4012,
+      "box" : [
+        1826,
+        2181,
+        118,
+        34
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 756,
+      "box" : [
+        60,
+        2182,
+        27,
+        28
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 3, 4 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 540,
+      "box" : [
+        1594,
+        2190,
+        27,
+        20
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 21, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 520,
+      "box" : [
+        1769,
+        2190,
+        26,
+        20
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 21, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        609,
+        2204,
+        27,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        944,
+        2204,
+        26,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 120,
+      "box" : [
+        1285,
+        2204,
+        20,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 5, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 676,
+      "box" : [
+        2283,
+        2204,
+        26,
+        26
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 3, 4 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 21,
+      "box" : [
+        1445,
+        2209,
+        21,
+        1
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 22, 6 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 21,
+      "box" : [
+        1542,
+        2209,
+        21,
+        1
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 22, 6 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 4456,
+      "box" : [
+        52,
+        2213,
+        557,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 2464,
+      "box" : [
+        636,
+        2213,
+        308,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 2472,
+      "box" : [
+        970,
+        2213,
+        309,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1112,
+      "box" : [
+        1305,
+        2213,
+        139,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 1216,
+      "box" : [
+        1563,
+        2213,
+        152,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 280,
+      "box" : [
+        1715,
+        2213,
+        140,
+        2
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 388,
+      "box" : [
+        1916,
+        2213,
+        194,
+        2
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 1384,
+      "box" : [
+        2110,
+        2213,
+        173,
+        8
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 414,
+      "box" : [
+        2110,
+        2218,
+        1,
+        414
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 162,
+      "box" : [
+        609,
+        2224,
+        27,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 156,
+      "box" : [
+        944,
+        2224,
+        26,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 2, 32 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 90,
+      "box" : [
+        1290,
+        2224,
+        15,
+        6
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 44,
+      "box" : [
+        1444,
+        2224,
+        22,
+        2
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 24, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 42,
+      "box" : [
+        1542,
+        2224,
+        21,
+        2
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 24, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 139481,
+      "box" : [
+        1724,
+        2224,
+        376,
+        398
+      ],
+      "class" : "ENTRANCE",
+      "fill_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        255,
+        255,
+        255
+      ],
+      "needs_review" : true,
+      "polygon" : [
+        [
+          1754,
+          2267
+        ],
+        [
+          2063,
+          2267
+        ],
+        [
+          2063,
+          2584
+        ],
+        [
+          1754,
+          2584
+        ]
+      ],
+      "reason" : "color is nearly as close to \"DECOR\"",
+      "text" : ""
+    },
+    {
+      "area" : 4272,
+      "box" : [
+        1279,
+        2230,
+        8,
+        534
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    },
+    {
+      "area" : 6260,
+      "box" : [
+        1331,
+        2270,
+        65,
+        99
+      ],
+      "class" : "Booth J",
+      "fill_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "id" : "J1",
+      "legend_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1331,
+          2271
+        ],
+        [
+          1395,
+          2271
+        ],
+        [
+          1395,
+          2369
+        ],
+        [
+          1331,
+          2368
+        ]
+      ],
+      "text" : "J1"
+    },
+    {
+      "area" : 4012,
+      "box" : [
+        1331,
+        2371,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K1",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1331,
+          2372
+        ],
+        [
+          1395,
+          2372
+        ],
+        [
+          1395,
+          2436
+        ],
+        [
+          1331,
+          2436
+        ]
+      ],
+      "text" : "K1"
+    },
+    {
+      "area" : 3965,
+      "box" : [
+        1331,
+        2438,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K2",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1331,
+          2439
+        ],
+        [
+          1395,
+          2439
+        ],
+        [
+          1395,
+          2503
+        ],
+        [
+          1331,
+          2503
+        ]
+      ],
+      "text" : "K2"
+    },
+    {
+      "area" : 3570,
+      "box" : [
+        2114,
+        2480,
+        30,
+        119
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 3944,
+      "box" : [
+        1331,
+        2505,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K3",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1331,
+          2506
+        ],
+        [
+          1395,
+          2506
+        ],
+        [
+          1395,
+          2570
+        ],
+        [
+          1331,
+          2570
+        ]
+      ],
+      "text" : "КЗ"
+    },
+    {
+      "area" : 3942,
+      "box" : [
+        1331,
+        2572,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K4",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1331,
+          2573
+        ],
+        [
+          1395,
+          2573
+        ],
+        [
+          1395,
+          2637
+        ],
+        [
+          1331,
+          2637
+        ]
+      ],
+      "text" : "K4"
+    },
+    {
+      "area" : 6224,
+      "box" : [
+        1331,
+        2639,
+        65,
+        99
+      ],
+      "class" : "Booth J",
+      "fill_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "id" : "J2",
+      "legend_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "needs_review" : false,
+      "text" : "J2"
+    },
+    {
+      "area" : 22,
+      "box" : [
+        2098,
+        2652,
+        1,
+        22
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 22, 6 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 22,
+      "box" : [
+        2114,
+        2652,
+        1,
+        22
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 22, 6 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 222,
+      "box" : [
+        2070,
+        2677,
+        74,
+        3
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 1682,
+      "box" : [
+        2070,
+        2683,
+        29,
+        58
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 26, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 1682,
+      "box" : [
+        2114,
+        2683,
+        29,
+        58
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 26, 2 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 6142,
+      "box" : [
+        1398,
+        2740,
+        98,
+        65
+      ],
+      "class" : "Booth J",
+      "fill_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "id" : "J3",
+      "legend_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1398,
+          2740
+        ],
+        [
+          1496,
+          2740
+        ],
+        [
+          1496,
+          2804
+        ],
+        [
+          1398,
+          2804
+        ]
+      ],
+      "text" : "J3"
+    },
+    {
+      "area" : 3941,
+      "box" : [
+        1498,
+        2740,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K5",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1499,
+          2740
+        ],
+        [
+          1563,
+          2740
+        ],
+        [
+          1563,
+          2804
+        ],
+        [
+          1499,
+          2804
+        ]
+      ],
+      "text" : "K5"
+    },
+    {
+      "area" : 3942,
+      "box" : [
+        1566,
+        2740,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K6",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1566,
+          2740
+        ],
+        [
+          1630,
+          2740
+        ],
+        [
+          1630,
+          2804
+        ],
+        [
+          1566,
+          2804
+        ]
+      ],
+      "text" : "K6"
+    },
+    {
+      "area" : 3994,
+      "box" : [
+        1633,
+        2740,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K7",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1633,
+          2740
+        ],
+        [
+          1697,
+          2740
+        ],
+        [
+          1697,
+          2804
+        ],
+        [
+          1633,
+          2804
+        ]
+      ],
+      "text" : "K7"
+    },
+    {
+      "area" : 3939,
+      "box" : [
+        1700,
+        2740,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K8",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1700,
+          2740
+        ],
+        [
+          1764,
+          2740
+        ],
+        [
+          1764,
+          2804
+        ],
+        [
+          1700,
+          2804
+        ]
+      ],
+      "text" : "K8"
+    },
+    {
+      "area" : 3931,
+      "box" : [
+        1767,
+        2740,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K9",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1767,
+          2740
+        ],
+        [
+          1831,
+          2740
+        ],
+        [
+          1831,
+          2804
+        ],
+        [
+          1767,
+          2804
+        ]
+      ],
+      "text" : "K9"
+    },
+    {
+      "area" : 3851,
+      "box" : [
+        1834,
+        2740,
+        65,
+        65
+      ],
+      "class" : "Booth K",
+      "fill_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "id" : "K10",
+      "legend_rgb" : [
+        194,
+        229,
+        225
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1834,
+          2741
+        ],
+        [
+          1898,
+          2740
+        ],
+        [
+          1898,
+          2804
+        ],
+        [
+          1834,
+          2804
+        ]
+      ],
+      "text" : "K10"
+    },
+    {
+      "area" : 6210,
+      "box" : [
+        1901,
+        2740,
+        99,
+        65
+      ],
+      "class" : "Booth J",
+      "fill_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "id" : "J4",
+      "legend_rgb" : [
+        0,
+        255,
+        255
+      ],
+      "needs_review" : false,
+      "polygon" : [
+        [
+          1901,
+          2741
+        ],
+        [
+          1999,
+          2740
+        ],
+        [
+          1999,
+          2804
+        ],
+        [
+          1901,
+          2804
+        ]
+      ],
+      "text" : "J4"
+    },
+    {
+      "area" : 148,
+      "box" : [
+        2070,
+        2744,
+        74,
+        2
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "single line, not confirmed as a wall",
+      "text" : ""
+    },
+    {
+      "area" : 21,
+      "box" : [
+        2098,
+        2749,
+        1,
+        21
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 22, 6 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 22,
+      "box" : [
+        2114,
+        2749,
+        1,
+        22
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "label this group once (group 22, 6 shapes)",
+      "text" : ""
+    },
+    {
+      "area" : 3782,
+      "box" : [
+        1285,
+        2764,
+        61,
+        62
+      ],
+      "class" : "object",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : true,
+      "reason" : "unique shape, label it",
+      "text" : ""
+    },
+    {
+      "area" : 6831,
+      "box" : [
+        1346,
+        2823,
+        759,
+        9
+      ],
+      "class" : "wall",
+      "fill_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "id" : null,
+      "legend_rgb" : [
+        128,
+        128,
+        128
+      ],
+      "needs_review" : false,
+      "text" : ""
+    }
+  ],
+  "legend" : [
+    {
+      "colors" : [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "label" : "ENTRANCE"
+    },
+    {
+      "colors" : [
+        [
+          0,
+          158,
+          96
+        ]
+      ],
+      "label" : "EXIT"
+    },
+    {
+      "colors" : [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "label" : "DECOR"
+    },
+    {
+      "colors" : [
+        [
+          239,
+          239,
+          239
+        ]
+      ],
+      "label" : "Class"
+    },
+    {
+      "colors" : [
+        [
+          184,
+          172,
+          246
+        ]
+      ],
+      "label" : "Booth A",
+      "prefix" : "A"
+    },
+    {
+      "colors" : [
+        [
+          179,
+          223,
+          114
+        ]
+      ],
+      "label" : "Booth B",
+      "prefix" : "B"
+    },
+    {
+      "colors" : [
+        [
+          253,
+          152,
+          145
+        ]
+      ],
+      "label" : "Booth C",
+      "prefix" : "C"
+    },
+    {
+      "colors" : [
+        [
+          255,
+          187,
+          125
+        ]
+      ],
+      "label" : "Booth D",
+      "prefix" : "D"
+    },
+    {
+      "colors" : [
+        [
+          126,
+          226,
+          184
+        ]
+      ],
+      "label" : "Booth F",
+      "prefix" : "F"
+    },
+    {
+      "colors" : [
+        [
+          42,
+          187,
+          127
+        ]
+      ],
+      "label" : "Booth G",
+      "prefix" : "G"
+    },
+    {
+      "colors" : [
+        [
+          245,
+          205,
+          71
+        ]
+      ],
+      "label" : "Booth H",
+      "prefix" : "H"
+    },
+    {
+      "colors" : [
+        [
+          0,
+          255,
+          255
+        ]
+      ],
+      "label" : "Booth J",
+      "prefix" : "J"
+    },
+    {
+      "colors" : [
+        [
+          194,
+          229,
+          225
+        ]
+      ],
+      "label" : "Booth K",
+      "prefix" : "K"
+    },
+    {
+      "colors" : [
+        [
+          241,
+          91,
+          80
+        ]
+      ],
+      "label" : "Large booth X",
+      "prefix" : "X"
+    },
+    {
+      "colors" : [
+        [
+          247,
+          151,
+          210
+        ]
+      ],
+      "label" : "Large booth XX",
+      "prefix" : "XX"
+    },
+    {
+      "colors" : [
+        [
+          170,
+          170,
+          170
+        ]
+      ],
+      "label" : "Stage"
+    },
+    {
+      "colors" : [
+        [
+          255,
+          255,
+          255
+        ]
+      ],
+      "label" : "Audience area"
+    },
+    {
+      "colors" : [
+        [
+          252,
+          252,
+          252
+        ]
+      ],
+      "label" : "Seating"
+    },
+    {
+      "colors" : [
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "label" : "Blocked"
+    },
+    {
+      "colors" : [
+        [
+          26,
+          26,
+          26
+        ]
+      ],
+      "label" : "Wall"
+    }
+  ],
+  "report" : {
+    "duplicate_ids" : [
+      "D6"
+    ],
+    "gaps_in_numbering" : {
+      "C" : [
+        6
+      ],
+      "G" : [
+        11
+      ],
+      "H" : [
+        3
+      ],
+      "X" : [
+        1
+      ]
+    },
+    "ids_read" : 151,
+    "items_per_class" : {
+      "Blocked" : 3,
+      "Booth A" : 9,
+      "Booth B" : 26,
+      "Booth C" : 21,
+      "Booth D" : 8,
+      "Booth F" : 27,
+      "Booth G" : 25,
+      "Booth H" : 18,
+      "Booth J" : 5,
+      "Booth K" : 10,
+      "ENTRANCE" : 9,
+      "Large booth X" : 3,
+      "Large booth XX" : 3,
+      "Stage" : 2,
+      "object" : 141,
+      "wall" : 54
+    },
+    "items_without_id" : 213,
+    "max_number_per_prefix" : {
+      "A" : 9,
+      "B" : 26,
+      "C" : 21,
+      "D" : 8,
+      "F" : 27,
+      "G" : 25,
+      "H" : 18,
+      "J" : 4,
+      "K" : 10,
+      "X" : 3,
+      "XX" : 3
+    }
+  }
+}

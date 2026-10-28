@@ -1,0 +1,1304 @@
+{
+ "source": "checked by eye against layout_3.png; booths from colour components of the legend_3 swatches; walls, doors, pillars, objects, and symbols verified from CAD plan",
+ "image": {
+  "width": 3413,
+  "height": 988
+ },
+ "items": [
+  {
+   "class": "Booth H",
+   "box": [
+    702,
+    386,
+    66,
+    66
+   ],
+   "id": "H1"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    769,
+    386,
+    66,
+    66
+   ],
+   "id": "H2"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    836,
+    386,
+    66,
+    66
+   ],
+   "id": "H3"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    903,
+    386,
+    66,
+    66
+   ],
+   "id": "H5"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    970,
+    386,
+    66,
+    66
+   ],
+   "id": "H6"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1037,
+    386,
+    66,
+    66
+   ],
+   "id": "H7"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1104,
+    386,
+    66,
+    66
+   ],
+   "id": "H8"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1171,
+    386,
+    65,
+    66
+   ],
+   "id": "H9"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1237,
+    386,
+    66,
+    66
+   ],
+   "id": "H10"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1304,
+    386,
+    66,
+    66
+   ],
+   "id": "H11"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1371,
+    386,
+    66,
+    66
+   ],
+   "id": "H12"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1438,
+    386,
+    66,
+    66
+   ],
+   "id": "H15"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1505,
+    386,
+    66,
+    66
+   ],
+   "id": "H16"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1572,
+    386,
+    66,
+    66
+   ],
+   "id": "H17"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1639,
+    386,
+    66,
+    66
+   ],
+   "id": "H18"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1706,
+    386,
+    66,
+    66
+   ],
+   "id": "H19"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1773,
+    386,
+    66,
+    66
+   ],
+   "id": "H20"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1973,
+    386,
+    67,
+    66
+   ],
+   "id": "H21"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2041,
+    386,
+    66,
+    66
+   ],
+   "id": "H22"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2108,
+    386,
+    66,
+    66
+   ],
+   "id": "H23"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2175,
+    386,
+    65,
+    66
+   ],
+   "id": "H25"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2241,
+    386,
+    66,
+    66
+   ],
+   "id": "H26"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2308,
+    386,
+    66,
+    66
+   ],
+   "id": "H27"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2375,
+    386,
+    66,
+    66
+   ],
+   "id": "H28"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2442,
+    386,
+    66,
+    66
+   ],
+   "id": "H29"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2509,
+    386,
+    66,
+    66
+   ],
+   "id": "H30"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2576,
+    386,
+    66,
+    66
+   ],
+   "id": "H31"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2643,
+    386,
+    66,
+    66
+   ],
+   "id": "H32"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2710,
+    386,
+    66,
+    66
+   ],
+   "id": "H33"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2777,
+    386,
+    66,
+    66
+   ],
+   "id": "H35"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2844,
+    386,
+    65,
+    66
+   ],
+   "id": "H36"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2910,
+    386,
+    66,
+    66
+   ],
+   "id": "H37"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2977,
+    386,
+    66,
+    66
+   ],
+   "id": "H38"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    3044,
+    386,
+    66,
+    66
+   ],
+   "id": "H39"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1371,
+    539,
+    66,
+    65
+   ],
+   "id": "H60"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1438,
+    539,
+    66,
+    65
+   ],
+   "id": "H61"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1505,
+    539,
+    66,
+    65
+   ],
+   "id": "H62"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1572,
+    539,
+    66,
+    65
+   ],
+   "id": "H63"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1639,
+    539,
+    66,
+    65
+   ],
+   "id": "H65"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1706,
+    539,
+    66,
+    65
+   ],
+   "id": "H66"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1773,
+    539,
+    66,
+    65
+   ],
+   "id": "H67"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1840,
+    539,
+    65,
+    65
+   ],
+   "id": "H68"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1906,
+    539,
+    66,
+    65
+   ],
+   "id": "H69"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1973,
+    539,
+    67,
+    65
+   ],
+   "id": "H70"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2041,
+    539,
+    66,
+    65
+   ],
+   "id": "H71"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    702,
+    587,
+    66,
+    65
+   ],
+   "id": "H50"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    769,
+    587,
+    66,
+    65
+   ],
+   "id": "H51"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    836,
+    587,
+    66,
+    65
+   ],
+   "id": "H52"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    903,
+    587,
+    66,
+    65
+   ],
+   "id": "H53"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    970,
+    587,
+    66,
+    65
+   ],
+   "id": "H55"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1037,
+    587,
+    66,
+    65
+   ],
+   "id": "H56"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1104,
+    587,
+    66,
+    65
+   ],
+   "id": "H57"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1171,
+    587,
+    65,
+    65
+   ],
+   "id": "H58"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    1237,
+    587,
+    66,
+    65
+   ],
+   "id": "H59"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2241,
+    587,
+    66,
+    65
+   ],
+   "id": "H72"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2308,
+    587,
+    66,
+    65
+   ],
+   "id": "H73"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2375,
+    587,
+    66,
+    65
+   ],
+   "id": "H75"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2442,
+    587,
+    66,
+    65
+   ],
+   "id": "H76"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2509,
+    587,
+    66,
+    65
+   ],
+   "id": "H77"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2576,
+    587,
+    66,
+    65
+   ],
+   "id": "H78"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2643,
+    587,
+    66,
+    65
+   ],
+   "id": "H79"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2710,
+    587,
+    66,
+    65
+   ],
+   "id": "H80"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2777,
+    587,
+    66,
+    65
+   ],
+   "id": "H81"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2844,
+    587,
+    65,
+    65
+   ],
+   "id": "H82"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2910,
+    587,
+    66,
+    65
+   ],
+   "id": "H83"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    2977,
+    587,
+    66,
+    65
+   ],
+   "id": "H85"
+  },
+  {
+   "class": "Booth H",
+   "box": [
+    3044,
+    586,
+    67,
+    67
+   ],
+   "id": "H86"
+  },
+  {
+   "class": "Stage",
+   "box": [
+    271,
+    365,
+    99,
+    272
+   ]
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1755,
+    157,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_top_walkway_1"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1995,
+    160,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_top_walkway_2"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    2271,
+    157,
+    32,
+    34
+   ],
+   "id": null,
+   "label": "pillar_top_walkway_3"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    2528,
+    159,
+    32,
+    34
+   ],
+   "id": null,
+   "label": "pillar_top_walkway_4"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    106,
+    332,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_stage_nw"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    106,
+    652,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_stage_sw"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    370,
+    332,
+    32,
+    34
+   ],
+   "id": null,
+   "label": "pillar_stage_ne"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    369,
+    636,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_stage_se"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    629,
+    332,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_seating_n"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    627,
+    652,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_seating_s"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    822,
+    337,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_1"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1016,
+    347,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_2"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1244,
+    348,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_3"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1514,
+    350,
+    32,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_4"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1756,
+    353,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_5"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1995,
+    353,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_6"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    2270,
+    353,
+    32,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_7"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    2524,
+    353,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_8"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    2784,
+    338,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_9"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    3044,
+    324,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_10"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    3205,
+    312,
+    32,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_top_11"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    823,
+    652,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_1"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1019,
+    652,
+    32,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_2"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1212,
+    652,
+    32,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_3"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1516,
+    638,
+    33,
+    36
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_4"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    1994,
+    638,
+    33,
+    35
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_5"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    2301,
+    652,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_6"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    2492,
+    652,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_7"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    2687,
+    652,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_8"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    2881,
+    652,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_9"
+  },
+  {
+   "class": "pillar",
+   "box": [
+    3074,
+    652,
+    33,
+    34
+   ],
+   "id": null,
+   "label": "pillar_booth_bottom_10"
+  },
+  {
+   "class": "door",
+   "box": [
+    3118,
+    484,
+    12,
+    115
+   ],
+   "id": null,
+   "label": "gate_entrance"
+  },
+  {
+   "class": "object",
+   "box": [
+    894,
+    508,
+    44,
+    28
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    965,
+    508,
+    44,
+    28
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1035,
+    508,
+    44,
+    28
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1128,
+    508,
+    44,
+    28
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    2537,
+    518,
+    44,
+    28
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    2603,
+    518,
+    44,
+    28
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    2669,
+    518,
+    44,
+    28
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    2735,
+    518,
+    44,
+    28
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    2802,
+    518,
+    44,
+    28
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    468,
+    418,
+    150,
+    190
+   ],
+   "id": null,
+   "label": "audience_seating_block"
+  },
+  {
+   "class": "object",
+   "box": [
+    236,
+    689,
+    258,
+    105
+   ],
+   "id": null,
+   "label": "stairs"
+  },
+  {
+   "class": "symbol",
+   "box": [
+    3095,
+    400,
+    35,
+    35
+   ],
+   "id": null,
+   "label": "circle_red_dashed_top"
+  },
+  {
+   "class": "symbol",
+   "box": [
+    3095,
+    435,
+    35,
+    35
+   ],
+   "id": null,
+   "label": "circle_green_dashed"
+  },
+  {
+   "class": "symbol",
+   "box": [
+    3115,
+    680,
+    35,
+    35
+   ],
+   "id": null,
+   "label": "circle_red_dashed_bottom"
+  },
+  {
+   "class": "symbol",
+   "box": [
+    3135,
+    510,
+    15,
+    65
+   ],
+   "id": null,
+   "label": "gate_label_symbol"
+  },
+  {
+   "class": "wall",
+   "box": [
+    114,
+    14,
+    646,
+    230
+   ],
+   "id": null,
+   "label": "tenant_boundary_top_1"
+  },
+  {
+   "class": "wall",
+   "box": [
+    834,
+    14,
+    988,
+    196
+   ],
+   "id": null,
+   "label": "tenant_boundary_top_2"
+  },
+  {
+   "class": "wall",
+   "box": [
+    1968,
+    14,
+    1262,
+    222
+   ],
+   "id": null,
+   "label": "tenant_boundary_top_3"
+  },
+  {
+   "class": "wall",
+   "box": [
+    3300,
+    14,
+    105,
+    200
+   ],
+   "id": null,
+   "label": "tenant_boundary_top_4"
+  },
+  {
+   "class": "wall",
+   "box": [
+    818,
+    804,
+    2400,
+    170
+   ],
+   "id": null,
+   "label": "tenant_boundary_mr_diy"
+  },
+  {
+   "class": "wall",
+   "box": [
+    318,
+    804,
+    460,
+    170
+   ],
+   "id": null,
+   "label": "tenant_boundary_bottom_left"
+  },
+  {
+   "class": "wall",
+   "box": [
+    4,
+    380,
+    102,
+    275
+   ],
+   "id": null,
+   "label": "tenant_boundary_far_left"
+  },
+  {
+   "class": "wall",
+   "box": [
+    3268,
+    172,
+    125,
+    480
+   ],
+   "id": null,
+   "label": "tenant_boundary_curved_right"
+  },
+  {
+   "class": "wall",
+   "box": [
+    236,
+    689,
+    258,
+    105
+   ],
+   "id": null,
+   "label": "stairwell_wall"
+  }
+ ]
+}
