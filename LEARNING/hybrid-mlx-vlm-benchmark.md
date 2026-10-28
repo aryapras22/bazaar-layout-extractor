@@ -21,6 +21,8 @@ All three floor plans ([layout.png](file:///Users/arya/projects/ada/bazaar/floor
 - Reducing `restNear` dilation from `rx: 3, ry: 3` (6px bridge) to `rx: 2, ry: 2` (4px bridge) and saving simplified convex-hull polygons on `object` items in [`outsideLayer`](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/extract_swift4_fixed.swift#L1184-L1228) separates adjacent 27x27 tables across 5px gaps on Layout 1 (raising matched objects from 30/141 to 122/141) and renders octagons in [`RenderSwift4`](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/render_swift4_fixed.swift#L181-L216).
 - Remaining deterministic CV gap on Layout 1 and Layout 3: perimeter round columns on Layout 1 (`20x20` hollow circles with thin outlines) are eroded away by `opened` (`rx: 5, ry: 5`), and blue tables/chairs on Layout 3 have HSV saturation around 130 so [`inkMask`](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/extract_swift4_fixed.swift#L1054) (`sat < 40`) filters them out before `outsideLayer` runs.
 
+Queued, not yet run: `mlx-community/gemma-4-26b-a4b-it-4bit` and `mlx-community/Qwen3.8-27B-4bit`. Both are listed in the benchmark runner scripts and need downloading first, because the runs are offline.
+
 ````carousel
 ![Layout 1 before Phase 3 fixes](/Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/swift4_orig_l1.png)
 <!-- slide -->
