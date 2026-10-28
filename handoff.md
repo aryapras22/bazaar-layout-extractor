@@ -25,7 +25,7 @@ LEARNING/              notes on tile detection, polygon-masked OCR with monotone
 .archived/             swift 1 to 3, old notebooks and outputs, SAM3 experiment (mostly untracked)
 ```
 
-Plan 1 is 2349 x 2871 (358 truth items), plan 2 is 1750 x 2106 (255), plan 3 is 3413 x 988 (124). `scripts/score.py` is the source of every number below. Plans 4 to 6 were not used to tune anything, and swift 4 does badly on them: it finds few tiles and reads no IDs, because their tiles do not match the legend colours (plan 4), the legend lists zones not booths (plans 5 and 6), or the booths are white boxes (plan 6). Plan 6's truth is generated from its PDF vector data. Plan 5 (cosmo) draws most booths another way and still needs a truth approach. `cluster.ipynb`, `map.json`, and `map.svg` in the root belong to a separate clustering experiment, not to swift 4.
+Plan 1 is 2349 x 2871 (355 truth items), plan 2 is 1750 x 2106 (255), plan 3 is 3413 x 988 (124), plan 6 is 2304 x 2520 (281). `scripts/score.py` is the source of every number below. Plans 4 to 6 were not used to tune anything, and swift 4 does badly on them: it finds few tiles and reads no IDs, because their tiles do not match the legend colours (plan 4), the legend lists zones not booths (plans 5 and 6), or the booths are white boxes (plan 6). Plan 6's truth is generated from its PDF vector data. Plan 5 (cosmo) draws most booths another way and still needs a truth approach. `cluster.ipynb`, `map.json`, and `map.svg` in the root belong to a separate clustering experiment, not to swift 4.
 
 ## How to run
 
