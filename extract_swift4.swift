@@ -2119,14 +2119,15 @@ struct Tool {
         var legendItems = legendOut.items
 
         var claimed = [Bool](repeating: false, count: w * h)
-        for item in legendItems {
+        let largeTile = { (item: Item) in item.rect.width * item.rect.height > 0.01 * Double(w * h) }
+        for item in legendItems where !largeTile(item) {
             fillRect(&claimed, item.rect.insetBy(dx: -6 * scale, dy: -6 * scale), w: w, h: h, value: true)
         }
         var outside = await outsideLayer(planImage, px, claimed: claimed)
         outside.removeAll { item in
             guard item.cls == "object" || item.cls == "pillar" else { return false }
             let center = CGPoint(x: item.rect.midX, y: item.rect.midY)
-            return legendItems.contains { $0.rect.contains(center) }
+            return legendItems.contains { !largeTile($0) && $0.rect.contains(center) }
         }
 
         var swift3Baseline = legendItems + outside
