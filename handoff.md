@@ -12,6 +12,8 @@ Swift 4 (`extractor/extract_swift4.swift` + `extractor/Judge.swift`) and `extrac
 
 ```
 data/plan{1,2,3}/      layout.png, legend.png, truth.json (inputs and hand-checked ground truth)
+data/plan4/            more-market: source.png (rotated scan), layout.png, legend.png; no truth yet (scripts/make_plan4.py)
+data/plan5/, plan6/    cosmo and women-fest: source.pdf (vector), layout.png, legend.png; no truth yet (scripts/make_pdf_plans.py)
 extractor/             extract_swift4.swift, Judge.swift, render_swift4.swift
 scripts/               score.py (scorer), make_pdf.py (writes output/swift4/layouts.pdf)
 notebooks/             render_swift4.ipynb (predates this session's changes)
@@ -22,7 +24,7 @@ LEARNING/              notes on tile detection, polygon-masked OCR with monotone
 .archived/             swift 1 to 3, old notebooks and outputs, SAM3 experiment (mostly untracked)
 ```
 
-Plan 1 is 2349 x 2871 (358 truth items), plan 2 is 1750 x 2106 (255), plan 3 is 3413 x 988 (124). `scripts/score.py` is the source of every number below. `cluster.ipynb`, `map.json`, and `map.svg` in the root belong to a separate clustering experiment, not to swift 4.
+Plan 1 is 2349 x 2871 (358 truth items), plan 2 is 1750 x 2106 (255), plan 3 is 3413 x 988 (124). `scripts/score.py` is the source of every number below. Plans 4 to 6 were not used to tune anything, and swift 4 does badly on them: it finds few tiles and reads no IDs, because their tiles do not match the legend colours (plan 4), the legend lists zones not booths (plans 5 and 6), or the booths are white boxes (plan 6). Plan 6 has 284 white booth rectangles with 283 ID labels in the PDF, so its truth can be generated from the vector data. `cluster.ipynb`, `map.json`, and `map.svg` in the root belong to a separate clustering experiment, not to swift 4.
 
 ## How to run
 
