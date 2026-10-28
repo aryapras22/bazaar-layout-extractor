@@ -662,6 +662,51 @@ func readLegend(_ image: CGImage) async throws -> [LegendClass] {
     return classes
 }
 
+// A swatch printed in one colour can be drawn in another on the plan (print, screen, scan).
+// A legend class that found no tiles takes the most common plan colour of similar hue
+// that no other legend class already explains.
+func adaptLegendToPlan(_ legend: [LegendClass], _ px: Pixels, classes only: [Int]) -> [LegendClass] {
+    struct Cluster { var lab: Lab; var rgb: (UInt8, UInt8, UInt8); var count: Int }
+    let stride = 2
+    let scale = Double(max(px.width, px.height)) / 2000
+    let minCount = 3 * Int(400 * scale * scale)
+    var counts: [UInt32: Int] = [:]
+    for i in Swift.stride(from: 0, to: px.width * px.height, by: stride) {
+        counts[UInt32(px.rgba[i * 4]) << 16 | UInt32(px.rgba[i * 4 + 1]) << 8 | UInt32(px.rgba[i * 4 + 2]), default: 0] += stride
+    }
+    var clusters: [Cluster] = []
+    for (key, count) in counts.sorted(by: { $0.value > $1.value }).prefix(5000) {
+        let rgb = (UInt8(key >> 16), UInt8((key >> 8) & 255), UInt8(key & 255))
+        let c = lab(rgb)
+        if let j = clusters.firstIndex(where: { distance($0.lab, c) < 8 }) {
+            clusters[j].count += count
+        } else {
+            clusters.append(Cluster(lab: c, rgb: rgb, count: count))
+        }
+    }
+    func hue(_ l: Lab) -> Double { atan2(l.b, l.a) * 180 / .pi }
+    func chroma(_ l: Lab) -> Double { sqrt(l.a * l.a + l.b * l.b) }
+    var result = legend
+    var taken = Set<Int>()
+    for k in only {
+        let want = legend[k].lab
+        guard want.l > 15, want.l < 95, chroma(want) >= 15 else { continue }
+        let candidates = clusters.indices.filter { j in
+            let c = clusters[j]
+            let gap = abs(hue(c.lab) - hue(want))
+            return !taken.contains(j) && c.count >= minCount && c.lab.l > 15 && c.lab.l < 97 && chroma(c.lab) >= 15
+                && min(gap, 360 - gap) <= 40 && distance(c.lab, want) <= 45
+                && !legend.indices.contains { $0 != k && distance(c.lab, legend[$0].lab) < gateDeltaE }
+        }
+        // Edge blends sit nearer the swatch than the flat fill, so the most common colour wins, not the nearest.
+        guard let j = candidates.max(by: { clusters[$0].count < clusters[$1].count }) else { continue }
+        taken.insert(j)
+        FileHandle.standardError.write(Data("note: \"\(legend[k].name)\" found no tiles, retrying with the nearest plan colour\n".utf8))
+        result[k] = LegendClass(name: legend[k].name, rgb: clusters[j].rgb, lab: clusters[j].lab)
+    }
+    return result
+}
+
 func legendWarnings(_ classes: [LegendClass]) -> [String] {
     var out: [String] = []
     for i in 0..<classes.count {
@@ -2196,17 +2241,24 @@ struct Tool {
 
         let planImage = try loadImage(URL(fileURLWithPath: opts.planPath))
         let legendImage = try loadImage(URL(fileURLWithPath: opts.legendPath))
-        let classes = try await readLegend(legendImage)
-        guard !classes.isEmpty else { throw ExtractError.noLegend }
-        for warning in legendWarnings(classes) {
+        let legendClasses = try await readLegend(legendImage)
+        guard !legendClasses.isEmpty else { throw ExtractError.noLegend }
+        for warning in legendWarnings(legendClasses) {
             FileHandle.standardError.write(Data("warning: \(warning)\n".utf8))
         }
 
         let px = pixels(of: planImage)
+        var classes = legendClasses
         let (w, h) = (px.width, px.height)
         let scale = Double(max(w, h)) / 2000
 
-        let legendOut = try await legendLayer(planImage, px, legend: classes)
+        var legendOut = try await legendLayer(planImage, px, legend: classes)
+        let silent = classes.indices.filter { k in !legendOut.items.contains { $0.cls == classes[k].name } }
+        let adapted = adaptLegendToPlan(classes, px, classes: silent)
+        if adapted.indices.contains(where: { adapted[$0].lab.l != classes[$0].lab.l || adapted[$0].lab.a != classes[$0].lab.a }) {
+            classes = adapted
+            legendOut = try await legendLayer(planImage, px, legend: classes)
+        }
         var legendItems = legendOut.items
         legendItems += await outlinedLayer(planImage, px, existing: legendItems)
 
