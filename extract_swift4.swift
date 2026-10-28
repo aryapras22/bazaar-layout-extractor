@@ -1216,7 +1216,8 @@ func outsideLayer(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> [Ite
         }
         guard count > 0 else { continue }
         let bw = x1 - x0 + 1, bh = y1 - y0 + 1
-        guard max(bw, bh) >= max(6, Int(0.003 * Double(mx))), Double(bw * bh) <= 0.25 * Double(n) else { continue }
+        guard max(bw, bh) >= max(6, Int(0.003 * Double(mx))), Double(bw * bh) <= 0.25 * Double(n),
+              Double(bw * bh) >= 160 * scale * scale else { continue }
         let hull = simplify(convexHull(activePixels, w: w, minY: y0, height: bh), epsilon: 2 * scale)
         let poly = hull.count >= 3 ? hull.map { [Int($0.0.rounded()), Int($0.1.rounded())] } : nil
         candidates.append(Candidate(
