@@ -74,9 +74,12 @@ def score(layout_path, truth_path):
     print(f"{layout_path} vs {truth_path}")
 
     t_tiles = [i for i in truth_items if i["class"] not in NON_TILE]
-    e_tiles = [i for i in engine_items if i["class"] not in NON_TILE]
+    truth_tile_classes = {i["class"] for i in t_tiles}
+    e_tiles_all = [i for i in engine_items if i["class"] not in NON_TILE]
+    e_tiles = [i for i in e_tiles_all if i["class"] in truth_tile_classes]
+    skipped = len(e_tiles_all) - len(e_tiles)
     pairs = greedy_match(t_tiles, e_tiles, 0.5)
-    print(row("tiles", len(pairs), len(t_tiles), len(e_tiles)))
+    print(row("tiles", len(pairs), len(t_tiles), len(e_tiles)) + f"   ({skipped} engine tiles in classes the truth does not list)")
     ids_truth = [t for t in t_tiles if t.get("id")]
     exact = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and e_tiles[ei].get("id") == t_tiles[ti]["id"])
     print(f"  tile ids exact {exact}/{len(ids_truth)}")
