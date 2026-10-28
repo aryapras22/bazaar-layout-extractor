@@ -54,7 +54,7 @@ Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use gree
 
 | | Plan 1 | Plan 2 | Plan 3 | Plan 6 (not tuned on) |
 |---|---|---|---|---|
-| Tiles found, precision | 160/160, 95% | 211/211, 99% | 68/68, 92% | 281/281, 88% |
+| Tiles found, precision | 160/160, 93% | 211/211, 100% | 68/68, 92% | 281/281, 88% |
 | Tile IDs exact | 154/154 | 208/209 | 67/67 | 271/281 |
 | Objects | 134/141, precision 79% | 26/26, 59% | 8/11, 40% | no truth |
 | Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth |
@@ -72,6 +72,9 @@ Notes on reading the table:
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session
+
+7. Legend parsing (`readLegend`): an entry now needs a real swatch, a bounded block of one colour left of its text, measured against the legend's own background colour. Titles and bare lines no longer become classes, wrapped lines join the entry above, and a leading ":" is stripped. Plan 5's legend sits on a pale cyan ground, so every class was being given the background colour; plan 5 went from 4 tiles to 134 (106 IDs read, no truth to score against). Plan 1 loses the bogus `Class`, `Wall`, `Seating` and `Audience area` classes, which moves its tile precision from 95% to 93% and plan 2's from 99% to 100%.
+8. `cleanLabel` accepts up to three letters before the digits, so `FNB12` reads. Plan 4's food booths now give 10 IDs, a few with OCR slips (`FN91`, `FNE2`).
 
 5. Light booths: `outlinedLayer` finds closed light regions of booth size between dark outlines and keeps those where OCR reads an ID (for example `W12`). Plan 6 went from 11 to 281 of 281 tiles and from 0 to 271 of 281 exact IDs, with plans 1 to 3 unchanged. It adds about 45 ms per booth (plan 6 takes about 20 s, was 3 s).
 6. The ID retry pass (`rereadTiles`) now also covers unlabelled tiles between 0.5 and 2.5 times the median size of tiles that have IDs. It recovered one plan 6 ID (`M15`).
@@ -94,7 +97,8 @@ macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27. Con
 - Judge output never reaches `layout.json`: `runJudge` takes `items` by value and returns only a report. `agreed_with_rule` is 0 and `compared_with_rule` is 1 on layout 1, so nothing yet measures whether the judge is right. Decision pending after the object noise work above; current recommendation is to keep it report-only.
 - Plan 6 sponsor booths: 10 black booths keep no ID. The legend-colour pass outlines only fragments of each black box because the white text splits it, so the retry crops are mostly blank. Inverting dark crops for OCR made no difference and was backed out. A fix needs the whole black rectangle, for example by filling holes in the black mask.
 - Plan 6 extra tiles (37) are mostly real legend tiles the truth does not list (22 `FACILITIES`, 6 sponsor boxes, 4 `GRID NETWORK`), plus `M21` and `B75`, which are real booths the truth skipped as ambiguous.
-- Plans 4 and 5 have no truth, and the legend parser still turns titles and wrapped lines into classes.
+- Plan 4 (more-market): none of the 52 goods booths are found. The legend swatch is light lime and the booths are a darker green, and swift 4 only accepts a close match. Matching tiles by nearest colour cluster is the next fix. Only 15 of 22 food booths are found and 10 IDs read.
+- Plan 5 (cosmo): 134 tiles and 106 IDs from a plan with about 291 labelled booths. It needs truth before this can be scored, and its booths are not all filled rectangles.
 - Doors need a detector for door-leaf symbols (see above).
 - Object precision is still 40% to 79%. Layout 3 misses 3 of 11 objects.
 - Layout 1 pillars: 5 north-wall squares missed behind `ENTRANCE` tiles, 4 false pillars at wall corners and the south wall.

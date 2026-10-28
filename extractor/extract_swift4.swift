@@ -330,7 +330,7 @@ func cleanLabel(_ raw: String) -> String? {
     var s = Array(foldLookalikes(raw.uppercased()).filter { !$0.isWhitespace })
     while let first = s.first, !first.isLetter && !first.isNumber { s.removeFirst() }
     while let last = s.last, !last.isLetter && !last.isNumber { s.removeLast() }
-    guard let firstDigit = s.firstIndex(where: { $0.isNumber }), (1...2).contains(firstDigit) else { return nil }
+    guard let firstDigit = s.firstIndex(where: { $0.isNumber }), (1...3).contains(firstDigit) else { return nil }
     let head = s[..<firstDigit]
     guard head.allSatisfy({ $0.isLetter }) else { return nil }
     let tail = s[firstDigit...].map { c -> Character in
