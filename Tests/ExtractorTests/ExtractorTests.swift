@@ -220,3 +220,32 @@ private func flatPlan(noise: Int) -> Pixels {
     #expect(back.polygon == [[50, 30], [70, 30], [70, 40]])
     #expect(scaledBack(item, by: 1).box == item.box)
 }
+
+private func strokeMask(size: Int, _ on: (Double, Double) -> Bool) -> [Bool] {
+    (0..<(size * size)).map { on(Double($0 % size), Double($0 / size)) }
+}
+
+@Test func arcFinderKeepsAHalfDiscOnItsLeafAndDropsAFullRing() {
+    let size = 200
+    let ringStroke = { (x: Double, y: Double) in abs(hypot(x - 100, y - 100) - 40) <= 1.3 }
+    let leafStroke = { (x: Double, y: Double) in abs(x - 100) <= 1.3 && y >= 60 && y <= 140 }
+    let halfDisc = strokeMask(size: size) { x, y in (ringStroke(x, y) && x >= 99) || leafStroke(x, y) }
+    let found = ArcFinder(w: size, h: size, thin: halfDisc, minRadius: 20, maxRadius: 60).arcs()
+    #expect(found.contains { abs($0.cx - 100) <= 4 && abs($0.cy - 100) <= 4 && abs($0.r - 40) <= 4 })
+
+    let fullRing = strokeMask(size: size, ringStroke)
+    #expect(ArcFinder(w: size, h: size, thin: fullRing, minRadius: 20, maxRadius: 60).arcs().isEmpty)
+}
+
+private func swing(_ x: Double, _ y: Double, r: Double) -> Arc {
+    Arc(cx: x, cy: y, r: r, from: 0, to: .pi / 2, leafAtFrom: true, leafAtTo: false,
+        rect: CGRect(x: x, y: y, width: r, height: r))
+}
+
+@Test func swingArcsJoinIntoOneSymbolAndSmallDetailNextToABigSwingIsDropped() {
+    let pair = [swing(100, 100, r: 36), swing(136, 100, r: 36), swing(500, 500, r: 36)]
+    #expect(swingSymbols(pair).map(\.count).sorted() == [1, 2])
+
+    let withPost = [swing(100, 100, r: 36), swing(120, 90, r: 15), swing(400, 400, r: 15)]
+    #expect(dominant(withPost).count == 2)
+}
