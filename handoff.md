@@ -61,12 +61,14 @@ Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use gree
 
 | | Plan 1 | Plan 2 | Plan 3 | Plan 5 (not tuned on) | Plan 6 (not tuned on) |
 |---|---|---|---|---|---|
-| Tiles found, precision | 160/160, 92% | 211/211, 100% | 68/68, 92% | 244/265, 81% | 280/281, 88% |
-| Tile IDs exact, with `suggested_id` | 154/154, 154 | 208/209, 209 | 67/67, 67 | 224/265, 232 | 279/281, 279 |
-| Objects | 136/141, precision 80% | 26/26, 59% | 8/11, 40% | no truth | no truth |
+| Tiles found, precision | 160/160, 92% | 211/211, 100% | 68/68, 92% | 248/265, 81% | 280/281, 88% |
+| Tile IDs exact, with `suggested_id` | 154/154, 154 | 208/209, 209 | 67/67, 67 | 243/265, 244 | 279/281, 279 |
+| Objects (single chairs excluded) | 137/141, precision 91% | 26/26, 59% | 8/11, 40% | no truth | no truth |
+| Chairs, against the seat agent's checked lists | 744/744 | 104/104 | 36/36 | no truth | no truth |
 | Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth | no truth |
-| Doors | 0/10 | 0/4 | 0/1 | no truth | no truth |
-| Walls, pixel recall / precision | 85% / 80% | 92% / 84% | not meaningful, see notes | no truth | no truth |
+| Doors (swing symbols) | 3/10, precision 27% | 4/4, 100% | 0/1 | 9/89, 75% | 20/44, 57% |
+| Diagonal walls found | - | - | - | 2/2 | 5/6 |
+| Walls, pixel recall / precision | 89% / 81% | 98% / 86% | not meaningful, see notes | no truth | no truth |
 
 Before this session's changes: plan 1 objects 122/141 at 56% precision, pillars 0/23; plan 3 objects 0/11, pillars 25/31.
 
@@ -80,6 +82,12 @@ Notes on reading the table:
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session
+
+25. Four layer agents, each in its own worktree, merged into `master` as four merge commits (`4804b4e` door, `522cc73` wall, `60f0815` seat, `a08a75b` booth). Per-layer reports and the merged scores are in the table above; each branch also has a note in `LEARNING/`.
+26. Door (`DoorArcs.swift`, `DoorLayer.swift`, `DoorVerify.swift`, `scripts/make_door_truth.py`): swing symbols from hinge arcs (circle vote on thin strokes, walked around the circle, standing on a long wall run, grouped into symbols). Plan 2 finds 4/4, plan 1 3/10. Plan 1's truth holds 5 items that are not swing symbols (3 X-box gates, an empty wall gap, a box beside a door), and its horizontal bow ties are truthed as a thin 62x24 band that the symbol box overlaps at IoU 0.20 to 0.28. Plan 3's truth is a red gate bar. `--verify-doors` (Qwen3.5-9B on each candidate crop) drops 15 of 27 false and 4 of 36 true candidates; off by default. Run `make_door_truth.py` after the booth truth scripts.
+27. Wall (`WallLayer.swift`, `Scan.swift`, `Outside.swift`): slanted walls from a Hough pass on the ink left after removing axis-aligned runs (items carry optional `segment` and `width`, and consumers of wall boxes must skip those), round columns as pillars (plan 4 truth in `data/plan4/columns.json`, 12/15), page tilt followed in the long-run search (`dominantTilt`, `tiltedRuns`), and near-black lines kept as ink under colour noise, gated so clean plans do not change. Plan 3 wall precision falls to 3% only because its truth is one stairwell box.
+28. Seat (`SeatLayer.swift`, `Regroup.swift`, `Judge.swift`): single chairs are found as small ink holes and emitted as `object` with `kind: "chair"` and `seat: true`, blobs with several as `kind: "chair_group"` and `chairs: N`, so object counts no longer include single chairs. The seat flag is set without the judge by a rule, and the judge only adds seats. Objects survive half size (plan 1 1/141 to 136/141) and JPEG or noise (plan 3 0/11 to 9/11). The chair lists in `data/plan{1,2,3}/seats.json` were produced by the detector and checked by eye by the agent, so they are not independent truth. Two ink fixes overlap (the wall branch's gated chroma rule in `inkMask` and the seat branch's `inkLosesBlackLines`); both are in `master` and one can be dropped.
+29. Booth (`Legend.swift`, `Tiles.swift`, `Text.swift`, `IdReader.swift`): blurred legends and faded colours (grey halo beside text stopped the swatch search; two classes could take the same shifted colour), local-contrast outlines for light booths, sharpened and enlarged crops for unread tiles (this recovers what `--upscale-small` did for plan 5 without resampling the plan), two-line labels such as GD over 38, and `--model-ids` (Qwen3.5-9B reads unread tiles into `suggested_id` only). `--upscale-small` stays off.
 
 23. Noise: `noiseScore` (share of sampled pixels more than 24 from their 3x3 median, summed over channels) separates added pixel noise (0.09 to 0.16) from clean plans (0.01 to 0.04). Over 0.07 for a plan, or 0.04 for a legend (its white ground clips the noise), the image is smoothed with `sigmaFiltered`, a 3x3 average over neighbours within 30 per channel, which keeps edges and 1 pixel lines that a median filter would erase. Noisy variants: plan 1 0/160 to 160/160 tiles, plans 2 and 3 crash to 211/211 and 68/68, plan 5 0/265 to 243/265 (222 exact IDs). Pillars, walls and objects on noisy plans 1 and 3 are still mostly lost, because the ink passes are sensitive to the remaining noise; a second smoothing pass helped plan 1 walls (22% to 56%) but cost IDs, so it was not kept. All six clean plans are byte-identical.
 24. `--upscale-small`, off by default: when small tiles (area-weighted 25th percentile of the legend-coloured regions) measure under 30 px, read the plan at 2x and scale every result back. Plan 5 gains 17 exact IDs (224 to 241), half-size plan 2 regains all 211 tiles, 26/26 objects (from 1) and 176/209 IDs (from 149), and rotated plan 5 recovers (101 to 247 tiles). It breaks plan 6 when that is faded (270 to 113) or halved (272 to 239) because the fixed outline cut (`darkPixels` below 60) loses lines that resampling lightens, and plan 3 objects collapse at 3x so the factor is capped at 2. Branch `experiment/outline-local-contrast` adds a local-contrast outline rule (a pixel much darker than its 11x11 neighbourhood counts as outline) that brings faded plan 6 under upscaling to 268 but still loses half-size plan 6 (242 against 267 unscaled) and costs 5 booths there even with upscaling off. Other tried and dropped: edge-slope and gray-percentile statistics cannot detect blur.
@@ -148,9 +156,8 @@ macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27. Con
 - Plan 6 extra tiles (37) are mostly real legend tiles the truth does not list (22 `FACILITIES`, 6 sponsor boxes, 4 `GRID NETWORK`), plus `M21` and `B75`, which are real booths the truth skipped as ambiguous.
 - Plan 4 (more-market): 52 goods tiles but only 29 valid IDs (including suggestions), and 15 of 22 food booths with 9 valid IDs. Unread IDs are the main gap.
 - Plan 5 (cosmo): 242 of 265 booths found, 223 exact IDs and 231 with `suggested_id`. The 23 missed booths and 34 booths with a wrong or missing ID remain; the biggest group is a dropped last digit (`P2` for `P26`, `J3` for `J39`), which no repair rule can recover without geometry. Booths are about 24 px, coloured blocks cut into stalls by thin divider lines, and the legend is printed inside the plan.
-- Walls: no diagonal wall is found (0 of 8 on plans 5 and 6) and no circle is detected, so round columns and round tables are missed.
-- Next planned work, pending your decisions: a layered pipeline (booth, wall, door, seat), each layer with its own output file, truth and score rows, and `layout.json` kept as the merged file.
-- Doors need a detector for door-leaf symbols (see above).
+- Remaining per layer: booth (plan 5 JPEG legend loses INDONESIA, plan 3 half size has 35/68 tiles and no IDs, plan 6 faded loses 7 black sponsor boxes, plan 5's tiny T stalls, food booths on plan 4); wall (blur on tinted fills, slanted walls under 10 degrees off an axis, plan 3 truth is not wall truth); door (gates and X boxes, the thin-band box convention for bow ties, tiny plan 5 symbols, 40% to 73% false candidates without `--verify-doors`); seat (plan 3 audience block, round tables versus round columns, half-size chairs, precision on noisy plans).
+- Four worktrees under `.claude/worktrees/` hold the layer branches (`layer/booth`, `layer/wall`, `layer/door`, `layer/seat`, all merged); each has its own `.build`.
 - Object precision is still 40% to 79%. Layout 3 misses 3 of 11 objects.
 - Layout 1 pillars: 5 north-wall squares missed behind `ENTRANCE` tiles, 4 false pillars at wall corners and the south wall.
 - `symbol` items (7, 4, 4 in the truth files) are never emitted and are not scored.
