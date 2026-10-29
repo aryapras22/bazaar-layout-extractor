@@ -7,7 +7,7 @@ import Vision
 // Vision frequently returns Cyrillic homoglyphs for single-letter Latin booth labels and the digit 3.
 let cyrillicLookalikes: [Character: Character] = [
     "\u{0410}": "A", "\u{0412}": "B", "\u{0421}": "C", "\u{0415}": "E", "\u{041D}": "H",
-    "\u{041A}": "K", "\u{041E}": "O", "\u{0425}": "X", "\u{0417}": "3", "\u{041C}": "M", "\u{0420}": "P", "\u{0422}": "T",
+    "\u{041A}": "K", "\u{041E}": "O", "\u{0425}": "X", "\u{0417}": "3", "\u{041C}": "M", "\u{0420}": "P", "\u{0422}": "T", "\u{0406}": "I",
 ]
 
 func foldLookalikes(_ s: String) -> String {
@@ -21,11 +21,36 @@ func makeTextRequest() -> RecognizeTextRequest {
     return request
 }
 
+/// Lines read as separate observations, joined top to bottom: a two-line label such as "GD" over "38"
+/// is one ID, but Vision returns it as two texts and neither reads as an ID alone.
+func stackedText(_ observations: [RecognizedTextObservation]) -> String {
+    observations.sorted { $0.boundingBox.cgRect.midY > $1.boundingBox.cgRect.midY }
+        .map(\.transcript).joined()
+}
+
 func readLabel(_ image: CGImage, in rect: CGRect) async throws -> String? {
     let bounds = CGRect(x: 0, y: 0, width: image.width, height: image.height)
     guard let crop = image.cropping(to: rect.insetBy(dx: 4, dy: 4).intersection(bounds)) else { return nil }
-    let found = try await makeTextRequest().perform(on: crop)
-    return found.max { $0.confidence < $1.confidence }?.transcript
+    // Vision reads text on a tile this small better when it is enlarged first.
+    let small = min(crop.width, crop.height) < 60
+    let readable = small ? upscaled(crop, by: 3) ?? crop : crop
+    let found = try await makeTextRequest().perform(on: readable)
+    let first = found.max { $0.confidence < $1.confidence }?.transcript
+    if let first, cleanLabel(first) != nil { return first }
+    let stacked = stackedText(found)
+    if cleanLabel(stacked) != nil { return stacked }
+    // A blurred or compressed tile reads as nothing at its own size. Vision is jumpy on crops this small,
+    // so several enlarged and sharpened crops vote and the most common readable label wins.
+    var votes: [String: (count: Int, raw: String)] = [:]
+    for (factor, inset) in [(3, 3.0), (3, 4.0), (3, 2.0), (2, 3.0), (2, 4.0)] {
+        guard let wide = image.cropping(to: rect.insetBy(dx: inset, dy: inset).intersection(bounds)),
+              let sharp = sharpened(wide, by: factor) else { continue }
+        let read = try await makeTextRequest().perform(on: sharp)
+        for text in read.map(\.transcript) + [stackedText(read)] {
+            if let label = cleanLabel(text) { votes[label, default: (0, text)].count += 1 }
+        }
+    }
+    return votes.max { $0.value.count < $1.value.count }?.value.raw ?? first
 }
 
 func cleanLabel(_ raw: String) -> String? {

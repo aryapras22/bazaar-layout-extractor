@@ -428,3 +428,73 @@ func scaledBack(_ item: Item, by factor: Int) -> Item {
     out.width = item.width.map { $0 / f }
     return out
 }
+
+/// Outline pixels: anything very dark, plus anything much darker than its 11 x 11 surroundings. The second
+/// rule keeps thin lines that blur, fading or resampling has turned mid-grey, which a fixed cut would lose.
+func outlinePixels(_ px: Pixels, below: Int = 60, lineScale: Int = 1) -> [Bool] {
+    let (w, h) = (px.width, px.height)
+    var gray = [Int32](repeating: 0, count: w * h)
+    for i in 0..<(w * h) {
+        gray[i] = Int32((299 * Int(px.rgba[i * 4]) + 587 * Int(px.rgba[i * 4 + 1]) + 114 * Int(px.rgba[i * 4 + 2])) / 1000)
+    }
+    // Integral image with a zero row and column in front, so a window sum is four lookups.
+    var integral = [Int64](repeating: 0, count: (w + 1) * (h + 1))
+    for y in 0..<h {
+        var row: Int64 = 0
+        for x in 0..<w {
+            row += Int64(gray[y * w + x])
+            integral[(y + 1) * (w + 1) + x + 1] = integral[y * (w + 1) + x + 1] + row
+        }
+    }
+    let r = 5 * lineScale
+    let contrast = 70 / lineScale
+    var out = [Bool](repeating: false, count: w * h)
+    for y in 0..<h {
+        let y0 = max(0, y - r), y1 = min(h, y + r + 1)
+        for x in 0..<w {
+            let g = Int(gray[y * w + x])
+            if g < below { out[y * w + x] = true; continue }
+            if g >= 200 { continue }
+            let x0 = max(0, x - r), x1 = min(w, x + r + 1)
+            let sum = integral[y1 * (w + 1) + x1] - integral[y0 * (w + 1) + x1] - integral[y1 * (w + 1) + x0] + integral[y0 * (w + 1) + x0]
+            if g + contrast < Int(sum) / ((x1 - x0) * (y1 - y0)) { out[y * w + x] = true }
+        }
+    }
+    return out
+}
+
+/// The image enlarged `factor` times and sharpened (unsharp mask, amount 3, sigma `sigma` source pixels).
+/// Blur leaves text a Vision request cannot read at 7 px; the enlarged, sharpened crop it can.
+func sharpened(_ image: CGImage, by factor: Int, sigma: Double = 1.2) -> CGImage? {
+    guard let big = upscaled(image, by: factor) else { return nil }
+    let px = pixels(of: big)
+    let (w, h) = (px.width, px.height)
+    // Three box passes approximate a Gaussian; the box width follows from the variance of three boxes.
+    let radius = max(1, Int(((4 * sigma * sigma * Double(factor * factor) + 1).squareRoot() - 1) / 2))
+    var blurred = px.rgba.map { Float($0) }
+    var scratch = blurred
+    for _ in 0..<3 {
+        for (stride, count, lines, lineStride) in [(4, w, h, w * 4), (w * 4, h, w, 4)] {
+            for line in 0..<lines {
+                for channel in 0..<3 {
+                    let base = line * lineStride + channel
+                    var sum: Float = 0
+                    for k in -radius...radius { sum += blurred[base + min(max(k, 0), count - 1) * stride] }
+                    for k in 0..<count {
+                        scratch[base + k * stride] = sum / Float(2 * radius + 1)
+                        sum += blurred[base + min(k + radius + 1, count - 1) * stride] - blurred[base + max(k - radius, 0) * stride]
+                    }
+                }
+            }
+            swap(&blurred, &scratch)
+        }
+    }
+    var out = px.rgba
+    for i in 0..<(w * h) {
+        for channel in 0..<3 {
+            let j = i * 4 + channel
+            out[j] = UInt8(min(255, max(0, Float(px.rgba[j]) + 3 * (Float(px.rgba[j]) - blurred[j]))))
+        }
+    }
+    return makeImage(Pixels(width: w, height: h, rgba: out))
+}

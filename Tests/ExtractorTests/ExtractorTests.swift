@@ -136,6 +136,34 @@ private func planWithBlocks(limeSide: Int) -> Pixels {
     #expect(kept[0].rgb == (196, 214, 82))
 }
 
+private func plan(_ blocks: [(side: Int, color: (UInt8, UInt8, UInt8))]) -> Pixels {
+    let (w, h) = (500, 300)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    for (n, block) in blocks.enumerated() {
+        for y in 20..<(20 + block.side) { for x in (20 + 160 * n)..<(20 + 160 * n + block.side) {
+            let i = (y * w + x) * 4
+            (rgba[i], rgba[i + 1], rgba[i + 2]) = block.color
+        } }
+    }
+    return Pixels(width: w, height: h, rgba: rgba)
+}
+
+@Test func fadedPlanKeepsEachClassOnItsOwnColourEvenWhenTwoWantTheSame() {
+    // Faded print: orange and yellow both drift toward white and the yellow block is the bigger one.
+    let orange = LegendClass(name: "F", rgb: (245, 136, 30), lab: lab((245, 136, 30)))
+    let yellow = LegendClass(name: "I", rgb: (253, 185, 19), lab: lab((253, 185, 19)))
+    let faded = plan([(side: 100, color: (247, 160, 75)), (side: 130, color: (253, 199, 67))])
+    let moved = adaptLegendToPlan([orange, yellow], faded, classes: [0, 1])
+    #expect(moved[0].rgb == (247, 160, 75))
+    #expect(moved[1].rgb == (253, 199, 67))
+}
+
+@Test func classRecentresOnThePlanColourOnlyWhenItIsWellOffTheSwatch() {
+    let pink = LegendClass(name: "A", rgb: (243, 132, 163), lab: lab((243, 132, 163)))
+    #expect(adaptLegendToPlan([pink], plan([(side: 100, color: (243, 134, 165))]), classes: [0])[0].rgb == (243, 132, 163))
+    #expect(adaptLegendToPlan([pink], plan([(side: 100, color: (245, 156, 182))]), classes: [0])[0].rgb == (245, 156, 182))
+}
+
 private func squareRegion(_ x0: Int, _ y0: Int, side: Int, w: Int) -> Region {
     let pixels = (y0..<(y0 + side)).flatMap { y in (x0..<(x0 + side)).map { y * w + $0 } }
     return Region(minX: x0, minY: y0, maxX: x0 + side - 1, maxY: y0 + side - 1, pixels: pixels)
@@ -409,4 +437,40 @@ private func inkWithRings(centers: [(Int, Int)], radius: Int, size: Int) -> [Boo
     let black = [Bool](repeating: true, count: 100)
     #expect(!inkLosesBlackLines(black: black, ink: [Bool](repeating: true, count: 40) + [Bool](repeating: false, count: 60)))
     #expect(inkLosesBlackLines(black: black, ink: [Bool](repeating: true, count: 10) + [Bool](repeating: false, count: 90)))
+}
+
+@Test func outlineKeepsLinesBlurHasLightenedButNotAFlatGreyFill() {
+    let (w, h) = (60, 40)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    func paint(_ x: Int, _ y: Int, _ v: UInt8) { let i = (y * w + x) * 4; (rgba[i], rgba[i + 1], rgba[i + 2]) = (v, v, v) }
+    for x in 5..<25 { paint(x, 10, 150) }  // a blurred line
+    for y in 20..<35 { for x in 35..<55 { paint(x, y, 150) } }  // a flat mid-grey zone
+    let outline = outlinePixels(Pixels(width: w, height: h, rgba: rgba))
+    #expect(outline[10 * w + 15])
+    #expect(!outline[27 * w + 45])
+}
+
+@Test func ukrainianIReadsAsLatinI() {
+    #expect(cleanLabel("\u{0406}3") == "I3")
+}
+
+@Test func sharpenedImageIsEnlargedAndDeepensAGreyStroke() {
+    let (w, h) = (12, 12)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    for y in 0..<h { for x in 5..<7 { for c in 0..<3 { rgba[(y * w + x) * 4 + c] = 140 } } }  // a blurred stroke
+    let image = makeImage(Pixels(width: w, height: h, rgba: rgba))!
+    let sharp = pixels(of: sharpened(image, by: 3)!)
+    #expect(sharp.width == 36)
+    #expect(sharp.rgb(18, 18).0 < 140)
+}
+
+@Test func modelAnswerMustFillAGapAndTakesTheClassLetters() {
+    let items = [tile("GOODS", "GD1"), tile("GOODS", nil), tile("GOODS", nil), tile("GOODS", nil), tile("GOODS", nil)]
+    let gaps = ["GOODS": ["GD2", "GD3", "GD4"]]
+    let accepted = acceptModelIds(
+        [1: "CO26", 2: "GD 3", 3: "GD3", 4: "GD9"], items: items, classPrefixes: ["GOODS": "GD"], gapIdsByClass: gaps)
+    // CO26 and GD9 are not gaps, and two tiles claiming GD3 cancel each other out.
+    #expect(accepted.isEmpty)
+    let one = acceptModelIds([1: "CD 2"], items: items, classPrefixes: ["GOODS": "GD"], gapIdsByClass: gaps)
+    #expect(one == [1: "GD2"])
 }

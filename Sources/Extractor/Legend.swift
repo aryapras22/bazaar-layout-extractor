@@ -42,6 +42,10 @@ func isSwatch(_ px: Pixels, seedX: Int, seedY: Int, textHeight: Int) -> Bool {
     return min(x1 - x0, y1 - y0) + 1 >= textHeight / 2
 }
 
+func isBlank(_ px: Pixels, _ x: Int, _ y: Int, _ ground: Lab) -> Bool {
+    isNearWhite(px.rgb(x, y)) || distance(lab(px.rgb(x, y)), ground) < 8
+}
+
 func readLegend(_ image: CGImage) async throws -> [LegendClass] {
     let px = pixels(of: image)
     let size = CGSize(width: image.width, height: image.height)
@@ -65,7 +69,10 @@ func readLegend(_ image: CGImage) async throws -> [LegendClass] {
         let y = Int(box.midY)
         guard y >= 0, y < px.height else { continue }
         var x = Int(box.minX) - 1
-        while x > 8, isNearWhite(px.rgb(x, y)) || distance(lab(px.rgb(x, y)), groundLab) < 8 { x -= 1 }
+        // Blur or JPEG ringing leaves a halo of grey just outside the glyphs, which is not the ground.
+        var halo = max(1, Int(box.height) / 6)
+        while x > 8, halo > 0, !isBlank(px, x, y, groundLab) { x -= 1; halo -= 1 }
+        while x > 8, isBlank(px, x, y, groundLab) { x -= 1 }
         guard x > 8 else { continue }
         let color = px.rgb(x - 8, y)
         if isSwatch(px, seedX: x - 8, seedY: y, textHeight: max(1, Int(box.height))) {
@@ -115,21 +122,46 @@ func adaptLegendToPlan(_ legend: [LegendClass], _ px: Pixels, classes only: [Int
     func chroma(_ l: Lab) -> Double { sqrt(l.a * l.a + l.b * l.b) }
     var result = legend
     var taken = Set<Int>()
-    for k in only {
+    let eligible = only.filter { k in
         let want = legend[k].lab
-        guard want.l > 15, want.l < 95, chroma(want) >= 15 else { continue }
+        return want.l > 15 && want.l < 95 && chroma(want) >= 15
+    }
+    var pending = eligible
+    func preferred(_ k: Int) -> Int? {
+        let want = legend[k].lab
         let matched = clusters.filter { distance($0.lab, want) < gateDeltaE }.reduce(0) { $0 + $1.count }
-        let candidates = clusters.indices.filter { j in
+        return clusters.indices.filter { j in
             let c = clusters[j]
             let gap = abs(hue(c.lab) - hue(want))
             return !taken.contains(j) && c.count >= max(minCount, 4 * matched) && c.lab.l > 15 && c.lab.l < 97 && chroma(c.lab) >= 15
                 && min(gap, 360 - gap) <= 40 && distance(c.lab, want) <= 45
                 && !legend.indices.contains { $0 != k && distance(c.lab, legend[$0].lab) < gateDeltaE }
+        }.max { clusters[$0].count < clusters[$1].count }
+    }
+    // Two classes can prefer the same colour (faded orange and yellow); the nearer swatch gets it and the other
+    // takes its next choice, so a uniform shift of all colours does not swap classes.
+    while !pending.isEmpty {
+        var wanted: [Int: [Int]] = [:]
+        for k in pending { if let j = preferred(k) { wanted[j, default: []].append(k) } }
+        if wanted.isEmpty { break }
+        for j in wanted.keys.sorted() {
+            guard let k = wanted[j]?.min(by: { distance(clusters[j].lab, legend[$0].lab) < distance(clusters[j].lab, legend[$1].lab) }) else { continue }
+            taken.insert(j)
+            pending.removeAll { $0 == k }
+            FileHandle.standardError.write(Data("note: \"\(legend[k].name)\" found few tiles, retrying with the nearest plan colour\n".utf8))
+            result[k] = LegendClass(name: legend[k].name, rgb: clusters[j].rgb, lab: clusters[j].lab)
         }
-        // Edge blends sit nearer the swatch than the flat fill, so the most common colour wins, not the nearest.
-        guard let j = candidates.max(by: { clusters[$0].count < clusters[$1].count }) else { continue }
-        taken.insert(j)
-        FileHandle.standardError.write(Data("note: \"\(legend[k].name)\" found no tiles, retrying with the nearest plan colour\n".utf8))
+    }
+    // Fading or a screen shifts every colour a little, and a tile shaded around its mean then reaches past the gate on
+    // one side. A class keeps its swatch unless the plan's own most common colour nearby is clearly off it.
+    for k in eligible where result[k].lab.l == legend[k].lab.l && result[k].lab.a == legend[k].lab.a {
+        let want = legend[k].lab
+        let nearest = { (c: Lab) in legend.indices.min { distance(c, legend[$0].lab) < distance(c, legend[$1].lab) } }
+        let mode = clusters.indices.filter { j in
+            let d = distance(clusters[j].lab, want)
+            return !taken.contains(j) && d <= 2 * gateDeltaE && nearest(clusters[j].lab) == k && clusters[j].count >= minCount
+        }.max { clusters[$0].count < clusters[$1].count }
+        guard let j = mode, distance(clusters[j].lab, want) > gateDeltaE / 2 else { continue }
         result[k] = LegendClass(name: legend[k].name, rgb: clusters[j].rgb, lab: clusters[j].lab)
     }
     return result

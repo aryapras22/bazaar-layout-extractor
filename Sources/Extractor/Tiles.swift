@@ -188,9 +188,9 @@ func makeMaskedUpscaledCrop(_ image: CGImage, item: Item, scale: Int) -> CGImage
 
 // Booths drawn as light boxes on a coloured zone have no legend colour of their own, so they are
 // found as closed light regions of booth size and kept only when an ID reads inside.
-func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Double) async -> [Item] {
+func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Double, lineScale: Int = 1) async -> [Item] {
     let (w, h) = (px.width, px.height)
-    let outlines = morph(darkPixels(px, below: 60), w: w, h: h, rx: 1, ry: 1, erode: false)
+    let outlines = morph(outlinePixels(px, lineScale: lineScale), w: w, h: h, rx: 1, ry: 1, erode: false)
     let minSide = Int(16 * scale), maxSide = Int(140 * Double(px.page) / 2000)
     var items: [Item] = []
     for face in components(outlines.map { !$0 }, w: w, h: h, eight: false) {
@@ -268,11 +268,13 @@ func rereadTiles(
         var bestScore = -1.0
         for scale in [2, 3] {
             guard let up = makeMaskedUpscaledCrop(image, item: items[idx], scale: scale) else { continue }
-            for obs in try await makeTextRequest().perform(on: up) {
-                let raw = obs.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+            let read = try await makeTextRequest().perform(on: up)
+            let lines = read.map { ($0.transcript, Double($0.confidence)) } + [(stackedText(read), 0.5)]
+            for (text, confidence) in lines {
+                let raw = text.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !raw.isEmpty else { continue }
                 let cleaned = cleanLabel(raw)
-                let score = (cleaned != nil ? 10.0 : 0.0) + Double(obs.confidence)
+                let score = (cleaned != nil ? 10.0 : 0.0) + confidence
                 if score > bestScore {
                     bestScore = score
                     bestRaw = raw
