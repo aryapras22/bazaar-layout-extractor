@@ -352,3 +352,61 @@ private func drawRing(_ mask: inout [Bool], size: Int, center: (Int, Int), radiu
     }
     #expect(columnLayer(columnScan(table, size: size)).items.filter { $0.cls == "pillar" }.isEmpty)
 }
+
+private func inkWithRings(centers: [(Int, Int)], radius: Int, size: Int) -> [Bool] {
+    var ink = [Bool](repeating: false, count: size * size)
+    for (cx, cy) in centers {
+        for y in (cy - radius - 1)...(cy + radius + 1) {
+            for x in (cx - radius - 1)...(cx + radius + 1) {
+                let d = (Double((x - cx) * (x - cx) + (y - cy) * (y - cy))).squareRoot()
+                if d <= Double(radius) + 0.5, d > Double(radius) - 1 { ink[y * size + x] = true }
+            }
+        }
+    }
+    return ink
+}
+
+@Test func chairsAreRingsThatComeInSetsNotLoneCircles() {
+    let size = 200
+    let four = [(40, 40), (60, 40), (40, 60), (60, 60)]
+    let found = chairs(ink: inkWithRings(centers: four + [(150, 150)], radius: 5, size: size), w: size, h: size, page: 2000)
+    #expect(found.count == 4)
+    #expect(found.allSatisfy { $0.midX < 100 })
+}
+
+@Test func squareHolesAreNotChairs() {
+    let size = 100
+    var ink = [Bool](repeating: false, count: size * size)
+    for (cx, cy) in [(20, 20), (40, 20), (60, 20), (80, 20)] {
+        for i in -6...6 {
+            for (x, y) in [(cx + i, cy - 6), (cx + i, cy + 6), (cx - 6, cy + i), (cx + 6, cy + i)] { ink[y * size + x] = true }
+        }
+    }
+    #expect(chairs(ink: ink, w: size, h: size, page: 2000).isEmpty)
+}
+
+@Test func rowsOfChairsMergeIntoOneGridButTablesInARowStayApart() {
+    func blob(_ x: Double, _ y: Double, chairs: Int) -> Item {
+        var item = outsideItem("object", CGRect(x: x, y: y, width: 100, height: 15), review: true, reason: nil)
+        item.chairs = chairs
+        return item
+    }
+    let rows = (0..<5).map { blob(0, Double($0) * 20, chairs: 10) }
+    #expect(mergeChairGrids(rows, gap: 8).count == 1)
+    let tables = (0..<4).map { blob(Double($0) * 102, 0, chairs: 4) }
+    #expect(mergeChairGrids(tables, gap: 8).count == 4)
+}
+
+@Test func tablesJoinTheirChairsWithAGrowthThatShrinksOnSmallPrints() {
+    func chairs(side: Double, count: Int) -> [CGRect] { (0..<count).map { CGRect(x: Double($0) * 40, y: 0, width: side, height: side) } }
+    #expect(objectJoinRadius(chairs: chairs(side: 12, count: 20)) == 2)
+    #expect(objectJoinRadius(chairs: chairs(side: 30, count: 20)) == 2)
+    #expect(objectJoinRadius(chairs: chairs(side: 6, count: 20)) == 1)
+    #expect(objectJoinRadius(chairs: chairs(side: 6, count: 3)) == 2)
+}
+
+@Test func blackLinesAreUsedOnlyWhenTheSaturationTestHasLostThem() {
+    let black = [Bool](repeating: true, count: 100)
+    #expect(!inkLosesBlackLines(black: black, ink: [Bool](repeating: true, count: 40) + [Bool](repeating: false, count: 60)))
+    #expect(inkLosesBlackLines(black: black, ink: [Bool](repeating: true, count: 10) + [Bool](repeating: false, count: 90)))
+}

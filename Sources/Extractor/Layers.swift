@@ -54,5 +54,5 @@ func outsideLayers(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> Out
         walls: walls.items,
         columns: columns.items,
         doors: doorLayer(scan, walls: walls),
-        seats: seatLayer(scan, hollow: columns.hollow))
+        seats: seatLayer(scan, hollow: columns.hollow, px: px, claimed: claimed))
 }

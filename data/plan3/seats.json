@@ -1,0 +1,337 @@
+{
+ "image": {
+  "height": 988,
+  "origin": "top-left",
+  "unit": "px",
+  "width": 3413
+ },
+ "checked": true,
+ "checked_by": "seat layer agent, by eye on rendered crops, not an independent annotation",
+ "note": "Same method on the two table groups (4 and 5 tables) at 0.7x and 5x: 9 tables with 4 round chairs each (36). The audience block (5 columns of 11 square cells, box 468,418,150,190) is not listed because its cells are squares and the detector does not claim them; the 55 cells were not counted by hand.",
+ "items": [
+  {
+   "class": "chair",
+   "box": [
+    901,
+    490,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    938,
+    490,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    968,
+    490,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1005,
+    490,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1035,
+    490,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1072,
+    490,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1102,
+    490,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1138,
+    490,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2534,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2571,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2601,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2638,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2668,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2705,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2735,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2772,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2802,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2839,
+    503,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    901,
+    513,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    938,
+    513,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    968,
+    513,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1005,
+    513,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1035,
+    513,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1072,
+    513,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1102,
+    513,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    1138,
+    513,
+    14,
+    14
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2534,
+    525,
+    14,
+    15
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2571,
+    525,
+    14,
+    15
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2601,
+    525,
+    14,
+    15
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2638,
+    525,
+    14,
+    15
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2668,
+    525,
+    14,
+    15
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2705,
+    525,
+    14,
+    15
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2735,
+    525,
+    14,
+    15
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2772,
+    525,
+    14,
+    15
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2802,
+    525,
+    14,
+    15
+   ]
+  },
+  {
+   "class": "chair",
+   "box": [
+    2839,
+    525,
+    14,
+    15
+   ]
+  }
+ ]
+}

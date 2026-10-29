@@ -195,7 +195,7 @@ public enum ExtractTool {
 
         for entry in judgeRep.entries where entry.accepted && items.indices.contains(entry.itemIndex) {
             if items[entry.itemIndex].cls == "object", let choice = entry.judgeChoice {
-                items[entry.itemIndex].seat = seatLabels.contains(choice)
+                items[entry.itemIndex].seat = (items[entry.itemIndex].seat ?? false) || seatLabels.contains(choice)
             }
         }
 

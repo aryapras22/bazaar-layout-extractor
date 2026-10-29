@@ -201,7 +201,7 @@ private func runMlxJudge(
     let allGapIds = Array(Set(gapIdsByClass.values.flatMap { $0 })).sorted()
     var number = 0
 
-    for idx in items.indices where items[idx].needsReview {
+    for idx in items.indices where items[idx].needsReview && !alreadySeat(items[idx]) {
         let item = items[idx]
         let classGaps = gapIdsByClass[item.cls] ?? []
         let usingGapSet = !classGaps.isEmpty
@@ -267,7 +267,7 @@ private func runMlxJudge(
     from mlx_vlm import load, generate
     from mlx_vlm.prompt_utils import apply_chat_template
     from mlx_vlm.utils import load_config
-    model_id = "mlx-community/Qwen3.5-9B-MLX-4bit"
+    model_id = os.environ.get("FP_JUDGE_MODEL", "mlx-community/Qwen3.5-9B-MLX-4bit")
     config = load_config(model_id)
     model, proc = load(model_id)
     tasks = json.load(open(sys.argv[1]))
@@ -407,7 +407,7 @@ func runJudge(
     var agreedWithRule = 0
     var number = 0
 
-    for idx in items.indices where items[idx].needsReview {
+    for idx in items.indices where items[idx].needsReview && !alreadySeat(items[idx]) {
         number += 1
         let item = items[idx]
         let classGaps = gapIdsByClass[item.cls] ?? []
@@ -523,3 +523,8 @@ func runJudge(
     )
 }
 #endif
+
+/// Objects the chair test already marked as seats need no answer; the judge only looks at the rest.
+func alreadySeat(_ item: Item) -> Bool {
+    item.cls == "object" && item.seat == true
+}

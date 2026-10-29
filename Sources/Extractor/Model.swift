@@ -32,11 +32,15 @@ struct Item: Codable {
     /// A slanted wall as [x0, y0, x1, y1] and its stroke thickness; `box` is the bounding box of the segment.
     var segment: [Int]?
     var width: Double?
+    /// "chair" for a single chair, "chair_group" for an object blob that holds chairs.
+    var kind: String?
+    /// Number of chairs found inside a chair group.
+    var chairs: Int?
 
     enum CodingKeys: String, CodingKey {
         case cls = "class", box, area, fillRgb = "fill_rgb", legendRgb = "legend_rgb", text, id
         case needsReview = "needs_review", reason, polygon, source, fillBox = "fill_box"
-        case suggestedId = "suggested_id", fixRule = "fix_rule", fixReason = "fix_reason", seat, segment, width
+        case suggestedId = "suggested_id", fixRule = "fix_rule", fixReason = "fix_reason", seat, segment, width, kind, chairs
     }
 
     var rect: CGRect { CGRect(x: box[0], y: box[1], width: box[2], height: box[3]) }
@@ -66,6 +70,8 @@ struct Item: Codable {
         try c.encodeIfPresent(seat, forKey: .seat)
         try c.encodeIfPresent(segment, forKey: .segment)
         try c.encodeIfPresent(width, forKey: .width)
+        try c.encodeIfPresent(kind, forKey: .kind)
+        try c.encodeIfPresent(chairs, forKey: .chairs)
     }
 }
 
