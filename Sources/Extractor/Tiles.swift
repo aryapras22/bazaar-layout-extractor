@@ -268,6 +268,24 @@ private func distance(_ a: Item, _ b: Item) -> Double {
     hypot(a.centerX - b.centerX, a.centerY - b.centerY)
 }
 
+/// Tiles without an ID whose text is a number with a lookalike where the letter belongs ("521" for S21) take the
+/// prefix of the nearest tile that read an ID, if that prefix's letter is a lookalike of the first character and the
+/// result is not taken. Booths of one series sit together, so the nearest read tile is the best witness for the letter.
+func restoreMisreadPrefixes(_ items: inout [Item], among indices: [Int]) {
+    let read = items.indices.filter { items[$0].id != nil }
+    var taken = Set(items.compactMap(\.id))
+    for idx in indices where items[idx].id == nil {
+        guard let near = read.min(by: { distance(items[$0], items[idx]) < distance(items[$1], items[idx]) }),
+              distance(items[near], items[idx]) <= 3 * max(items[near].longSide, items[idx].longSide),
+              let prefix = items[near].id?.first(where: { $0.isLetter }),
+              let label = labelWithLeadingLookalike(items[idx].text, prefix: prefix),
+              !taken.contains(label)
+        else { continue }
+        items[idx].id = label
+        taken.insert(label)
+    }
+}
+
 func rereadTiles(
     _ image: CGImage,
     content: CGRect,
@@ -403,6 +421,7 @@ func rereadTiles(
     }
 
     if apply {
+        restoreMisreadPrefixes(&items, among: blankIndices)
         rebuildLabelledReasons(&items, labelledClasses: labelledClasses, colorReasons: colorReasons)
     }
 
