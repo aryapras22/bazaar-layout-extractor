@@ -66,7 +66,7 @@ Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use gree
 | Objects (single chairs excluded) | 137/141, precision 91% | 26/26, 59% | 8/11, 40% | no truth | no truth |
 | Chairs, against the seat agent's checked lists | 744/744 | 104/104 | 36/36 | no truth | no truth |
 | Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth | no truth |
-| Doors (swing symbols) | 3/10, precision 27% | 4/4, 100% | 0/1 | 9/89, 75% | 20/44, 57% |
+| Doors (swing symbols) | 3/6, precision 27% | 4/4, 100% | 0/1 | 9/89, 75% | 20/44, 57% |
 | Diagonal walls found | - | - | - | 2/2 | 5/6 |
 | Walls, pixel recall / precision | 89% / 81% | 98% / 86% | not meaningful, see notes | no truth | no truth |
 
@@ -82,6 +82,8 @@ Notes on reading the table:
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session
+
+30. Cleanup after the merge: the four layer worktrees are removed (branches kept); the seat branch's own black-line rule (`inkLosesBlackLines`, `nearBlack`, two `seatLayer` parameters) is deleted because the wall branch's gated rule in `inkMask` already keeps those lines, and seat output is identical with it disabled on six degraded rows; plan 1 truth moves four non-swing entries (the three north emergency bays, which are X-box gates, and the east emergency entry, a wall gap with nothing drawn) from class `door` to a new class `gate`, so plan 1 doors score 3 of 6 on swing symbols and gates score separately at 0 of 4. `score.py` counts `gate` as a non-tile class and prints its row. The west emergency box stays a door; the door agent found it sits beside a swing, not on it. Vision varies by a tile or an ID between runs of the same binary on plan 5, so compare plan 5 outputs by score, not byte for byte.
 
 25. Four layer agents, each in its own worktree, merged into `master` as four merge commits (`4804b4e` door, `522cc73` wall, `60f0815` seat, `a08a75b` booth). Per-layer reports and the merged scores are in the table above; each branch also has a note in `LEARNING/`.
 26. Door (`DoorArcs.swift`, `DoorLayer.swift`, `DoorVerify.swift`, `scripts/make_door_truth.py`): swing symbols from hinge arcs (circle vote on thin strokes, walked around the circle, standing on a long wall run, grouped into symbols). Plan 2 finds 4/4, plan 1 3/10. Plan 1's truth holds 5 items that are not swing symbols (3 X-box gates, an empty wall gap, a box beside a door), and its horizontal bow ties are truthed as a thin 62x24 band that the symbol box overlaps at IoU 0.20 to 0.28. Plan 3's truth is a red gate bar. `--verify-doors` (Qwen3.5-9B on each candidate crop) drops 15 of 27 false and 4 of 36 true candidates; off by default. Run `make_door_truth.py` after the booth truth scripts.
@@ -158,7 +160,7 @@ macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27. Con
 - Plan 6 extra tiles (37) are mostly real legend tiles the truth does not list (22 `FACILITIES`, 6 sponsor boxes, 4 `GRID NETWORK`), plus `M21` and `B75`, which are real booths the truth skipped as ambiguous.
 - Plan 4 (more-market): 52 goods tiles but only 29 valid IDs (including suggestions), and 15 of 22 food booths with 9 valid IDs. Unread IDs are the main gap.
 - Plan 5 (cosmo): 242 of 265 booths found, 223 exact IDs and 231 with `suggested_id`. The 23 missed booths and 34 booths with a wrong or missing ID remain; the biggest group is a dropped last digit (`P2` for `P26`, `J3` for `J39`), which no repair rule can recover without geometry. Booths are about 24 px, coloured blocks cut into stalls by thin divider lines, and the legend is printed inside the plan.
-- Remaining per layer: booth (plan 5 JPEG legend loses INDONESIA, plan 3 half size has 35/68 tiles and no IDs, plan 6 faded loses 7 black sponsor boxes, plan 5's tiny T stalls, food booths on plan 4); wall (blur on tinted fills, slanted walls under 10 degrees off an axis, plan 3 truth is not wall truth); door (gates and X boxes, the thin-band box convention for bow ties, tiny plan 5 symbols, 40% to 73% false candidates without `--verify-doors`); seat (plan 3 audience block, round tables versus round columns, half-size chairs, precision on noisy plans).
+- Remaining per layer: booth (plan 5 JPEG legend loses INDONESIA, plan 3 half size has 35/68 tiles and no IDs, plan 6 faded loses 7 black sponsor boxes, plan 5's tiny T stalls, food booths on plan 4); wall (blur on tinted fills, slanted walls under 10 degrees off an axis, plan 3 truth is not wall truth); door (detecting gates and X boxes, the thin-band box convention for bow ties, tiny plan 5 symbols, 40% to 73% false candidates without `--verify-doors`); seat (plan 3 audience block, round tables versus round columns, half-size chairs, precision on noisy plans).
 - Four worktrees under `.claude/worktrees/` hold the layer branches (`layer/booth`, `layer/wall`, `layer/door`, `layer/seat`, all merged); each has its own `.build`.
 - Object precision is still 40% to 79%. Layout 3 misses 3 of 11 objects.
 - Layout 1 pillars: 5 north-wall squares missed behind `ENTRANCE` tiles, 4 false pillars at wall corners and the south wall.

@@ -1819,7 +1819,7 @@
    "label": "door_north_double"
   },
   {
-   "class": "door",
+   "class": "gate",
    "box": [
     270,
     50,
@@ -1830,7 +1830,7 @@
    "label": "door_north_emergency_bay1"
   },
   {
-   "class": "door",
+   "class": "gate",
    "box": [
     865,
     50,
@@ -1841,7 +1841,7 @@
    "label": "door_north_emergency_bay2"
   },
   {
-   "class": "door",
+   "class": "gate",
    "box": [
     1295,
     50,
@@ -1863,7 +1863,7 @@
    "label": "door_west_emergency"
   },
   {
-   "class": "door",
+   "class": "gate",
    "box": [
     2285,
     1460,

@@ -20,7 +20,7 @@ PAIRS = [
     ("output/swift5/plan5/layout.json", "data/plan5/truth.json"),
     ("output/swift5/plan6/layout.json", "data/plan6/truth.json"),
 ]
-NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "symbol", "boundary"}
+NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "gate", "symbol", "boundary"}
 WALL_SLACK = 6
 SEAT_LABELS = {"table_with_chairs", "audience_seating", "audience_seating_block"}
 
@@ -98,7 +98,7 @@ def score(layout_path, truth_path):
     with_suggestion = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and t_tiles[ti]["id"] in (e_tiles[ei].get("id"), e_tiles[ei].get("suggested_id")))
     print(f"  tile ids exact {exact}/{len(ids_truth)}, with suggested_id {with_suggestion}/{len(ids_truth)}")
 
-    for cls in ("object", "pillar", "door"):
+    for cls in ("object", "pillar", "door", "gate"):
         t = [i for i in truth_items if i["class"] == cls]
         e = [i for i in engine_items if i["class"] == cls and i.get("kind") != "chair"]
         pairs = greedy_match(t, e, 0.3)
