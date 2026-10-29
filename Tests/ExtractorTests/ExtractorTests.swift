@@ -276,6 +276,23 @@ private func stroke(_ mask: inout [Bool], w: Int, from a: (Int, Int), to b: (Int
     #expect(dominantTilt(straight, w: w, h: h, horizontal: true) == 0)
 }
 
+private func lineImage(black: [UInt8], tinted: [UInt8], tintedPixels: Int) -> Pixels {
+    let (w, h) = (100, 100)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    for i in 0..<400 {
+        let (r, g, b) = i < tintedPixels ? (tinted[0], tinted[1], tinted[2]) : (black[0], black[1], black[2])
+        rgba[i * 4] = r; rgba[i * 4 + 1] = g; rgba[i * 4 + 2] = b
+    }
+    return Pixels(width: w, height: h, rgba: rgba)
+}
+
+@Test func nearBlackLinesWithColourNoiseCountAsInkOnlyWhenMostDarkPixelsAreTinted() {
+    let noisy = inkMask(lineImage(black: [0, 0, 0], tinted: [0, 0, 7], tintedPixels: 300))
+    #expect(noisy.filter { $0 }.count == 400)
+    let clean = inkMask(lineImage(black: [0, 0, 0], tinted: [0, 0, 7], tintedPixels: 100))
+    #expect(clean.filter { $0 }.count == 300)
+}
+
 private func columnScan(_ ink: [Bool], size: Int) -> InkScan {
     let off = [Bool](repeating: false, count: size * size)
     return InkScan(

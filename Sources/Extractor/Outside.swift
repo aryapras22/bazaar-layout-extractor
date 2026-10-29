@@ -90,12 +90,25 @@ func inkMask(_ px: Pixels) -> [Bool] {
         if acc * 2 >= n { background = v; break }
     }
     let cut = Int(Double(background) * 0.75)
-    var ink = [Bool](repeating: false, count: n)
+    var channels = [(chroma: Int, sat: Int)](repeating: (0, 0), count: n)
+    var darkGrey = 0, darkTinted = 0
     for i in 0..<n {
         let r = Int(px.rgba[i * 4]), g = Int(px.rgba[i * 4 + 1]), b = Int(px.rgba[i * 4 + 2])
         let top = max(r, g, b)
-        let sat = top == 0 ? 0 : (top - min(r, g, b)) * 255 / top
-        ink[i] = sat < 40 && Int(gray[i]) < cut
+        let chroma = top - min(r, g, b)
+        channels[i] = (chroma, top == 0 ? 0 : chroma * 255 / top)
+        if gray[i] < 64 {
+            if channels[i].sat < 40 { darkGrey += 1 } else if chroma < 24 { darkTinted += 1 }
+        }
+    }
+    // Saturation is chroma over brightness, so a few levels of colour noise (pixel noise left after smoothing,
+    // JPEG blocks) make near-black line pixels read as colours. Clean plans reject at most 0.72 of their
+    // dark grey count that way, noisy and JPEG-damaged ones 5 or more; then chroma alone decides.
+    let colourNoise = darkTinted >= 2 * max(darkGrey, 1)
+    var ink = [Bool](repeating: false, count: n)
+    for i in 0..<n {
+        let (chroma, sat) = channels[i]
+        ink[i] = (sat < 40 || (colourNoise && chroma < 30)) && Int(gray[i]) < cut
     }
     return ink
 }
