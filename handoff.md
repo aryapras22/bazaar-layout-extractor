@@ -54,8 +54,8 @@ Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use gree
 
 | | Plan 1 | Plan 2 | Plan 3 | Plan 5 (not tuned on) | Plan 6 (not tuned on) |
 |---|---|---|---|---|---|
-| Tiles found, precision | 160/160, 93% | 211/211, 100% | 68/68, 92% | 101/265, 75% | 281/281, 88% |
-| Tile IDs exact | 154/154 | 208/209 | 67/67 | 94/265 | 271/281 |
+| Tiles found, precision | 160/160, 93% | 211/211, 100% | 68/68, 92% | 242/265, 82% | 281/281, 88% |
+| Tile IDs exact | 154/154 | 208/209 | 67/67 | 222/265 | 271/281 |
 | Objects | 134/141, precision 79% | 26/26, 59% | 8/11, 40% | no truth | no truth |
 | Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth | no truth |
 | Doors | 0/10 | 0/4 | 0/1 | no truth | no truth |
@@ -73,6 +73,8 @@ Notes on reading the table:
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session
+
+10. Small tiles (`legendLayer`): the class mask is eroded by about 3 px before the `minArea` test, so a 24 x 27 px booth (648 px restored) fell to 378 px and was dropped. The size test now uses the restored box. Tiles that pass only that way are kept only when their class turns out to be labelled (at least half its tiles read an ID), because the unlabelled `Entrance` class gained eight thin fragments on plan 1 otherwise. Plan 5 went from 101 to 242 of 265 booths and from 94 to 222 exact IDs; plans 1 to 3 and 6 are unchanged. Rendering the plan at a larger zoom does not help, since booth size and every threshold scale together.
 
 9. Legend colour adaptation (`adaptLegendToPlan`): when a legend class finds no tiles, `legendLayer` runs again with that class moved to the most common plan colour of similar hue (within 45 delta E and 40 degrees) that no other class already explains. The most common colour wins, not the nearest, because anti-aliased edge colours sit nearer the swatch than the flat fill does. Plan 4's goods booths went from 0 to 52 tiles, matching the legend's total of 52, with 26 valid IDs (`GD1` to `GD52` are printed on the plan), 5 misread (`CD28` for `GD28`) and 21 unread. Plans 1 to 3 and 6 are unchanged.
 
@@ -101,7 +103,7 @@ macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27. Con
 - Plan 6 sponsor booths: 10 black booths keep no ID. The legend-colour pass outlines only fragments of each black box because the white text splits it, so the retry crops are mostly blank. Inverting dark crops for OCR made no difference and was backed out. A fix needs the whole black rectangle, for example by filling holes in the black mask.
 - Plan 6 extra tiles (37) are mostly real legend tiles the truth does not list (22 `FACILITIES`, 6 sponsor boxes, 4 `GRID NETWORK`), plus `M21` and `B75`, which are real booths the truth skipped as ambiguous.
 - Plan 4 (more-market): 52 goods tiles but only 26 valid IDs, and 15 of 22 food booths with 8 valid IDs. Misreads like `CD28` for `GD28` could be fixed by repairing IDs against the class's majority prefix.
-- Plan 5 (cosmo): 101 of 265 booths found and 94 exact IDs. Where a booth is found its ID is right 94 times in 101 (misreads such as `NO4` for `N04`), so detection is the gap. Booths are small (about 55 px) coloured blocks cut into stalls by thin divider lines, and the legend is printed inside the plan.
+- Plan 5 (cosmo): 242 of 265 booths found and 222 exact IDs. The 23 missed booths and the 20 found with a wrong or missing ID (`NO4` for `N04`) are the gap. Booths are about 24 px, coloured blocks cut into stalls by thin divider lines, and the legend is printed inside the plan.
 - Doors need a detector for door-leaf symbols (see above).
 - Object precision is still 40% to 79%. Layout 3 misses 3 of 11 objects.
 - Layout 1 pillars: 5 north-wall squares missed behind `ENTRANCE` tiles, 4 false pillars at wall corners and the south wall.

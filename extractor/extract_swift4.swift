@@ -809,6 +809,7 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
         var item: Item
         let cls: Int
         let colorReasons: [String]
+        let small: Bool
     }
     var found: [Found] = []
 
@@ -816,7 +817,10 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
         let whole = fillHoles(grid.map { $0 == Int16(k) }, w: w, h: h, maxHole: maxHole, seamLength: seamLength)
         let mask = morph(whole, w: w, h: h, rx: r, ry: r, erode: true)
         for reg in components(mask, w: w, h: h, eight: false) {
-            guard reg.area >= minArea, solidity(reg, w: w) >= minSolidity else { continue }
+            // The mask was eroded by r, so the size test uses the restored box a tile of this size would have.
+            // Tiles that only pass that way are kept later if their class turns out to carry IDs.
+            guard (reg.width + 2 * r) * (reg.height + 2 * r) >= minArea, solidity(reg, w: w) >= minSolidity else { continue }
+            let small = reg.area < minArea
             let rect = CGRect(x: reg.minX - r, y: reg.minY - r, width: reg.width + 2 * r, height: reg.height + 2 * r)
                 .intersection(canvas)
             var reasons: [String] = []
@@ -847,7 +851,7 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
                     text: raw ?? "", id: label, needsReview: !reasons.isEmpty,
                     reason: reasons.isEmpty ? nil : reasons.joined(separator: "; "),
                     polygon: tilePolygon(reg, rect: rect, faces: faces, faceOf: faceOf, w: w, epsilon: 2 * scale)),
-                cls: k, colorReasons: reasons))
+                cls: k, colorReasons: reasons, small: small))
         }
     }
 
@@ -858,6 +862,7 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
         if !members.isEmpty, withLabel * 2 >= members.count { labelledIndices.insert(k) }
     }
     let labelledNames = Set(labelledIndices.map { legend[$0].name })
+    found = found.filter { !$0.small || labelledIndices.contains($0.cls) }
     var items: [Item] = []
     var colorReasons: [[String]] = []
     for var f in found {
