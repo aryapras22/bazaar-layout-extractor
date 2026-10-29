@@ -1,5 +1,5 @@
 {
- "source": "generated from the PDF vector data: small white or black rectangles with one ID label inside; not checked by eye; two rectangles holding two labels each and sponsor boxes without a label are left out; diagonal wall segments from the PDF strokes at least 0.5 pt wide (scripts/make_wall_truth.py)",
+ "source": "generated from the PDF vector data: small white or black rectangles with one ID label inside; not checked by eye; two rectangles holding two labels each and sponsor boxes without a label are left out; diagonal wall segments from the PDF strokes at least 0.5 pt wide (scripts/make_wall_truth.py); door swing symbols from the single stroked curves in the PDF (scripts/make_door_truth.py)",
  "image": {
   "height": 2520,
   "origin": "top-left",
@@ -2917,6 +2917,490 @@
     789
    ],
    "width": 2.9,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1572,
+    2253,
+    243,
+    19
+   ],
+   "arcs": 24,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    458,
+    2253,
+    243,
+    19
+   ],
+   "arcs": 24,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    723,
+    333,
+    21,
+    21
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    415,
+    334,
+    21,
+    21
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1837,
+    327,
+    21,
+    21
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1528,
+    328,
+    21,
+    21
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2253,
+    1234,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2253,
+    1279,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1300,
+    287,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1890,
+    2252,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    994,
+    2312,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1189,
+    287,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    106,
+    2315,
+    41,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    355,
+    2312,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    782,
+    2312,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    809,
+    2312,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    217,
+    287,
+    37,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2253,
+    1415,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1895,
+    2314,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2253,
+    1370,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2253,
+    1460,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    133,
+    285,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2023,
+    308,
+    37,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    790,
+    2253,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    955,
+    287,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1489,
+    2315,
+    37,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    848,
+    233,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2253,
+    1324,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    910,
+    308,
+    37,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    334,
+    2274,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1489,
+    308,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2211,
+    287,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1086,
+    287,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2068,
+    287,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2066,
+    2312,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1899,
+    308,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1077,
+    2312,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    220,
+    2315,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    786,
+    308,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    376,
+    308,
+    19,
+    37
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    2231,
+    2235,
+    12,
+    12
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    1326,
+    287,
+    37,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    848,
+    287,
+    19,
+    19
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    956,
+    2314,
+    19,
+    19
+   ],
+   "arcs": 1,
    "id": null
   }
  ]

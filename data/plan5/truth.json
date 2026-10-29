@@ -1,5 +1,5 @@
 {
- "source": "generated from the PDF vector data: enclosed cells between divider lines that hold one ID label; not checked by eye; cells with two or more labels and labels outside any block are left out; diagonal wall segments from the PDF strokes at least 0.5 pt wide (scripts/make_wall_truth.py)",
+ "source": "generated from the PDF vector data: enclosed cells between divider lines that hold one ID label; not checked by eye; cells with two or more labels and labels outside any block are left out; diagonal wall segments from the PDF strokes at least 0.5 pt wide (scripts/make_wall_truth.py); door swing symbols from the single stroked curves in the PDF (scripts/make_door_truth.py)",
  "image": {
   "height": 2125,
   "origin": "top-left",
@@ -2689,6 +2689,985 @@
     144
    ],
    "width": 3.2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    653,
+    1246,
+    27,
+    14
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    653,
+    1276,
+    27,
+    14
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    628,
+    1264,
+    11,
+    22
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    82,
+    1954,
+    12,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    82,
+    1839,
+    12,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    82,
+    1812,
+    12,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    82,
+    1566,
+    12,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    82,
+    1539,
+    12,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    83,
+    1201,
+    9,
+    16
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    112,
+    1138,
+    20,
+    11
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    191,
+    1148,
+    8,
+    10
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    111,
+    1027,
+    17,
+    8
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    201,
+    1915,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    169,
+    1915,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    404,
+    1914,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    373,
+    1914,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    611,
+    1908,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    580,
+    1908,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    611,
+    1942,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    579,
+    1942,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    817,
+    1909,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    786,
+    1909,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    817,
+    1942,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    785,
+    1942,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    912,
+    2051,
+    12,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    912,
+    2020,
+    12,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    912,
+    1983,
+    12,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    912,
+    1951,
+    12,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    274,
+    2078,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    252,
+    2078,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    322,
+    2078,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    300,
+    2078,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    618,
+    2078,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    595,
+    2078,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    665,
+    2078,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    643,
+    2078,
+    19,
+    12
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    502,
+    1854,
+    10,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    502,
+    1769,
+    10,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    502,
+    1629,
+    10,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    502,
+    1446,
+    10,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    502,
+    1307,
+    10,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    435,
+    1265,
+    10,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    434,
+    1081,
+    10,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    629,
+    1151,
+    10,
+    19
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    664,
+    1055,
+    19,
+    10
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    289,
+    1084,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    289,
+    917,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    289,
+    890,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    289,
+    713,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    289,
+    686,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    289,
+    509,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    289,
+    482,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    289,
+    306,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    289,
+    279,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    126,
+    844,
+    10,
+    17
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    126,
+    815,
+    10,
+    17
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    127,
+    756,
+    20,
+    19
+   ],
+   "arcs": 4,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    127,
+    785,
+    20,
+    19
+   ],
+   "arcs": 4,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    126,
+    436,
+    10,
+    17
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    126,
+    407,
+    10,
+    17
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    126,
+    349,
+    20,
+    19
+   ],
+   "arcs": 4,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    126,
+    378,
+    20,
+    19
+   ],
+   "arcs": 4,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    847,
+    442,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    847,
+    414,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    847,
+    645,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    847,
+    618,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    859,
+    265,
+    15,
+    9
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    668,
+    124,
+    17,
+    9
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    644,
+    95,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    701,
+    95,
+    9,
+    15
+   ],
+   "arcs": 2,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    246,
+    189,
+    7,
+    9
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    212,
+    148,
+    7,
+    9
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    267,
+    261,
+    7,
+    8
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    267,
+    466,
+    7,
+    8
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    267,
+    670,
+    7,
+    8
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    267,
+    872,
+    7,
+    8
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    266,
+    940,
+    7,
+    8
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    267,
+    737,
+    7,
+    8
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    267,
+    533,
+    7,
+    8
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    267,
+    330,
+    7,
+    8
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    149,
+    1930,
+    12,
+    10
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    227,
+    1931,
+    12,
+    10
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    435,
+    1934,
+    10,
+    11
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    642,
+    1933,
+    10,
+    11
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    352,
+    1934,
+    12,
+    11
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    556,
+    1933,
+    12,
+    11
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    766,
+    1931,
+    11,
+    10
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    846,
+    1930,
+    11,
+    12
+   ],
+   "arcs": 1,
+   "id": null
+  },
+  {
+   "class": "door",
+   "box": [
+    838,
+    2086,
+    11,
+    12
+   ],
+   "arcs": 1,
    "id": null
   }
  ]
