@@ -220,3 +220,41 @@ private func flatPlan(noise: Int) -> Pixels {
     #expect(back.polygon == [[50, 30], [70, 30], [70, 40]])
     #expect(scaledBack(item, by: 1).box == item.box)
 }
+
+private func stroke(_ mask: inout [Bool], w: Int, from a: (Int, Int), to b: (Int, Int), thickness: Int = 3) {
+    let steps = max(abs(b.0 - a.0), abs(b.1 - a.1))
+    for i in 0...steps {
+        let x = a.0 + (b.0 - a.0) * i / steps, y = a.1 + (b.1 - a.1) * i / steps
+        for d in 0..<thickness { mask[(y + d - thickness / 2) * w + x] = true }
+    }
+}
+
+@Test func slantedStrokesFindAnglesOffTheAxesAndSkipNearHorizontalLines() {
+    let (w, h) = (300, 300)
+    var mask = [Bool](repeating: false, count: w * h)
+    stroke(&mask, w: w, from: (40, 60), to: (160, 180))
+    stroke(&mask, w: w, from: (40, 250), to: (260, 254))
+    let found = slantedStrokes(mask, w: w, h: h, minLength: 50, gap: 6)
+    #expect(found.count == 1)
+    #expect(abs(found[0].length - 170) < 10)
+    #expect(abs(found[0].width - 2.1) < 0.4)
+}
+
+@Test func slantedStrokesSeparateTwoCrossingLines() {
+    let (w, h) = (300, 300)
+    var mask = [Bool](repeating: false, count: w * h)
+    stroke(&mask, w: w, from: (40, 40), to: (200, 200))
+    stroke(&mask, w: w, from: (40, 200), to: (200, 40))
+    let found = slantedStrokes(mask, w: w, h: h, minLength: 50, gap: 6)
+    #expect(found.count == 2)
+    #expect(slantsCross(found[0], found[1]))
+}
+
+@Test func doubleLineWallsMergeButSeparateWallsStayApart() {
+    let near = [Slant(x0: 0, y0: 0, x1: 100, y1: 100, width: 2), Slant(x0: 4, y0: -4, x1: 104, y1: 96, width: 2)]
+    let merged = mergedSlants(near, separation: 8, gap: 6)
+    #expect(merged.count == 1)
+    #expect(merged[0].width > 2)
+    let far = [near[0], Slant(x0: 40, y0: -40, x1: 140, y1: 60, width: 2)]
+    #expect(mergedSlants(far, separation: 8, gap: 6).count == 2)
+}

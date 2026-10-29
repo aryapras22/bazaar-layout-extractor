@@ -424,5 +424,7 @@ func scaledBack(_ item: Item, by factor: Int) -> Item {
     out.area = Int((Double(item.area) / (f * f)).rounded())
     out.polygon = item.polygon?.map { $0.map { Int((Double($0) / f).rounded()) } }
     out.fillBox = item.fillBox?.map { Int((Double($0) / f).rounded()) }
+    out.segment = item.segment?.map { Int((Double($0) / f).rounded()) }
+    out.width = item.width.map { $0 / f }
     return out
 }
