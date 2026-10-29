@@ -115,3 +115,23 @@ private func gridWithTiles(side: Int, count: Int, page: Int) -> [Int16] {
     #expect(extent.area == 200)
     #expect(extent.rect == CGRect(x: 30, y: 40, width: 20, height: 10))
 }
+
+private func planWithBlocks(limeSide: Int) -> Pixels {
+    let (w, h) = (400, 400)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    func fill(_ x0: Int, _ y0: Int, _ side: Int, _ c: (UInt8, UInt8, UInt8)) {
+        for y in y0..<(y0 + side) { for x in x0..<(x0 + side) { let i = (y * w + x) * 4; (rgba[i], rgba[i + 1], rgba[i + 2]) = c } }
+    }
+    fill(20, 20, 200, (120, 184, 80))   // the plan's own green
+    fill(250, 250, limeSide, (196, 214, 82))  // the legend lime, e.g. the swatch printed inside the plan
+    return Pixels(width: w, height: h, rgba: rgba)
+}
+
+@Test func legendColourMovesToADominantPlanColourOnlyWhenItClearlyOutweighsTheMatch() {
+    let lime = LegendClass(name: "GOODS", rgb: (196, 214, 82), lab: lab((196, 214, 82)))
+    let moved = adaptLegendToPlan([lime], planWithBlocks(limeSide: 15), classes: [0])
+    #expect(moved[0].rgb == (120, 184, 80))
+    // A class that already matches a block over a quarter of the green one's size keeps its own colour.
+    let kept = adaptLegendToPlan([lime], planWithBlocks(limeSide: 110), classes: [0])
+    #expect(kept[0].rgb == (196, 214, 82))
+}

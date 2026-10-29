@@ -90,7 +90,8 @@ public enum ExtractTool {
         let scale = Double(px.page) / 2000
 
         var legendOut = try await legendLayer(planImage, px, legend: classes)
-        let silent = classes.indices.filter { k in !legendOut.items.contains { $0.cls == classes[k].name } }
+        // A class with one or two tiles may only have found its own swatch printed inside the plan.
+        let silent = classes.indices.filter { k in legendOut.items.filter { $0.cls == classes[k].name }.count <= 2 }
         let adapted = adaptLegendToPlan(classes, px, classes: silent)
         if adapted.indices.contains(where: { adapted[$0].lab.l != classes[$0].lab.l || adapted[$0].lab.a != classes[$0].lab.a }) {
             classes = adapted

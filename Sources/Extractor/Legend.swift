@@ -118,10 +118,11 @@ func adaptLegendToPlan(_ legend: [LegendClass], _ px: Pixels, classes only: [Int
     for k in only {
         let want = legend[k].lab
         guard want.l > 15, want.l < 95, chroma(want) >= 15 else { continue }
+        let matched = clusters.filter { distance($0.lab, want) < gateDeltaE }.reduce(0) { $0 + $1.count }
         let candidates = clusters.indices.filter { j in
             let c = clusters[j]
             let gap = abs(hue(c.lab) - hue(want))
-            return !taken.contains(j) && c.count >= minCount && c.lab.l > 15 && c.lab.l < 97 && chroma(c.lab) >= 15
+            return !taken.contains(j) && c.count >= max(minCount, 4 * matched) && c.lab.l > 15 && c.lab.l < 97 && chroma(c.lab) >= 15
                 && min(gap, 360 - gap) <= 40 && distance(c.lab, want) <= 45
                 && !legend.indices.contains { $0 != k && distance(c.lab, legend[$0].lab) < gateDeltaE }
         }
