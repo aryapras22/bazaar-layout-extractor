@@ -16,6 +16,7 @@ struct Options {
     var judgeMode: String = "off"
     var layers: Set<Layer> = Set(Layer.allCases)
     var upscaleSmall: Bool = false
+    var modelIds: Bool = false
 }
 
 func parseOptions(_ args: [String]) -> Options? {
@@ -29,6 +30,7 @@ func parseOptions(_ args: [String]) -> Options? {
     var judgeMode = "off"
     var layers = Set(Layer.allCases)
     var upscaleSmall = false
+    var modelIds = false
 
     var i = 1
     while i < args.count {
@@ -60,6 +62,9 @@ func parseOptions(_ args: [String]) -> Options? {
         case "--upscale-small":
             upscaleSmall = true
             i += 1
+        case "--model-ids":
+            modelIds = true
+            i += 1
         case "--layers":
             guard i + 1 < args.count else { return nil }
             let named = args[i + 1].split(separator: ",").map { Layer(rawValue: String($0)) }
@@ -76,14 +81,14 @@ func parseOptions(_ args: [String]) -> Options? {
     return Options(
         planPath: positional[0], legendPath: positional[1], outDir: outDir,
         repair: repair, reread: reread, bridge: bridge, regroup: regroup,
-        featurePrint: featurePrint, judgeMode: judgeMode, layers: layers, upscaleSmall: upscaleSmall
+        featurePrint: featurePrint, judgeMode: judgeMode, layers: layers, upscaleSmall: upscaleSmall, modelIds: modelIds
     )
 }
 
 public enum ExtractTool {
     public static func run(arguments: [String]) async throws {
         guard let opts = parseOptions(arguments) else {
-            fputs("usage: fp-extract layout.png legend.png [--out dir] [--no-repair] [--no-reread] [--no-bridge] [--no-regroup] [--feature-print] [--judge off|fm|mlx] [--layers booth,wall,door,seat] [--upscale-small]\n", stderr)
+            fputs("usage: fp-extract layout.png legend.png [--out dir] [--no-repair] [--no-reread] [--no-bridge] [--no-regroup] [--feature-print] [--judge off|fm|mlx] [--layers booth,wall,door,seat] [--upscale-small] [--model-ids]\n", stderr)
             exit(2)
         }
         let outDir = URL(fileURLWithPath: opts.outDir)
@@ -176,6 +181,13 @@ public enum ExtractTool {
         if opts.repair {
             repairIds(&items, classPrefixes: classPrefixes, ruleCounts: &ruleCounts)
             repairIdsByPrefix(&items, ruleCounts: &ruleCounts)
+        }
+
+        if opts.modelIds {
+            let read = readMissingIdsWithModel(
+                image: planImage, items: &items, classPrefixes: classPrefixes, gapIdsByClass: gapIdsByClass,
+                outDir: outDir, ruleCounts: &ruleCounts)
+            FileHandle.standardError.write(Data("note: the local model supplied \(read) tile IDs\n".utf8))
         }
 
         let entries = classes.map {

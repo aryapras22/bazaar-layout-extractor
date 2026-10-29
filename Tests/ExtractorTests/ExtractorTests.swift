@@ -273,3 +273,14 @@ private func flatPlan(noise: Int) -> Pixels {
     #expect(sharp.width == 36)
     #expect(sharp.rgb(18, 18).0 < 140)
 }
+
+@Test func modelAnswerMustFillAGapAndTakesTheClassLetters() {
+    let items = [tile("GOODS", "GD1"), tile("GOODS", nil), tile("GOODS", nil), tile("GOODS", nil), tile("GOODS", nil)]
+    let gaps = ["GOODS": ["GD2", "GD3", "GD4"]]
+    let accepted = acceptModelIds(
+        [1: "CO26", 2: "GD 3", 3: "GD3", 4: "GD9"], items: items, classPrefixes: ["GOODS": "GD"], gapIdsByClass: gaps)
+    // CO26 and GD9 are not gaps, and two tiles claiming GD3 cancel each other out.
+    #expect(accepted.isEmpty)
+    let one = acceptModelIds([1: "CD 2"], items: items, classPrefixes: ["GOODS": "GD"], gapIdsByClass: gaps)
+    #expect(one == [1: "GD2"])
+}
