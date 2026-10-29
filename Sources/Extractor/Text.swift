@@ -24,7 +24,10 @@ func makeTextRequest() -> RecognizeTextRequest {
 func readLabel(_ image: CGImage, in rect: CGRect) async throws -> String? {
     let bounds = CGRect(x: 0, y: 0, width: image.width, height: image.height)
     guard let crop = image.cropping(to: rect.insetBy(dx: 4, dy: 4).intersection(bounds)) else { return nil }
-    let first = try await makeTextRequest().perform(on: crop).max { $0.confidence < $1.confidence }?.transcript
+    // Vision reads text on a tile this small better when it is enlarged first.
+    let small = min(crop.width, crop.height) < 40
+    let readable = small ? upscaled(crop, by: 3) ?? crop : crop
+    let first = try await makeTextRequest().perform(on: readable).max { $0.confidence < $1.confidence }?.transcript
     if let first, cleanLabel(first) != nil { return first }
     // A blurred or compressed tile reads as nothing at its own size. Vision is jumpy on crops this small,
     // so several enlarged and sharpened crops vote and the most common readable label wins.
