@@ -201,7 +201,7 @@ private func runMlxJudge(
     let allGapIds = Array(Set(gapIdsByClass.values.flatMap { $0 })).sorted()
     var number = 0
 
-    for idx in items.indices where items[idx].needsReview {
+    for idx in items.indices where items[idx].needsReview && !alreadySeat(items[idx]) {
         let item = items[idx]
         let classGaps = gapIdsByClass[item.cls] ?? []
         let usingGapSet = !classGaps.isEmpty
@@ -407,7 +407,7 @@ func runJudge(
     var agreedWithRule = 0
     var number = 0
 
-    for idx in items.indices where items[idx].needsReview {
+    for idx in items.indices where items[idx].needsReview && !alreadySeat(items[idx]) {
         number += 1
         let item = items[idx]
         let classGaps = gapIdsByClass[item.cls] ?? []
@@ -523,3 +523,8 @@ func runJudge(
     )
 }
 #endif
+
+/// Objects the chair test already marked as seats need no answer; the judge only looks at the rest.
+func alreadySeat(_ item: Item) -> Bool {
+    item.cls == "object" && item.seat == true
+}
