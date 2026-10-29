@@ -8,6 +8,7 @@ struct LegendLayerOutput {
     var items: [Item]
     var labelledClasses: Set<String>
     var colorReasons: [[String]]
+    var scale: Double
 }
 
 func rebuildLabelledReasons(_ items: inout [Item], labelledClasses: Set<String>, colorReasons: [[String]]) {
@@ -31,15 +32,40 @@ func rebuildLabelledReasons(_ items: inout [Item], labelledClasses: Set<String>,
     }
 }
 
+// Thresholds scale with the page, so a plan whose booths are small for its page (a scan with margins
+// and a title block) would lose them all. The small tiles are the area-weighted 25th percentile of
+// sqrt(area) over legend-coloured regions, so fragments such as text blobs are outvoted by real tiles
+// and the smallest booths set the thresholds, not the typical one. The scale shrinks to fit them but
+// never grows past the page scale.
+let referenceTileSide = 25.0
+
+func tileScale(_ grid: [Int16], w: Int, h: Int) -> Double {
+    let page = Double(max(w, h)) / 2000
+    let cap = max(2500, w * h / 200)
+    let regions = components(grid.map { $0 >= 0 }, w: w, h: h, eight: false)
+        .filter { $0.area >= 25 && $0.area <= cap }
+        .map { (side: Double($0.area).squareRoot(), weight: $0.area) }
+        .sorted { $0.side < $1.side }
+    guard regions.count >= 8 else { return page }
+    let half = regions.reduce(0) { $0 + $1.weight }
+    var seen = 0
+    for region in regions {
+        seen += region.weight
+        if seen * 4 >= half { return min(page, region.side / referenceTileSide) }
+    }
+    return page
+}
+
 func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async throws -> LegendLayerOutput {
     let (w, h) = (px.width, px.height)
-    let scale = Double(max(w, h)) / 2000
-    let r = max(1, Int((3 * scale).rounded()))
-    let minArea = Int(400 * scale * scale)
-    let maxHole = Int(2000 * scale * scale)
-    let seamLength = Int(20 * scale)
     let canvas = CGRect(x: 0, y: 0, width: w, height: h)
     let grid = classify(px, legend: legend)
+    let scale = tileScale(grid, w: w, h: h)
+    let r = max(1, Int((3 * scale).rounded()))
+    let minArea = Int(400 * scale * scale)
+    let page = Double(max(w, h)) / 2000
+    let maxHole = Int(2000 * page * page)  // an upper bound, so it follows the page, not the smallest tile
+    let seamLength = Int(20 * scale)
     let outlines = morph(darkPixels(px, below: 60), w: w, h: h, rx: 1, ry: 1, erode: false)
     let faces = components(outlines.map { !$0 }, w: w, h: h, eight: false)
     var faceOf = [Int32](repeating: -1, count: w * h)
@@ -60,7 +86,7 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
             // The mask was eroded by r, so the size test uses the restored box a tile of this size would have.
             // Tiles that only pass that way are kept later if their class turns out to carry IDs.
             guard (reg.width + 2 * r) * (reg.height + 2 * r) >= minArea, solidity(reg, w: w) >= minSolidity else { continue }
-            let small = reg.area < minArea
+            let small = reg.area < Int(400 * page * page)
             let rect = CGRect(x: reg.minX - r, y: reg.minY - r, width: reg.width + 2 * r, height: reg.height + 2 * r)
                 .intersection(canvas)
             var reasons: [String] = []
@@ -114,7 +140,7 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
         colorReasons.append(f.colorReasons)
     }
     rebuildLabelledReasons(&items, labelledClasses: labelledNames, colorReasons: colorReasons)
-    return LegendLayerOutput(items: items, labelledClasses: labelledNames, colorReasons: colorReasons)
+    return LegendLayerOutput(items: items, labelledClasses: labelledNames, colorReasons: colorReasons, scale: scale)
 }
 
 func makeMaskedUpscaledCrop(_ image: CGImage, item: Item, scale: Int) -> CGImage? {
@@ -156,12 +182,10 @@ func makeMaskedUpscaledCrop(_ image: CGImage, item: Item, scale: Int) -> CGImage
 
 // Booths drawn as light boxes on a coloured zone have no legend colour of their own, so they are
 // found as closed light regions of booth size and kept only when an ID reads inside.
-func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item]) async -> [Item] {
+func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Double) async -> [Item] {
     let (w, h) = (px.width, px.height)
-    let mx = max(w, h)
-    let scale = Double(mx) / 2000
     let outlines = morph(darkPixels(px, below: 60), w: w, h: h, rx: 1, ry: 1, erode: false)
-    let minSide = Int(0.008 * Double(mx)), maxSide = Int(0.07 * Double(mx))
+    let minSide = Int(16 * scale), maxSide = Int(140 * Double(max(w, h)) / 2000)
     var items: [Item] = []
     for face in components(outlines.map { !$0 }, w: w, h: h, eight: false) {
         guard min(face.width, face.height) >= minSide, max(face.width, face.height) <= maxSide,

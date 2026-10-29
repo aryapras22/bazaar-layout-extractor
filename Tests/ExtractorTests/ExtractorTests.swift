@@ -82,3 +82,21 @@ private func ring(size: Int, gapAt: Int? = nil) -> [Bool] {
     #expect(!isSwatch(px, seedX: 30, seedY: 30, textHeight: 12))
     #expect(!isSwatch(px, seedX: 40, seedY: 15, textHeight: 12))
 }
+
+private func gridWithTiles(side: Int, count: Int, page: Int) -> [Int16] {
+    var grid = [Int16](repeating: -1, count: page * page)
+    for t in 0..<count {
+        let x0 = 20 + (t % 10) * (side + 20), y0 = 20 + (t / 10) * (side + 20)
+        for y in y0..<(y0 + side) { for x in x0..<(x0 + side) { grid[y * page + x] = 0 } }
+    }
+    return grid
+}
+
+@Test func tileScaleShrinksForSmallTilesAndNeverPassesThePageScale() {
+    let small = gridWithTiles(side: 24, count: 20, page: 3000)
+    #expect(abs(tileScale(small, w: 3000, h: 3000) - 24.0 / referenceTileSide) < 0.01)
+    let large = gridWithTiles(side: 100, count: 20, page: 2000)
+    #expect(tileScale(large, w: 2000, h: 2000) == 1.0)
+    let few = gridWithTiles(side: 24, count: 3, page: 3000)
+    #expect(tileScale(few, w: 3000, h: 3000) == 1.5)
+}
