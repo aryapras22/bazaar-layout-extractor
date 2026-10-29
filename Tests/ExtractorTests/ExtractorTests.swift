@@ -135,3 +135,21 @@ private func planWithBlocks(limeSide: Int) -> Pixels {
     let kept = adaptLegendToPlan([lime], planWithBlocks(limeSide: 110), classes: [0])
     #expect(kept[0].rgb == (196, 214, 82))
 }
+
+private func squareRegion(_ x0: Int, _ y0: Int, side: Int, w: Int) -> Region {
+    let pixels = (y0..<(y0 + side)).flatMap { y in (x0..<(x0 + side)).map { y * w + $0 } }
+    return Region(minX: x0, minY: y0, maxX: x0 + side - 1, maxY: y0 + side - 1, pixels: pixels)
+}
+
+@Test func tileOutlineMustCoverMostOfTheTileNotAGlyph() {
+    let w = 40
+    let tile = squareRegion(10, 10, side: 20, w: w)
+    func outline(faceSide: Int) -> [[Int]]? {
+        let face = squareRegion(11, 11, side: faceSide, w: w)
+        var faceOf = [Int32](repeating: -1, count: w * w)
+        for i in face.pixels { faceOf[i] = 0 }
+        return tilePolygon(tile, rect: CGRect(x: 10, y: 10, width: 20, height: 20), faces: [face], faceOf: faceOf, w: w, epsilon: 1)
+    }
+    #expect(outline(faceSide: 18) != nil)
+    #expect(outline(faceSide: 4) == nil)
+}

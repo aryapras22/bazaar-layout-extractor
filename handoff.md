@@ -61,7 +61,7 @@ Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use gree
 | | Plan 1 | Plan 2 | Plan 3 | Plan 5 (not tuned on) | Plan 6 (not tuned on) |
 |---|---|---|---|---|---|
 | Tiles found, precision | 160/160, 92% | 211/211, 100% | 68/68, 92% | 244/265, 81% | 280/281, 88% |
-| Tile IDs exact, with `suggested_id` | 154/154, 154 | 208/209, 209 | 67/67, 67 | 224/265, 232 | 270/281, 270 |
+| Tile IDs exact, with `suggested_id` | 154/154, 154 | 208/209, 209 | 67/67, 67 | 224/265, 232 | 279/281, 279 |
 | Objects | 136/141, precision 80% | 26/26, 59% | 8/11, 40% | no truth | no truth |
 | Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth | no truth |
 | Doors | 0/10 | 0/4 | 0/1 | no truth | no truth |
@@ -79,6 +79,8 @@ Notes on reading the table:
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session
+
+18. Dark tiles (`tilePolygon`): the outline of a tile is the face (region between dark lines) holding most of its pixels, but a black tile is itself dark, so its only faces are the white text glyphs and the polygon became one glyph, which blanked the OCR crop. The face must now cover at least half the tile or the tile gets no polygon and a rectangular crop. Plan 6's sponsor booths recover: exact IDs 270 to 279 of 281. Other plans are unchanged.
 
 17. Legend retry on near-silent classes: a class with one or two tiles is now retried like one with none, and moves to the most common similar-hue plan colour only if that colour has at least four times as many pixels as the class already matches. An uncropped page prints the legend inside the plan, so the goods swatch matched its own colour and the class never adapted. Plan 4's rotated scan, rotated upright by hand, run whole with its title block and legend box and upscaled 3x: 52 goods tiles and 29 valid IDs (same as the cropped plan), 14 of 22 food tiles with 7 valid IDs (cropped: 15 and 9). At its native 1x size the tiles are found (52 and 15) but no ID is read, because the text is too small for Vision. Plans 1 to 3, 5 and 6 are unchanged in score. The pipeline does not rotate pages by itself.
 
@@ -118,7 +120,6 @@ macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27. Con
 ## Open items
 
 - Judge output never reaches `layout.json`: `runJudge` takes `items` by value and returns only a report. `agreed_with_rule` is 0 and `compared_with_rule` is 1 on layout 1, so nothing yet measures whether the judge is right. Decision pending after the object noise work above; current recommendation is to keep it report-only.
-- Plan 6 sponsor booths: 10 black booths keep no ID. The legend-colour pass outlines only fragments of each black box because the white text splits it, so the retry crops are mostly blank. Inverting dark crops for OCR made no difference and was backed out. A fix needs the whole black rectangle, for example by filling holes in the black mask.
 - Plan 6 extra tiles (37) are mostly real legend tiles the truth does not list (22 `FACILITIES`, 6 sponsor boxes, 4 `GRID NETWORK`), plus `M21` and `B75`, which are real booths the truth skipped as ambiguous.
 - Plan 4 (more-market): 52 goods tiles but only 29 valid IDs (including suggestions), and 15 of 22 food booths with 9 valid IDs. Unread IDs are the main gap.
 - Plan 5 (cosmo): 242 of 265 booths found, 223 exact IDs and 231 with `suggested_id`. The 23 missed booths and 34 booths with a wrong or missing ID remain; the biggest group is a dropped last digit (`P2` for `P26`, `J3` for `J39`), which no repair rule can recover without geometry. Booths are about 24 px, coloured blocks cut into stalls by thin divider lines, and the legend is printed inside the plan.

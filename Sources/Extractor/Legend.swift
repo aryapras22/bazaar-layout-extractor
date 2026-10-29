@@ -186,6 +186,8 @@ func tilePolygon(_ reg: Region, rect: CGRect, faces: [Region], faceOf: [Int32], 
     for i in reg.pixels where faceOf[i] >= 0 { votes[faceOf[i], default: 0] += 1 }
     guard let best = votes.max(by: { $0.value < $1.value })?.key else { return nil }
     let face = faces[Int(best)]
+    // A dark tile has only its white text as faces, and a glyph is not the tile's outline.
+    guard 2 * face.area >= reg.area else { return nil }
     let bounds = CGRect(x: face.minX, y: face.minY, width: face.width, height: face.height)
     guard rect.insetBy(dx: -6, dy: -6).contains(bounds) else { return nil }
     let poly = simplify(convexHull(face.pixels, w: w, minY: face.minY, height: face.height), epsilon: epsilon)
