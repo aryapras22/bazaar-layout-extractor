@@ -37,7 +37,7 @@ func regroupObjects(
     enableFeaturePrint: Bool,
     ruleCounts: inout [String: Int]
 ) async -> FeaturePrintStats {
-    let objIndices = items.indices.filter { items[$0].cls == "object" && items[$0].id == nil }
+    let objIndices = items.indices.filter { items[$0].cls == "object" && items[$0].id == nil && items[$0].kind != "chair" }
     guard !objIndices.isEmpty else {
         return FeaturePrintStats(
             enabled: enableFeaturePrint, intraGroupDistanceMedian: nil,
