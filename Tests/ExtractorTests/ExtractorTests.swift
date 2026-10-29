@@ -248,3 +248,14 @@ private func flatPlan(noise: Int) -> Pixels {
     #expect(back.polygon == [[50, 30], [70, 30], [70, 40]])
     #expect(scaledBack(item, by: 1).box == item.box)
 }
+
+@Test func outlineKeepsLinesBlurHasLightenedButNotAFlatGreyFill() {
+    let (w, h) = (60, 40)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    func paint(_ x: Int, _ y: Int, _ v: UInt8) { let i = (y * w + x) * 4; (rgba[i], rgba[i + 1], rgba[i + 2]) = (v, v, v) }
+    for x in 5..<25 { paint(x, 10, 150) }  // a blurred line
+    for y in 20..<35 { for x in 35..<55 { paint(x, y, 150) } }  // a flat mid-grey zone
+    let outline = outlinePixels(Pixels(width: w, height: h, rgba: rgba))
+    #expect(outline[10 * w + 15])
+    #expect(!outline[27 * w + 45])
+}

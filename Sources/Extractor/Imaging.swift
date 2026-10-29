@@ -426,3 +426,36 @@ func scaledBack(_ item: Item, by factor: Int) -> Item {
     out.fillBox = item.fillBox?.map { Int((Double($0) / f).rounded()) }
     return out
 }
+
+/// Outline pixels: anything very dark, plus anything much darker than its 11 x 11 surroundings. The second
+/// rule keeps thin lines that blur, fading or resampling has turned mid-grey, which a fixed cut would lose.
+func outlinePixels(_ px: Pixels, below: Int = 60) -> [Bool] {
+    let (w, h) = (px.width, px.height)
+    var gray = [Int32](repeating: 0, count: w * h)
+    for i in 0..<(w * h) {
+        gray[i] = Int32((299 * Int(px.rgba[i * 4]) + 587 * Int(px.rgba[i * 4 + 1]) + 114 * Int(px.rgba[i * 4 + 2])) / 1000)
+    }
+    // Integral image with a zero row and column in front, so a window sum is four lookups.
+    var integral = [Int64](repeating: 0, count: (w + 1) * (h + 1))
+    for y in 0..<h {
+        var row: Int64 = 0
+        for x in 0..<w {
+            row += Int64(gray[y * w + x])
+            integral[(y + 1) * (w + 1) + x + 1] = integral[y * (w + 1) + x + 1] + row
+        }
+    }
+    let r = 5
+    var out = [Bool](repeating: false, count: w * h)
+    for y in 0..<h {
+        let y0 = max(0, y - r), y1 = min(h, y + r + 1)
+        for x in 0..<w {
+            let g = Int(gray[y * w + x])
+            if g < below { out[y * w + x] = true; continue }
+            if g >= 200 { continue }
+            let x0 = max(0, x - r), x1 = min(w, x + r + 1)
+            let sum = integral[y1 * (w + 1) + x1] - integral[y0 * (w + 1) + x1] - integral[y1 * (w + 1) + x0] + integral[y0 * (w + 1) + x0]
+            if g + 70 < Int(sum) / ((x1 - x0) * (y1 - y0)) { out[y * w + x] = true }
+        }
+    }
+    return out
+}

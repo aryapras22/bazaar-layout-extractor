@@ -190,7 +190,7 @@ func makeMaskedUpscaledCrop(_ image: CGImage, item: Item, scale: Int) -> CGImage
 // found as closed light regions of booth size and kept only when an ID reads inside.
 func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Double) async -> [Item] {
     let (w, h) = (px.width, px.height)
-    let outlines = morph(darkPixels(px, below: 60), w: w, h: h, rx: 1, ry: 1, erode: false)
+    let outlines = morph(outlinePixels(px), w: w, h: h, rx: 1, ry: 1, erode: false)
     let minSide = Int(16 * scale), maxSide = Int(140 * Double(px.page) / 2000)
     var items: [Item] = []
     for face in components(outlines.map { !$0 }, w: w, h: h, eight: false) {
