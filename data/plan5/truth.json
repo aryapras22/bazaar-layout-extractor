@@ -1,5 +1,5 @@
 {
- "source": "generated from the PDF vector data: enclosed cells between divider lines that hold one ID label; not checked by eye; cells with two or more labels and labels outside any block are left out",
+ "source": "generated from the PDF vector data: enclosed cells between divider lines that hold one ID label; not checked by eye; cells with two or more labels and labels outside any block are left out; diagonal wall segments from the PDF strokes at least 0.5 pt wide (scripts/make_wall_truth.py)",
  "image": {
   "height": 2125,
   "origin": "top-left",
@@ -2656,6 +2656,40 @@
     51
    ],
    "id": "B07"
+  },
+  {
+   "class": "diagonal wall",
+   "box": [
+    127,
+    40,
+    98,
+    94
+   ],
+   "segment": [
+    129,
+    132,
+    223,
+    42
+   ],
+   "width": 3.2,
+   "id": null
+  },
+  {
+   "class": "diagonal wall",
+   "box": [
+    781,
+    38,
+    106,
+    108
+   ],
+   "segment": [
+    783,
+    40,
+    885,
+    144
+   ],
+   "width": 3.2,
+   "id": null
   }
  ]
 }

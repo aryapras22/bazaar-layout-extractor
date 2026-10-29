@@ -1,5 +1,5 @@
 {
- "source": "generated from the PDF vector data: small white or black rectangles with one ID label inside; not checked by eye; two rectangles holding two labels each and sponsor boxes without a label are left out",
+ "source": "generated from the PDF vector data: small white or black rectangles with one ID label inside; not checked by eye; two rectangles holding two labels each and sponsor boxes without a label are left out; diagonal wall segments from the PDF strokes at least 0.5 pt wide (scripts/make_wall_truth.py)",
  "image": {
   "height": 2520,
   "origin": "top-left",
@@ -2816,6 +2816,108 @@
     62
    ],
    "id": "B76"
+  },
+  {
+   "class": "diagonal wall",
+   "box": [
+    713,
+    230,
+    54,
+    77
+   ],
+   "segment": [
+    766,
+    231,
+    714,
+    306
+   ],
+   "width": 2.9,
+   "id": null
+  },
+  {
+   "class": "diagonal wall",
+   "box": [
+    924,
+    230,
+    28,
+    77
+   ],
+   "segment": [
+    925,
+    306,
+    951,
+    231
+   ],
+   "width": 2.9,
+   "id": null
+  },
+  {
+   "class": "diagonal wall",
+   "box": [
+    830,
+    230,
+    40,
+    77
+   ],
+   "segment": [
+    831,
+    306,
+    869,
+    231
+   ],
+   "width": 2.9,
+   "id": null
+  },
+  {
+   "class": "diagonal wall",
+   "box": [
+    854,
+    230,
+    36,
+    77
+   ],
+   "segment": [
+    855,
+    306,
+    889,
+    231
+   ],
+   "width": 2.9,
+   "id": null
+  },
+  {
+   "class": "diagonal wall",
+   "box": [
+    2249,
+    952,
+    188,
+    105
+   ],
+   "segment": [
+    2250,
+    1056,
+    2436,
+    953
+   ],
+   "width": 2.9,
+   "id": null
+  },
+  {
+   "class": "diagonal wall",
+   "box": [
+    2249,
+    788,
+    311,
+    167
+   ],
+   "segment": [
+    2250,
+    954,
+    2559,
+    789
+   ],
+   "width": 2.9,
+   "id": null
   }
  ]
 }

@@ -8,6 +8,7 @@ and class names are counted separately. Walls are thin and fragmented, so they u
 import json
 import sys
 
+import cv2
 import numpy as np
 
 PAIRS = [
@@ -17,8 +18,9 @@ PAIRS = [
     ("output/swift5/plan5/layout.json", "data/plan5/truth.json"),
     ("output/swift5/plan6/layout.json", "data/plan6/truth.json"),
 ]
-NON_TILE = {"object", "wall", "pillar", "door", "symbol", "boundary"}
+NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "symbol", "boundary"}
 WALL_SLACK = 6
+SEAT_LABELS = {"table_with_chairs", "audience_seating", "audience_seating_block"}
 
 
 def iou(a, b):
@@ -44,6 +46,14 @@ def greedy_match(truth, engine, threshold):
         used_e.add(ei)
         pairs.append((ti, ei))
     return pairs
+
+
+def segment_mask(items, shape, grow):
+    mask = np.zeros(shape, dtype=np.uint8)
+    for it in items:
+        x0, y0, x1, y1 = it["segment"]
+        cv2.line(mask, (x0, y0), (x1, y1), 1, max(1, round(it.get("width", 2))) + 2 * grow)
+    return mask.astype(bool)
 
 
 def wall_mask(items, shape, grow=0):
@@ -89,7 +99,22 @@ def score(layout_path, truth_path):
     for cls in ("object", "pillar", "door"):
         t = [i for i in truth_items if i["class"] == cls]
         e = [i for i in engine_items if i["class"] == cls]
-        print(row(cls, len(greedy_match(t, e, 0.3)), len(t), len(e)))
+        pairs = greedy_match(t, e, 0.3)
+        print(row(cls, len(pairs), len(t), len(e)))
+        if cls == "object" and t:
+            judged = [(ti, ei) for ti, ei in pairs if "seat" in e[ei]]
+            right = sum(1 for ti, ei in judged if e[ei]["seat"] == (t[ti].get("label") in SEAT_LABELS))
+            print(f"  seat flag right {right}/{len(judged)} judged, {len(pairs) - len(judged)} matched objects not judged")
+
+    t_diagonal = [i for i in truth_items if i["class"] == "diagonal wall"]
+    if t_diagonal:
+        e_diagonal = [i for i in engine_items if i["class"] == "wall" and i.get("segment")]
+        covered = segment_mask(e_diagonal, shape, WALL_SLACK)
+        found = 0
+        for item in t_diagonal:
+            own = segment_mask([item], shape, 0)
+            found += (own & covered).sum() >= 0.5 * max(own.sum(), 1)
+        print(f"  diagonal wall found {found}/{len(t_diagonal)}   engine diagonal walls {len(e_diagonal)}")
 
     t_walls = [i for i in truth_items if i["class"] == "wall"]
     e_walls = [i for i in engine_items if i["class"] == "wall"]
