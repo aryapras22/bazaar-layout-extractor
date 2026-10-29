@@ -90,12 +90,25 @@ func inkMask(_ px: Pixels) -> [Bool] {
         if acc * 2 >= n { background = v; break }
     }
     let cut = Int(Double(background) * 0.75)
-    var ink = [Bool](repeating: false, count: n)
+    var channels = [(chroma: Int, sat: Int)](repeating: (0, 0), count: n)
+    var darkGrey = 0, darkTinted = 0
     for i in 0..<n {
         let r = Int(px.rgba[i * 4]), g = Int(px.rgba[i * 4 + 1]), b = Int(px.rgba[i * 4 + 2])
         let top = max(r, g, b)
-        let sat = top == 0 ? 0 : (top - min(r, g, b)) * 255 / top
-        ink[i] = sat < 40 && Int(gray[i]) < cut
+        let chroma = top - min(r, g, b)
+        channels[i] = (chroma, top == 0 ? 0 : chroma * 255 / top)
+        if gray[i] < 64 {
+            if channels[i].sat < 40 { darkGrey += 1 } else if chroma < 24 { darkTinted += 1 }
+        }
+    }
+    // Saturation is chroma over brightness, so a few levels of colour noise (pixel noise left after smoothing,
+    // JPEG blocks) make near-black line pixels read as colours. Clean plans reject at most 0.72 of their
+    // dark grey count that way, noisy and JPEG-damaged ones 5 or more; then chroma alone decides.
+    let colourNoise = darkTinted >= 2 * max(darkGrey, 1)
+    var ink = [Bool](repeating: false, count: n)
+    for i in 0..<n {
+        let (chroma, sat) = channels[i]
+        ink[i] = (sat < 40 || (colourNoise && chroma < 30)) && Int(gray[i]) < cut
     }
     return ink
 }
@@ -140,7 +153,7 @@ func bridgeWalls(_ items: inout [Item], page: Int, ruleCounts: inout [String: In
 
     for horizontal in [true, false] {
         let wallIndices = items.indices.filter {
-            items[$0].cls == "wall" && (items[$0].box[2] >= items[$0].box[3]) == horizontal
+            items[$0].cls == "wall" && items[$0].segment == nil && (items[$0].box[2] >= items[$0].box[3]) == horizontal
         }
         func crossCenter(_ i: Int) -> Double { horizontal ? items[i].centerY : items[i].centerX }
         func stroke(_ i: Int) -> Double { Double(items[i].box[horizontal ? 3 : 2]) }
@@ -347,4 +360,222 @@ func bridgeWalls(_ items: inout [Item], page: Int, ruleCounts: inout [String: In
     }
     updated.append(contentsOf: addedItems)
     items = updated
+}
+
+/// A straight stroke that is neither horizontal nor vertical.
+struct Slant {
+    var x0: Double, y0: Double, x1: Double, y1: Double
+    /// Stroke thickness: ink pixels per unit of length.
+    var width: Double
+    var length: Double { hypot(x1 - x0, y1 - y0) }
+    var unit: (x: Double, y: Double) { ((x1 - x0) / length, (y1 - y0) / length) }
+}
+
+/// Slanted wall strokes need their own detector because `longRuns` only follows rows and columns. Each pass takes
+/// the strongest line of the Hough accumulator, cuts the ink on it into runs at gaps, keeps the long dense ones
+/// and removes their pixels, so a line that crosses another still finds the second one on the next pass.
+/// Angles within `minDegrees` of an axis are skipped: that range is what `longRuns` already owns, and it is where
+/// the wobble of a nominally straight wall would otherwise match.
+func slantedStrokes(_ mask: [Bool], w: Int, h: Int, minLength: Double, gap: Double, minDegrees: Double = 10) -> [Slant] {
+    var xs: [Double] = [], ys: [Double] = []
+    for i in 0..<mask.count where mask[i] { xs.append(Double(i % w)); ys.append(Double(i / w)) }
+    var angles: [Double] = []
+    var a = 0.0
+    while a < 180 {
+        let m = a.truncatingRemainder(dividingBy: 90)
+        if min(m, 90 - m) >= minDegrees { angles.append(a) }
+        a += 0.5
+    }
+    let cosines = angles.map { cos($0 * .pi / 180) }, sines = angles.map { sin($0 * .pi / 180) }
+    let diag = Int(hypot(Double(w), Double(h))) + 2
+    let bins = 2 * diag + 1
+    var votes = [Int32](repeating: 0, count: angles.count * bins)
+    func vote(_ p: Int, _ sign: Int32) {
+        for t in angles.indices {
+            votes[t * bins + Int((xs[p] * cosines[t] + ys[p] * sines[t]).rounded()) + diag] += sign
+        }
+    }
+    for p in xs.indices { vote(p, 1) }
+
+    var alive = [Bool](repeating: true, count: xs.count)
+    var found: [Slant] = []
+    let floor = Int32(2 * minLength)
+    for _ in 0..<300 {
+        var best: Int32 = 0, bestT = 0, bestR = 0
+        for t in angles.indices {
+            let row = t * bins
+            for r in 1..<(bins - 1) {
+                let sum = votes[row + r - 1] + votes[row + r] + votes[row + r + 1]
+                if sum > best { best = sum; bestT = t; bestR = r }
+            }
+        }
+        if best < floor { break }
+        let (nx, ny) = (cosines[bestT], sines[bestT])
+        let offset = Double(bestR - diag)
+        var near: [(s: Double, p: Int)] = []
+        for p in xs.indices where alive[p] {
+            if abs(xs[p] * nx + ys[p] * ny - offset) <= 2.5 { near.append((-xs[p] * ny + ys[p] * nx, p)) }
+        }
+        near.sort { $0.s < $1.s }
+        var consumed = Set<Int>()
+        var start = 0
+        for i in 1...max(1, near.count) {
+            guard i == near.count || near[i].s - near[i - 1].s > gap else { continue }
+            let run = near[start..<i]
+            start = i
+            guard let first = run.first, let last = run.last else { continue }
+            let length = last.s - first.s + 1
+            guard length >= minLength, Double(run.count) / length >= 1.8 else { continue }
+            func onLine(_ s: Double) -> (Double, Double) { (offset * nx - s * ny, offset * ny + s * nx) }
+            let (p0, p1) = (onLine(first.s), onLine(last.s))
+            found.append(Slant(x0: p0.0, y0: p0.1, x1: p1.0, y1: p1.1, width: Double(run.count) / length))
+            for r in run { consumed.insert(r.p) }
+        }
+        for item in (consumed.isEmpty ? near.map(\.p) : Array(consumed)) {
+            alive[item] = false
+            vote(item, -1)
+        }
+    }
+    return found
+}
+
+/// Moves each end of a slanted stroke outward while ink continues within one pixel of the line. Detection
+/// runs on ink with the axis-aligned walls removed, so a stroke loses the stretch where it crosses or meets one.
+/// The end stops `overlap` pixels past the last ink outside `axis`, which puts it on the centre line of the wall
+/// it meets and not on the far side of it.
+func extendedAlongInk(_ s: Slant, ink: [Bool], axis: [Bool], w: Int, h: Int, maxGap: Int, overlap: Double) -> Slant {
+    var out = s
+    let (ux, uy) = s.unit
+    func hit(_ x: Double, _ y: Double, in mask: [Bool], excluding other: [Bool]? = nil) -> Bool {
+        for m in -1...1 {
+            let px = Int((x - Double(m) * uy).rounded()), py = Int((y + Double(m) * ux).rounded())
+            if px >= 0, py >= 0, px < w, py < h, mask[py * w + px], !(other?[py * w + px] ?? false) { return true }
+        }
+        return false
+    }
+    func reach(from x: Double, _ y: Double, dx: Double, dy: Double) -> Double {
+        var last = 0.0, anyLast = 0.0, misses = 0, k = 1.0
+        while k <= s.length, misses <= maxGap {
+            if hit(x + dx * k, y + dy * k, in: ink) {
+                anyLast = k
+                misses = 0
+                if hit(x + dx * k, y + dy * k, in: ink, excluding: axis) { last = k }
+            } else { misses += 1 }
+            k += 1
+        }
+        return last == 0 ? 0 : min(anyLast, last + overlap)
+    }
+    let tail = reach(from: s.x0, s.y0, dx: -ux, dy: -uy)
+    let head = reach(from: s.x1, s.y1, dx: ux, dy: uy)
+    out.x0 -= ux * tail; out.y0 -= uy * tail
+    out.x1 += ux * head; out.y1 += uy * head
+    return out
+}
+
+/// Whether two segments cross when each is stretched by `stretch` of its length at both ends. A hairline X
+/// loses the middle of one stroke to the other, so the pieces found no longer reach the crossing.
+func slantsCross(_ a: Slant, _ b: Slant, stretch: Double = 0.5) -> Bool {
+    func stretched(_ s: Slant) -> (Double, Double, Double, Double) {
+        let (dx, dy) = (s.x1 - s.x0, s.y1 - s.y0)
+        return (s.x0 - stretch * dx, s.y0 - stretch * dy, s.x1 + stretch * dx, s.y1 + stretch * dy)
+    }
+    let (a0, a1, a2, a3) = stretched(a), (b0, b1, b2, b3) = stretched(b)
+    let (rx, ry, sx, sy) = (a2 - a0, a3 - a1, b2 - b0, b3 - b1)
+    let denominator = rx * sy - ry * sx
+    guard abs(denominator) > 1e-9 else { return false }
+    let t = ((b0 - a0) * sy - (b1 - a1) * sx) / denominator
+    let u = ((b0 - a0) * ry - (b1 - a1) * rx) / denominator
+    return t > 0 && t < 1 && u > 0 && u < 1
+}
+
+/// Joins strokes that lie on one line, or on two lines closer than `separation` (a wall drawn as a double line),
+/// when their extents overlap or leave a gap under `gap`.
+func mergedSlants(_ input: [Slant], separation: Double, gap: Double) -> [Slant] {
+    var slants = input.sorted { $0.length > $1.length }
+    var i = 0
+    while i < slants.count {
+        var merged = false
+        for j in (i + 1)..<max(i + 1, slants.count) {
+            let a = slants[i], b = slants[j]
+            let (ux, uy) = a.unit, (vx, vy) = b.unit
+            guard abs(ux * vx + uy * vy) > cos(3 * Double.pi / 180) else { continue }
+            func along(_ x: Double, _ y: Double) -> Double { x * ux + y * uy }
+            func across(_ x: Double, _ y: Double) -> Double { -x * uy + y * ux }
+            let aAcross = across((a.x0 + a.x1) / 2, (a.y0 + a.y1) / 2)
+            let bAcross = across((b.x0 + b.x1) / 2, (b.y0 + b.y1) / 2)
+            let offset = abs(bAcross - aAcross)
+            let aSpan = [along(a.x0, a.y0), along(a.x1, a.y1)].sorted()
+            let bSpan = [along(b.x0, b.y0), along(b.x1, b.y1)].sorted()
+            guard offset <= separation, bSpan[0] - aSpan[1] <= gap, aSpan[0] - bSpan[1] <= gap else { continue }
+            let lo = min(aSpan[0], bSpan[0]), hi = max(aSpan[1], bSpan[1])
+            let base = aAcross + (bAcross - aAcross) * b.length / (a.length + b.length)
+            func point(_ s: Double) -> (Double, Double) { (s * ux - base * uy, s * uy + base * ux) }
+            let (p0, p1) = (point(lo), point(hi))
+            slants[i] = Slant(x0: p0.0, y0: p0.1, x1: p1.0, y1: p1.1, width: max(a.width, b.width) + offset)
+            slants.remove(at: j)
+            merged = true
+            break
+        }
+        if !merged { i += 1 }
+    }
+    return slants
+}
+
+/// Slope of the dominant near-horizontal (or near-vertical) lines: the shear that makes the ink pile into the
+/// fewest rows, found by trying slopes up to about 3 degrees. A page that is straight keeps slope 0 unless
+/// another slope packs the ink at least 10% tighter, so clean plans never change.
+func dominantTilt(_ mask: [Bool], w: Int, h: Int, horizontal: Bool) -> Double {
+    var along: [Int32] = [], across: [Int32] = []
+    for i in 0..<mask.count where mask[i] {
+        along.append(Int32(horizontal ? i % w : i / w))
+        across.append(Int32(horizontal ? i / w : i % w))
+    }
+    let (length, lines) = horizontal ? (w, h) : (h, w)
+    let reach = Int(Double(length) * 0.053) + 1
+    var counts = [Int32](repeating: 0, count: lines + 2 * reach + 1)
+    func sharpness(_ slope: Double) -> Double {
+        for i in counts.indices { counts[i] = 0 }
+        for k in along.indices { counts[Int(across[k]) - Int((Double(along[k]) * slope).rounded()) + reach] += 1 }
+        return counts.reduce(0.0) { $0 + Double($1) * Double($1) }
+    }
+    let straight = sharpness(0)
+    var best = (slope: 0.0, score: straight)
+    for step in -30...30 where step != 0 {
+        let slope = tan(Double(step) * 0.1 * .pi / 180)
+        let score = sharpness(slope)
+        if score > best.score { best = (slope, score) }
+    }
+    return best.score >= 1.1 * straight ? best.slope : 0
+}
+
+/// Like `longRuns`, for lines that follow `tilt` (rise per step along them) instead of one row or column. A run
+/// may wander one pixel off the ideal line, because a rotated 1 px line is not straight on the pixel grid.
+func tiltedRuns(_ m: [Bool], w: Int, h: Int, minLen: Int, horizontal: Bool, tilt: Double) -> [Bool] {
+    if tilt == 0 { return longRuns(m, w: w, h: h, minLen: minLen, horizontal: horizontal) }
+    let (length, lines) = horizontal ? (w, h) : (h, w)
+    let reach = Int(Double(length) * abs(tilt)) + 2
+    var out = [Bool](repeating: false, count: m.count)
+    for line in -reach..<(lines + reach) {
+        var hits: [Int] = []
+        var steps = 0
+        for along in 0...length {
+            var found: [Int] = []
+            if along < length {
+                let center = line + Int((Double(along) * tilt).rounded())
+                for across in (center - 1)...(center + 1) where across >= 0 && across < lines {
+                    let i = horizontal ? across * w + along : along * w + across
+                    if m[i] { found.append(i) }
+                }
+            }
+            if !found.isEmpty {
+                hits += found
+                steps += 1
+                continue
+            }
+            if steps >= minLen { for i in hits { out[i] = true } }
+            hits.removeAll(keepingCapacity: true)
+            steps = 0
+        }
+    }
+    return out
 }

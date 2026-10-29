@@ -249,3 +249,106 @@ private func swing(_ x: Double, _ y: Double, r: Double) -> Arc {
     let withPost = [swing(100, 100, r: 36), swing(120, 90, r: 15), swing(400, 400, r: 15)]
     #expect(dominant(withPost).count == 2)
 }
+
+private func stroke(_ mask: inout [Bool], w: Int, from a: (Int, Int), to b: (Int, Int), thickness: Int = 3) {
+    let steps = max(abs(b.0 - a.0), abs(b.1 - a.1))
+    for i in 0...steps {
+        let x = a.0 + (b.0 - a.0) * i / steps, y = a.1 + (b.1 - a.1) * i / steps
+        for d in 0..<thickness { mask[(y + d - thickness / 2) * w + x] = true }
+    }
+}
+
+@Test func slantedStrokesFindAnglesOffTheAxesAndSkipNearHorizontalLines() {
+    let (w, h) = (300, 300)
+    var mask = [Bool](repeating: false, count: w * h)
+    stroke(&mask, w: w, from: (40, 60), to: (160, 180))
+    stroke(&mask, w: w, from: (40, 250), to: (260, 254))
+    let found = slantedStrokes(mask, w: w, h: h, minLength: 50, gap: 6)
+    #expect(found.count == 1)
+    #expect(abs(found[0].length - 170) < 10)
+    #expect(abs(found[0].width - 2.1) < 0.4)
+}
+
+@Test func slantedStrokesSeparateTwoCrossingLines() {
+    let (w, h) = (300, 300)
+    var mask = [Bool](repeating: false, count: w * h)
+    stroke(&mask, w: w, from: (40, 40), to: (200, 200))
+    stroke(&mask, w: w, from: (40, 200), to: (200, 40))
+    let found = slantedStrokes(mask, w: w, h: h, minLength: 50, gap: 6)
+    #expect(found.count == 2)
+    #expect(slantsCross(found[0], found[1]))
+}
+
+@Test func doubleLineWallsMergeButSeparateWallsStayApart() {
+    let near = [Slant(x0: 0, y0: 0, x1: 100, y1: 100, width: 2), Slant(x0: 4, y0: -4, x1: 104, y1: 96, width: 2)]
+    let merged = mergedSlants(near, separation: 8, gap: 6)
+    #expect(merged.count == 1)
+    #expect(merged[0].width > 2)
+    let far = [near[0], Slant(x0: 40, y0: -40, x1: 140, y1: 60, width: 2)]
+    #expect(mergedSlants(far, separation: 8, gap: 6).count == 2)
+}
+
+@Test func tiltIsEstimatedFromLongLinesAndRunsFollowIt() {
+    let (w, h) = (800, 400)
+    var mask = [Bool](repeating: false, count: w * h)
+    let slope = 0.0175
+    for line in stride(from: 40, to: 300, by: 60) {
+        for x in 0..<w { mask[(line + Int((Double(x) * slope).rounded())) * w + x] = true }
+    }
+    let tilt = dominantTilt(mask, w: w, h: h, horizontal: true)
+    #expect(abs(tilt - slope) < 0.003)
+    #expect(longRuns(mask, w: w, h: h, minLen: 200, horizontal: true).allSatisfy { !$0 })
+    #expect(tiltedRuns(mask, w: w, h: h, minLen: 200, horizontal: true, tilt: tilt).filter { $0 }.count >= 4 * 750)
+
+    var straight = [Bool](repeating: false, count: w * h)
+    for line in stride(from: 40, to: 300, by: 60) { for x in 0..<w { straight[line * w + x] = true } }
+    #expect(dominantTilt(straight, w: w, h: h, horizontal: true) == 0)
+}
+
+private func lineImage(black: [UInt8], tinted: [UInt8], tintedPixels: Int) -> Pixels {
+    let (w, h) = (100, 100)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    for i in 0..<400 {
+        let (r, g, b) = i < tintedPixels ? (tinted[0], tinted[1], tinted[2]) : (black[0], black[1], black[2])
+        rgba[i * 4] = r; rgba[i * 4 + 1] = g; rgba[i * 4 + 2] = b
+    }
+    return Pixels(width: w, height: h, rgba: rgba)
+}
+
+@Test func nearBlackLinesWithColourNoiseCountAsInkOnlyWhenMostDarkPixelsAreTinted() {
+    let noisy = inkMask(lineImage(black: [0, 0, 0], tinted: [0, 0, 7], tintedPixels: 300))
+    #expect(noisy.filter { $0 }.count == 400)
+    let clean = inkMask(lineImage(black: [0, 0, 0], tinted: [0, 0, 7], tintedPixels: 100))
+    #expect(clean.filter { $0 }.count == 300)
+}
+
+private func columnScan(_ ink: [Bool], size: Int) -> InkScan {
+    let off = [Bool](repeating: false, count: size * size)
+    return InkScan(
+        w: size, h: size, n: size * size, mx: size, scale: Double(size) / 2000, rawInk: ink, ink: ink,
+        textBoxes: [], inText: off, longest: 25, hs: off, vs: off, thick: off, compact: off, solidRegions: [])
+}
+
+private func drawRing(_ mask: inout [Bool], size: Int, center: (Int, Int), radius: Double, bar: Bool) {
+    for y in (center.1 - 30)...(center.1 + 30) {
+        for x in (center.0 - 30)...(center.0 + 30) {
+            let d = hypot(Double(x - center.0), Double(y - center.1))
+            if abs(d - radius) <= 1 || (bar && d < radius && abs(y - center.1) <= 1) { mask[y * size + x] = true }
+        }
+    }
+}
+
+@Test func roundColumnIsARingWithClearSpaceAndATableWithChairsIsNot() {
+    let size = 1000
+    var column = [Bool](repeating: false, count: size * size)
+    drawRing(&column, size: size, center: (300, 300), radius: 16, bar: true)
+    let found = columnLayer(columnScan(column, size: size)).items.filter { $0.cls == "pillar" }
+    #expect(found.count == 1)
+    #expect(found.first.map { abs($0.box[2] - 33) <= 3 } == true)
+
+    var table = column
+    for (dx, dy) in [(-24, 0), (24, 0), (0, -24), (0, 24)] {
+        for y in 0..<11 { for x in 0..<11 { table[(300 + dy - 5 + y) * size + 300 + dx - 5 + x] = true } }
+    }
+    #expect(columnLayer(columnScan(table, size: size)).items.filter { $0.cls == "pillar" }.isEmpty)
+}

@@ -1,0 +1,22 @@
+{
+ "image": {"width": 2640, "height": 1005, "origin": "top-left", "unit": "px"},
+ "source": "Round columns of data/plan4/layout.png, listed by looking at the image and enlarged crops of each (checked by the wall layer agent, not by the plan owner). Boxes are the bounding box of the dark ring from connected components, except the first, the twelfth and the thirteenth, whose rings touch a wall line and were estimated from the crop. Plan 4 has no other truth. Same item format as the other truth files: python scripts/score.py output/swift5/plan4/layout.json data/plan4/columns.json",
+ "kind_note": "plain circle and circle with bar are both drawn as columns on this plan; the bar-through-circle ones are larger",
+ "items": [
+  {"class": "pillar", "kind": "circle with bar", "box": [519, 123, 44, 44], "id": null},
+  {"class": "pillar", "kind": "circle with bar", "box": [266, 364, 61, 63], "id": null},
+  {"class": "pillar", "kind": "circle with bar", "box": [510, 364, 63, 63], "id": null},
+  {"class": "pillar", "kind": "circle with bar", "box": [148, 658, 65, 63], "id": null},
+  {"class": "pillar", "kind": "plain circle", "box": [259, 816, 40, 39], "id": null},
+  {"class": "pillar", "kind": "plain circle", "box": [516, 816, 39, 39], "id": null},
+  {"class": "pillar", "kind": "plain circle", "box": [774, 816, 39, 40], "id": null},
+  {"class": "pillar", "kind": "plain circle", "box": [1031, 816, 40, 39], "id": null},
+  {"class": "pillar", "kind": "plain circle", "box": [1287, 816, 39, 40], "id": null},
+  {"class": "pillar", "kind": "plain circle", "box": [1545, 816, 39, 39], "id": null},
+  {"class": "pillar", "kind": "plain circle", "box": [1803, 816, 39, 39], "id": null},
+  {"class": "pillar", "kind": "plain circle", "box": [2023, 781, 33, 33], "id": null},
+  {"class": "pillar", "kind": "circle with bar", "box": [2261, 780, 35, 35], "id": null},
+  {"class": "pillar", "kind": "plain circle", "box": [2031, 524, 48, 48], "id": null},
+  {"class": "pillar", "kind": "circle with bar", "box": [2456, 425, 94, 93], "id": null}
+ ]
+}
