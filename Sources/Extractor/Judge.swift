@@ -267,7 +267,7 @@ private func runMlxJudge(
     from mlx_vlm import load, generate
     from mlx_vlm.prompt_utils import apply_chat_template
     from mlx_vlm.utils import load_config
-    model_id = "mlx-community/Qwen3.5-9B-MLX-4bit"
+    model_id = os.environ.get("FP_JUDGE_MODEL", "mlx-community/Qwen3.5-9B-MLX-4bit")
     config = load_config(model_id)
     model, proc = load(model_id)
     tasks = json.load(open(sys.argv[1]))
