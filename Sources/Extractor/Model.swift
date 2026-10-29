@@ -26,11 +26,14 @@ struct Item: Codable {
     var suggestedId: String?
     var fixRule: String?
     var fixReason: String?
+    /// Whether an object is something to sit on or at (chairs, a table with chairs, audience seating).
+    /// Set only when the judge answered; absent means unknown.
+    var seat: Bool?
 
     enum CodingKeys: String, CodingKey {
         case cls = "class", box, area, fillRgb = "fill_rgb", legendRgb = "legend_rgb", text, id
         case needsReview = "needs_review", reason, polygon, source, fillBox = "fill_box"
-        case suggestedId = "suggested_id", fixRule = "fix_rule", fixReason = "fix_reason"
+        case suggestedId = "suggested_id", fixRule = "fix_rule", fixReason = "fix_reason", seat
     }
 
     var rect: CGRect { CGRect(x: box[0], y: box[1], width: box[2], height: box[3]) }
@@ -57,6 +60,7 @@ struct Item: Codable {
         try c.encodeIfPresent(suggestedId, forKey: .suggestedId)
         try c.encodeIfPresent(fixRule, forKey: .fixRule)
         try c.encodeIfPresent(fixReason, forKey: .fixReason)
+        try c.encodeIfPresent(seat, forKey: .seat)
     }
 }
 

@@ -53,6 +53,8 @@ struct JudgeReport: Codable {
     }
 }
 
+let seatLabels: Set<String> = ["table_with_chairs", "audience_seating"]
+
 let structuralGroupLabels = [
     "table_with_chairs", "audience_seating", "stairs", "door", "pillar", "wall", "noise"
 ]

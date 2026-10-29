@@ -152,6 +152,12 @@ public enum ExtractTool {
             gapIdsByClass: gapIdsByClass, mode: opts.judgeMode, outDir: outDir
         )
 
+        for entry in judgeRep.entries where entry.accepted && items.indices.contains(entry.itemIndex) {
+            if items[entry.itemIndex].cls == "object", let choice = entry.judgeChoice {
+                items[entry.itemIndex].seat = seatLabels.contains(choice)
+            }
+        }
+
         let swift4Rep = report(items)
         let result = Result(image: ImageInfo(width: w, height: h), legend: entries, items: items, report: swift4Rep)
 
