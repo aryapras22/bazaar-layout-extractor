@@ -75,7 +75,7 @@ struct RenderSwift4 {
         }
 
         if paths.isEmpty {
-            let defaults = ["output/swift4/plan1", "output/swift4/plan2", "output/swift4/plan3"]
+            let defaults = ["output/swift5/plan1", "output/swift5/plan2", "output/swift5/plan3"]
             let existing = defaults.filter { FileManager.default.fileExists(atPath: ($0 as NSString).appendingPathComponent("layout.json")) }
             if existing.isEmpty {
                 printUsage()

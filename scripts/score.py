@@ -1,6 +1,6 @@
-"""Score extract_swift4 output against the truth files.
+"""Score fp-extract output against the truth files.
 
-usage: score.py [layout.json truth.json]...   (default: the swift4 outputs for plans 1 to 3, 5 and 6, run from the project root)
+usage: score.py [layout.json truth.json]...   (default: the swift5 outputs for plans 1 to 3, 5 and 6, run from the project root)
 
 Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Tiles match on box and ID only,
 and class names are counted separately. Walls are thin and fragmented, so they use pixel coverage.
@@ -11,11 +11,11 @@ import sys
 import numpy as np
 
 PAIRS = [
-    ("output/swift4/plan1/layout.json", "data/plan1/truth.json"),
-    ("output/swift4/plan2/layout.json", "data/plan2/truth.json"),
-    ("output/swift4/plan3/layout.json", "data/plan3/truth.json"),
-    ("output/swift4/plan5/layout.json", "data/plan5/truth.json"),
-    ("output/swift4/plan6/layout.json", "data/plan6/truth.json"),
+    ("output/swift5/plan1/layout.json", "data/plan1/truth.json"),
+    ("output/swift5/plan2/layout.json", "data/plan2/truth.json"),
+    ("output/swift5/plan3/layout.json", "data/plan3/truth.json"),
+    ("output/swift5/plan5/layout.json", "data/plan5/truth.json"),
+    ("output/swift5/plan6/layout.json", "data/plan6/truth.json"),
 ]
 NON_TILE = {"object", "wall", "pillar", "door", "symbol", "boundary"}
 WALL_SLACK = 6

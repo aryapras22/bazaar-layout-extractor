@@ -16,6 +16,23 @@ let package = Package(
             path: "Sources/fp-fix",
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
+        .target(
+            name: "Extractor",
+            path: "Sources/Extractor",
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .executableTarget(
+            name: "fp-extract",
+            dependencies: ["Extractor"],
+            path: "Sources/fp-extract",
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .testTarget(
+            name: "ExtractorTests",
+            dependencies: ["Extractor"],
+            path: "Tests/ExtractorTests",
+            swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
         .testTarget(
             name: "FloorPlanCoreTests",
             dependencies: ["FloorPlanCore"],

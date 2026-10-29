@@ -1,0 +1,343 @@
+import CoreGraphics
+import Foundation
+import ImageIO
+import UniformTypeIdentifiers
+import Vision
+
+struct LegendLayerOutput {
+    var items: [Item]
+    var labelledClasses: Set<String>
+    var colorReasons: [[String]]
+}
+
+func rebuildLabelledReasons(_ items: inout [Item], labelledClasses: Set<String>, colorReasons: [[String]]) {
+    var counts: [String: Int] = [:]
+    for item in items where labelledClasses.contains(item.cls) {
+        if let id = item.id { counts[id, default: 0] += 1 }
+    }
+    for i in items.indices {
+        var reasons = i < colorReasons.count ? colorReasons[i] : []
+        if labelledClasses.contains(items[i].cls) {
+            if let id = items[i].id {
+                if counts[id, default: 0] > 1 { reasons.append("duplicate id") }
+            } else if !items[i].text.isEmpty {
+                reasons.append("text \"\(items[i].text)\" is not a readable id")
+            } else {
+                reasons.append("no label found")
+            }
+        }
+        items[i].needsReview = !reasons.isEmpty
+        items[i].reason = reasons.isEmpty ? nil : reasons.joined(separator: "; ")
+    }
+}
+
+func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async throws -> LegendLayerOutput {
+    let (w, h) = (px.width, px.height)
+    let scale = Double(max(w, h)) / 2000
+    let r = max(1, Int((3 * scale).rounded()))
+    let minArea = Int(400 * scale * scale)
+    let maxHole = Int(2000 * scale * scale)
+    let seamLength = Int(20 * scale)
+    let canvas = CGRect(x: 0, y: 0, width: w, height: h)
+    let grid = classify(px, legend: legend)
+    let outlines = morph(darkPixels(px, below: 60), w: w, h: h, rx: 1, ry: 1, erode: false)
+    let faces = components(outlines.map { !$0 }, w: w, h: h, eight: false)
+    var faceOf = [Int32](repeating: -1, count: w * h)
+    for (j, face) in faces.enumerated() { for i in face.pixels { faceOf[i] = Int32(j) } }
+
+    struct Found {
+        var item: Item
+        let cls: Int
+        let colorReasons: [String]
+        let small: Bool
+    }
+    var found: [Found] = []
+
+    for (k, entry) in legend.enumerated() {
+        let whole = fillHoles(grid.map { $0 == Int16(k) }, w: w, h: h, maxHole: maxHole, seamLength: seamLength)
+        let mask = morph(whole, w: w, h: h, rx: r, ry: r, erode: true)
+        for reg in components(mask, w: w, h: h, eight: false) {
+            // The mask was eroded by r, so the size test uses the restored box a tile of this size would have.
+            // Tiles that only pass that way are kept later if their class turns out to carry IDs.
+            guard (reg.width + 2 * r) * (reg.height + 2 * r) >= minArea, solidity(reg, w: w) >= minSolidity else { continue }
+            let small = reg.area < minArea
+            let rect = CGRect(x: reg.minX - r, y: reg.minY - r, width: reg.width + 2 * r, height: reg.height + 2 * r)
+                .intersection(canvas)
+            var reasons: [String] = []
+
+            let median = lab(medianRGB(px, reg.pixels))
+            let ranked = legend.enumerated()
+                .map { (index: $0.offset, d: distance(median, $0.element.lab)) }
+                .sorted { $0.d < $1.d }
+            if ranked.count > 1, ranked[1].d - ranked[0].d < marginDeltaE {
+                reasons.append("color is nearly as close to \"\(legend[ranked[1].index].name)\"")
+            }
+            if ranked[0].index != k {
+                reasons.append("median color is closer to \"\(legend[ranked[0].index].name)\"")
+            }
+
+            var tileArea = 0
+            for y in Int(rect.minY)..<Int(rect.maxY) {
+                for x in Int(rect.minX)..<Int(rect.maxX) where grid[y * w + x] == Int16(k) { tileArea += 1 }
+            }
+            guard Double(tileArea) >= minColorCover * rect.width * rect.height else { continue }
+
+            let raw = try await readLabel(image, in: rect)
+            let label = raw.flatMap { cleanLabel($0) }
+            let rgb = [Int(entry.rgb.0), Int(entry.rgb.1), Int(entry.rgb.2)]
+            found.append(Found(
+                item: Item(
+                    cls: entry.name, box: box(rect), area: tileArea, fillRgb: rgb, legendRgb: rgb,
+                    text: raw ?? "", id: label, needsReview: !reasons.isEmpty,
+                    reason: reasons.isEmpty ? nil : reasons.joined(separator: "; "),
+                    polygon: tilePolygon(reg, rect: rect, faces: faces, faceOf: faceOf, w: w, epsilon: 2 * scale)),
+                cls: k, colorReasons: reasons, small: small))
+        }
+    }
+
+    var labelledIndices = Set<Int>()
+    for k in legend.indices {
+        let members = found.filter { $0.cls == k }
+        let withLabel = members.filter { $0.item.id != nil }.count
+        if !members.isEmpty, withLabel * 2 >= members.count { labelledIndices.insert(k) }
+    }
+    let labelledNames = Set(labelledIndices.map { legend[$0].name })
+    found = found.filter { !$0.small || labelledIndices.contains($0.cls) }
+    var items: [Item] = []
+    var colorReasons: [[String]] = []
+    for var f in found {
+        if !labelledIndices.contains(f.cls) {
+            f.item.id = nil
+            f.item.text = ""
+        }
+        items.append(f.item)
+        colorReasons.append(f.colorReasons)
+    }
+    rebuildLabelledReasons(&items, labelledClasses: labelledNames, colorReasons: colorReasons)
+    return LegendLayerOutput(items: items, labelledClasses: labelledNames, colorReasons: colorReasons)
+}
+
+func makeMaskedUpscaledCrop(_ image: CGImage, item: Item, scale: Int) -> CGImage? {
+    let bx = item.box[0], by = item.box[1], bw = item.box[2], bh = item.box[3]
+    let bounds = CGRect(x: 0, y: 0, width: image.width, height: image.height)
+    let srcRect = CGRect(x: bx, y: by, width: bw, height: bh).intersection(bounds)
+    guard srcRect.width >= 2, srcRect.height >= 2, let sub = image.cropping(to: srcRect) else { return nil }
+    let pad = max(2, Int((0.2 * Double(min(bw, bh))).rounded()))
+    let cw = (Int(srcRect.width) + 2 * pad) * scale
+    let ch = (Int(srcRect.height) + 2 * pad) * scale
+    guard let ctx = CGContext(
+        data: nil, width: cw, height: ch, bitsPerComponent: 8, bytesPerRow: 0,
+        space: CGColorSpace(name: CGColorSpace.sRGB)!,
+        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+    ) else { return nil }
+    ctx.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
+    ctx.fill(CGRect(x: 0, y: 0, width: cw, height: ch))
+    ctx.saveGState()
+    if let poly = item.polygon, poly.count >= 3 {
+        let path = CGMutablePath()
+        for (idx, pt) in poly.enumerated() {
+            let px = CGFloat(Double(pt[0]) - Double(srcRect.minX) + Double(pad)) * CGFloat(scale)
+            let py = CGFloat(Double(srcRect.height) - (Double(pt[1]) - Double(srcRect.minY)) + Double(pad)) * CGFloat(scale)
+            if idx == 0 { path.move(to: CGPoint(x: px, y: py)) }
+            else { path.addLine(to: CGPoint(x: px, y: py)) }
+        }
+        path.closeSubpath()
+        ctx.addPath(path)
+        ctx.clip()
+    }
+    ctx.interpolationQuality = .high
+    ctx.draw(sub, in: CGRect(
+        x: pad * scale, y: pad * scale,
+        width: Int(srcRect.width) * scale, height: Int(srcRect.height) * scale
+    ))
+    ctx.restoreGState()
+    return ctx.makeImage()
+}
+
+// Booths drawn as light boxes on a coloured zone have no legend colour of their own, so they are
+// found as closed light regions of booth size and kept only when an ID reads inside.
+func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item]) async -> [Item] {
+    let (w, h) = (px.width, px.height)
+    let mx = max(w, h)
+    let scale = Double(mx) / 2000
+    let outlines = morph(darkPixels(px, below: 60), w: w, h: h, rx: 1, ry: 1, erode: false)
+    let minSide = Int(0.008 * Double(mx)), maxSide = Int(0.07 * Double(mx))
+    var items: [Item] = []
+    for face in components(outlines.map { !$0 }, w: w, h: h, eight: false) {
+        guard min(face.width, face.height) >= minSide, max(face.width, face.height) <= maxSide,
+              face.minX > 0, face.minY > 0, face.maxX < w - 1, face.maxY < h - 1,
+              face.fill >= 0.6, face.fill < 0.98
+        else { continue }
+        let light = face.pixels.filter { i in
+            let c = px.rgb(i % w, i / w)
+            return min(c.0, min(c.1, c.2)) >= 235
+        }.count
+        guard Double(light) >= 0.7 * Double(face.area) else { continue }
+        let rect = CGRect(x: face.minX, y: face.minY, width: face.width, height: face.height)
+            .insetBy(dx: -2 * scale, dy: -2 * scale)
+        guard !existing.contains(where: { boxIoU($0.box, box(rect)) >= 0.3 }) else { continue }
+        var tile = outsideItem("Booth", rect, review: false, reason: nil)
+        guard let crop = makeMaskedUpscaledCrop(image, item: tile, scale: 3),
+              let found = try? await makeTextRequest().perform(on: crop),
+              let read = found.sorted(by: { $0.confidence > $1.confidence })
+                  .compactMap({ obs in cleanLabel(obs.transcript).map { (obs.transcript, $0) } }).first
+        else { continue }
+        tile.cls = "Booth " + String(read.1.prefix { $0.isLetter })
+        tile.fillRgb = [255, 255, 255]
+        tile.legendRgb = [255, 255, 255]
+        tile.text = read.0
+        tile.id = read.1
+        tile.source = "outlined"
+        items.append(tile)
+    }
+    return items
+}
+
+func rereadTiles(
+    _ image: CGImage,
+    items: inout [Item],
+    labelledClasses: Set<String>,
+    colorReasons: [[String]],
+    outDir: URL,
+    apply: Bool,
+    ruleCounts: inout [String: Int]
+) async throws -> RereadStats {
+    let idShorts = items.filter { $0.id != nil }.map(\.shortSide).sorted()
+    let medianIdShort = idShorts.isEmpty ? 0 : idShorts[idShorts.count / 2]
+    let blankIndices = items.indices.filter { i in
+        guard items[i].id == nil else { return false }
+        if labelledClasses.contains(items[i].cls) { return true }
+        return medianIdShort > 0 && (0.5...2.5).contains(items[i].shortSide / medianIdShort)
+    }
+    let cropsDir = outDir.appendingPathComponent("crops")
+    try FileManager.default.createDirectory(at: cropsDir, withIntermediateDirectories: true)
+    let bounds = CGRect(x: 0, y: 0, width: image.width, height: image.height)
+    var dumped = 0
+    for idx in blankIndices {
+        let b = items[idx].box
+        if let rawCrop = image.cropping(to: CGRect(x: b[0], y: b[1], width: b[2], height: b[3]).intersection(bounds)) {
+            let safeCls = items[idx].cls.replacingOccurrences(of: " ", with: "_")
+            let name = "tile_\(idx)_\(safeCls)_\(b[0])_\(b[1]).png"
+            savePNG(rawCrop, to: cropsDir.appendingPathComponent(name))
+            dumped += 1
+        }
+    }
+
+    guard !blankIndices.isEmpty else {
+        return RereadStats(
+            blankTilesBefore: 0, cropsDumped: dumped, maskedCropRecovered: 0,
+            pageTextRecovered: 0, pageTextAdditionalRecovered: 0, totalRecovered: 0, applied: apply
+        )
+    }
+
+    var maskedHits: [Int: (raw: String, cleaned: String?)] = [:]
+    for idx in blankIndices {
+        var bestRaw: String?
+        var bestClean: String?
+        var bestScore = -1.0
+        for scale in [2, 3] {
+            guard let up = makeMaskedUpscaledCrop(image, item: items[idx], scale: scale) else { continue }
+            for obs in try await makeTextRequest().perform(on: up) {
+                let raw = obs.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !raw.isEmpty else { continue }
+                let cleaned = cleanLabel(raw)
+                let score = (cleaned != nil ? 10.0 : 0.0) + Double(obs.confidence)
+                if score > bestScore {
+                    bestScore = score
+                    bestRaw = raw
+                    bestClean = cleaned
+                }
+            }
+        }
+        if let raw = bestRaw {
+            maskedHits[idx] = (raw, bestClean)
+        }
+    }
+
+    let labelledShorts = items.filter { labelledClasses.contains($0.cls) }.map(\.shortSide).sorted()
+    let medianShort = labelledShorts.isEmpty ? 40.0 : labelledShorts[labelledShorts.count / 2]
+    var pageReq = makeTextRequest()
+    pageReq.minimumTextHeightFraction = Float(max(0.001, 0.15 * medianShort / Double(image.height)))
+    let pageObs = try await pageReq.perform(on: image)
+    let pageSize = CGSize(width: image.width, height: image.height)
+
+    // Assign each page-level text box to the single labelled tile that owns its center pixel.
+    var pageHits: [Int: (raw: String, cleaned: String?, score: Double)] = [:]
+    let labelledItemIndices = items.indices.filter { labelledClasses.contains(items[$0].cls) }
+    for obs in pageObs {
+        let raw = obs.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !raw.isEmpty else { continue }
+        let b = obs.boundingBox.toImageCoordinates(pageSize, origin: .upperLeft)
+        let center = CGPoint(x: b.midX, y: b.midY)
+        var owner: Int?
+        var ownerArea = Int.max
+        for ti in labelledItemIndices where items[ti].rect.contains(center) {
+            if let poly = items[ti].polygon, poly.count >= 3, !pointInPolygon(center, poly) {
+                continue
+            }
+            if items[ti].area < ownerArea {
+                ownerArea = items[ti].area
+                owner = ti
+            }
+        }
+        guard let ti = owner else { continue }
+        let cleaned = cleanLabel(raw)
+        let score = (cleaned != nil ? 10.0 : 0.0) + Double(obs.confidence)
+        if score > (pageHits[ti]?.score ?? -1.0) {
+            pageHits[ti] = (raw, cleaned, score)
+        }
+    }
+
+    var maskedRecoveredCount = 0
+    var pageRecoveredCount = 0
+    var pageAdditionalCount = 0
+    var totalRecoveredCount = 0
+
+    for idx in blankIndices {
+        let mHit = maskedHits[idx]
+        let pHit = pageHits[idx]
+        let mValid = mHit?.cleaned != nil
+        let pValid = pHit?.cleaned != nil
+        if mValid { maskedRecoveredCount += 1 }
+        if pValid { pageRecoveredCount += 1 }
+        if !mValid && pValid { pageAdditionalCount += 1 }
+
+        let chosen: (raw: String, cleaned: String?)?
+        if mValid {
+            chosen = mHit
+        } else if let p = pHit, pValid {
+            chosen = (p.raw, p.cleaned)
+        } else if let m = mHit {
+            chosen = m
+        } else if let p = pHit {
+            chosen = (p.raw, p.cleaned)
+        } else {
+            chosen = nil
+        }
+
+        if let chosen, chosen.cleaned != nil {
+            totalRecoveredCount += 1
+        }
+        if apply, let chosen {
+            items[idx].text = chosen.raw
+            items[idx].id = chosen.cleaned
+            if chosen.cleaned != nil {
+                ruleCounts["reread-tile", default: 0] += 1
+            }
+        }
+    }
+
+    if apply {
+        rebuildLabelledReasons(&items, labelledClasses: labelledClasses, colorReasons: colorReasons)
+    }
+
+    return RereadStats(
+        blankTilesBefore: blankIndices.count,
+        cropsDumped: dumped,
+        maskedCropRecovered: maskedRecoveredCount,
+        pageTextRecovered: pageRecoveredCount,
+        pageTextAdditionalRecovered: pageAdditionalCount,
+        totalRecovered: totalRecoveredCount,
+        applied: apply
+    )
+}

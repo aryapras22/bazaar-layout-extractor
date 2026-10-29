@@ -1,4 +1,4 @@
-# Handoff: floor plan extractor, swift 4
+# Handoff: floor plan extractor, swift 5
 
 Folder: `/Users/arya/Projects/ADA/bazaar/floor-plan-extractor/legend-only`. It is a git repo (initialised this session, local only, nothing pushed).
 
@@ -6,7 +6,7 @@ Folder: `/Users/arya/Projects/ADA/bazaar/floor-plan-extractor/legend-only`. It i
 
 Read a floor plan image and its legend image. Find each booth tile by legend colour, read its ID, extract walls, doors, pillars, and objects outside the legend, and write `layout.json`, `report_diff.json`, `overlay.png`, and `render.png`. An optional on-device MLX VLM judge (`--judge mlx`) classifies grouped objects and unresolved tiles once per group. The judge writes only to `report_diff.json`. It does not change `layout.json`.
 
-Swift 4 (`extractor/extract_swift4.swift` + `extractor/Judge.swift`) and `extractor/render_swift4.swift` are the main tools. Swift 1, swift 2, the older Python notebooks, and the SAM3 experiment are archived in `.archived`.
+Swift 5 is the same extractor as swift 4 split into a SwiftPM library (`Sources/Extractor`) with a thin executable (`fp-extract`) and tests. On all six plans its `layout.json` and `report_diff.json` are byte-identical to the last swift 4 build. `extractor/render_swift4.swift` is still the renderer. The single-file swift 4 sources and older tools are archived in `.archived`. Some JSON keys keep their swift 3 and swift 4 names (`swift4_items_per_class`) so outputs stay identical.
 
 ## What is in the folder
 
@@ -15,14 +15,18 @@ data/plan{1,2,3}/      layout.png, legend.png, truth.json (inputs and hand-check
 data/plan4/            more-market: source.png (rotated scan), layout.png, legend.png; no truth yet (scripts/make_plan4.py)
 data/plan5/            cosmo: source.pdf (vector), layout.png, legend.png, truth.json generated from the PDF (scripts/make_pdf_plans.py, scripts/make_plan5_truth.py)
 data/plan6/            women-fest: source.pdf, layout.png, legend.png, truth.json generated from the PDF (scripts/make_plan6_truth.py)
-extractor/             extract_swift4.swift, Judge.swift, render_swift4.swift
-scripts/               score.py (scorer), make_pdf.py (writes output/swift4/layouts.pdf)
+extractor/             render_swift4.swift (renderer, compiled by hand into bin/)
+scripts/               score.py (scorer), make_pdf.py (writes output/swift5/layouts.pdf), plan and truth generators
 notebooks/             render_swift4.ipynb (predates this session's changes)
-output/swift4/plan*/   layout.json, report_diff.json, overlay.png, render.png, crops/, judge_crops/ (generated, gitignored)
-bin/                   compiled extract_swift4 and render_swift4 (gitignored)
-Package.swift, Sources/, Tests/   separate SwiftPM package for ID repair (fp-fix); 9 tests pass
+output/swift5/plan*/   layout.json, report_diff.json, overlay.png, render.png, crops/, judge_crops/ (generated, gitignored)
+bin/                   compiled render_swift4 (gitignored); fp-extract is built into .build/release/
+Package.swift         SwiftPM package, macOS 27
+Sources/Extractor/     the extractor by stage: Imaging, Text, Model, Legend, Tiles, Outside, Regroup, IdRepair, Judge, Tool
+Sources/fp-extract/    four-line executable around ExtractTool.run
+Sources/FloorPlanCore/, Sources/fp-fix/   older ID-repair library and tool; duplicates part of IdRepair, not merged yet
+Tests/                 ExtractorTests (7) and FloorPlanCoreTests (9); all pass
 LEARNING/              notes on tile detection, polygon-masked OCR with monotone bands, and the MLX VLM benchmark
-.archived/             swift 1 to 3, old notebooks and outputs, SAM3 experiment (mostly untracked)
+.archived/             swift 1 to 4 sources, old notebooks and outputs, SAM3 experiment (mostly untracked)
 ```
 
 Plan 1 is 2349 x 2871 (355 truth items), plan 2 is 1750 x 2106 (255), plan 3 is 3413 x 988 (124), plan 6 is 2304 x 2520 (281). `scripts/score.py` is the source of every number below. Plans 4 to 6 were not used to tune anything, and swift 4 does badly on them: it finds few tiles and reads no IDs, because their tiles do not match the legend colours (plan 4), the legend lists zones not booths (plans 5 and 6), or the booths are white boxes (plan 6). Plan 6's truth is generated from its PDF vector data. Plan 5 (cosmo) draws most booths another way and still needs a truth approach. `cluster.ipynb`, `map.json`, and `map.svg` in the root belong to a separate clustering experiment, not to swift 4.
@@ -32,19 +36,20 @@ Plan 1 is 2349 x 2871 (355 truth items), plan 2 is 1750 x 2106 (255), plan 3 is 
 Run everything from the project root.
 
 ```
-swiftc -O -parse-as-library extractor/extract_swift4.swift extractor/Judge.swift -o bin/extract_swift4
+swift build -c release --product fp-extract
 swiftc -O -parse-as-library extractor/render_swift4.swift -o bin/render_swift4
 
-bin/extract_swift4 data/plan1/layout.png data/plan1/legend.png --out output/swift4/plan1 --feature-print
-bin/extract_swift4 data/plan2/layout.png data/plan2/legend.png --out output/swift4/plan2 --feature-print
-bin/extract_swift4 data/plan3/layout.png data/plan3/legend.png --out output/swift4/plan3 --feature-print
+for n in 1 2 3 4 5 6; do
+  .build/release/fp-extract data/plan$n/layout.png data/plan$n/legend.png --out output/swift5/plan$n --feature-print
+done
 bin/render_swift4
 
 /Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/make_pdf.py
 /Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/score.py
+swift test
 ```
 
-`bin/render_swift4` with no arguments renders the three default output folders.
+`bin/render_swift4` with no arguments renders the three default output folders (plans 1 to 3).
 
 Add `--judge mlx` for the VLM pass (25 s, 22 s, and 16 s for plans 1 to 3, conda env `floor-plan-vlm-bench`). If that env path is missing, the judge records `missing-env-floor-plan-vlm-bench` in `report_diff.json` and the run carries on without an error. The `--judge fm` mode only compiles with Swift 6.4 or later.
 
@@ -73,6 +78,8 @@ Notes on reading the table:
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session
+
+14. Swift 5: the 2,433-line `extract_swift4.swift` is split by line range, with no code edits except the entry point, into `Sources/Extractor` (ten files, internal access), run through a public `ExtractTool.run(arguments:)`. Outputs for all six plans are byte-identical to swift 4. Seven new tests cover label cleaning, hole filling, the three ID repairs, class prefix dominance and the legend swatch test. The default output folder is `output/swift5/plan1`.
 
 11. Plan-wide ID repair (`repairIdsByPrefix`), as suggestions only (`suggested_id`, `id` is never overwritten): a two-letter prefix whose last letter looks like a digit and that is less common than its shortened form becomes the zero-padded ID (`NO4` to `N04`, 9 on plan 5); a prefix under a third as common as a one-letter-different neighbour (C and G, B and E) takes the neighbour (`CD28` to `GD28`); a duplicated ID of full series width tries single-digit swaps (1 and 7, 3 and 8 and so on) and is suggested only if exactly one lands on a missing number. Plan 5 gains 8 correct suggestions and 1 wrong (`FO1` for `F07`); plan 4's goods and food booths with a valid ID go from 26 and 7 to 29 and 9. Plans 1 to 3 and 6 get no new suggestions.
 12. `computeClassPrefixes` now needs the leading prefix to cover at least 70% of a class's IDs. Before, a class holding many prefixes (plan 5's countries) got one arbitrary prefix and `id-pattern` flagged 199 tiles for review.
