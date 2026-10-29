@@ -162,5 +162,35 @@ func columnLayer(_ s: InkScan) -> (items: [Item], hollow: [Bool]) {
         let rect = CGRect(x: reg.minX, y: reg.minY, width: reg.width, height: reg.height)
         items.append(outsideItem("pillar", rect, review: true, reason: "hollow square, confirm it is a pillar"))
     }
+
+    // Round columns are rings, often with a bar across, so the bar splits the inside into two holes that the
+    // square pass may leave open. A disc fills pi/4 of its box, which the square pass rejects by design; here
+    // that fill, a square box, an empty inside and clear space around it are the test. A round table has chairs
+    // within half a diameter; a column stands alone or against a wall.
+    let roomy = fillHoles(loopInk, w: w, h: h, maxHole: Int(pow(0.05 * Double(mx), 2)), seamLength: longest)
+    let discs = morph(morph(roomy, w: w, h: h, rx: coreRadius, ry: coreRadius, erode: true),
+                      w: w, h: h, rx: coreRadius, ry: coreRadius, erode: false)
+    for reg in components(discs, w: w, h: h, eight: true) {
+        let side = Double(max(reg.width, reg.height))
+        guard side >= 0.008 * Double(mx), side <= 0.04 * Double(mx),
+              side <= 1.12 * Double(min(reg.width, reg.height)),
+              (0.72...0.84).contains(reg.fill),
+              reg.pixels.filter({ loopInk[$0] }).count * 2 < reg.area else { continue }
+        let center = CGPoint(x: Double(reg.minX + reg.maxX) / 2, y: Double(reg.minY + reg.maxY) / 2)
+        if textBoxes.contains(where: { $0.contains(center) }) { continue }
+        if items.contains(where: { $0.cls == "pillar" && $0.rect.contains(center) }) { continue }
+        let radius = side / 2
+        var ring = 0, crowded = 0
+        for y in max(0, Int(center.y - 1.5 * radius))...min(h - 1, Int(center.y + 1.5 * radius)) {
+            for x in max(0, Int(center.x - 1.5 * radius))...min(w - 1, Int(center.x + 1.5 * radius)) {
+                let d = hypot(Double(x) - Double(center.x), Double(y) - Double(center.y))
+                if d > radius + 2, d <= 1.5 * radius { ring += 1; if loopInk[y * w + x] { crowded += 1 } }
+            }
+        }
+        if Double(crowded) > 0.15 * Double(ring) { continue }
+        for i in reg.pixels { hollow[i] = true }
+        let rect = CGRect(x: reg.minX, y: reg.minY, width: reg.width, height: reg.height)
+        items.append(outsideItem("pillar", rect, review: true, reason: "round column, confirm it is a pillar"))
+    }
     return (items, hollow)
 }

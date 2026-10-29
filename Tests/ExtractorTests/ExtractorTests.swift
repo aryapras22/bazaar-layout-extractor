@@ -258,3 +258,34 @@ private func stroke(_ mask: inout [Bool], w: Int, from a: (Int, Int), to b: (Int
     let far = [near[0], Slant(x0: 40, y0: -40, x1: 140, y1: 60, width: 2)]
     #expect(mergedSlants(far, separation: 8, gap: 6).count == 2)
 }
+
+private func columnScan(_ ink: [Bool], size: Int) -> InkScan {
+    let off = [Bool](repeating: false, count: size * size)
+    return InkScan(
+        w: size, h: size, n: size * size, mx: size, scale: Double(size) / 2000, rawInk: ink, ink: ink,
+        textBoxes: [], inText: off, longest: 25, hs: off, vs: off, thick: off, compact: off, solidRegions: [])
+}
+
+private func drawRing(_ mask: inout [Bool], size: Int, center: (Int, Int), radius: Double, bar: Bool) {
+    for y in (center.1 - 30)...(center.1 + 30) {
+        for x in (center.0 - 30)...(center.0 + 30) {
+            let d = hypot(Double(x - center.0), Double(y - center.1))
+            if abs(d - radius) <= 1 || (bar && d < radius && abs(y - center.1) <= 1) { mask[y * size + x] = true }
+        }
+    }
+}
+
+@Test func roundColumnIsARingWithClearSpaceAndATableWithChairsIsNot() {
+    let size = 1000
+    var column = [Bool](repeating: false, count: size * size)
+    drawRing(&column, size: size, center: (300, 300), radius: 16, bar: true)
+    let found = columnLayer(columnScan(column, size: size)).items.filter { $0.cls == "pillar" }
+    #expect(found.count == 1)
+    #expect(found.first.map { abs($0.box[2] - 33) <= 3 } == true)
+
+    var table = column
+    for (dx, dy) in [(-24, 0), (24, 0), (0, -24), (0, 24)] {
+        for y in 0..<11 { for x in 0..<11 { table[(300 + dy - 5 + y) * size + 300 + dx - 5 + x] = true } }
+    }
+    #expect(columnLayer(columnScan(table, size: size)).items.filter { $0.cls == "pillar" }.isEmpty)
+}
