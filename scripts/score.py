@@ -4,8 +4,10 @@ usage: score.py [layout.json truth.json]...   (default: the swift5 outputs for p
 
 Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Tiles match on box and ID only,
 and class names are counted separately. Walls are thin and fragmented, so they use pixel coverage.
+Objects leave out single chairs (kind "chair"); those are scored as "chair" against data/planN/seats.json when it exists.
 """
 import json
+import os
 import sys
 
 import cv2
@@ -98,13 +100,25 @@ def score(layout_path, truth_path):
 
     for cls in ("object", "pillar", "door"):
         t = [i for i in truth_items if i["class"] == cls]
-        e = [i for i in engine_items if i["class"] == cls]
+        e = [i for i in engine_items if i["class"] == cls and i.get("kind") != "chair"]
         pairs = greedy_match(t, e, 0.3)
         print(row(cls, len(pairs), len(t), len(e)))
         if cls == "object" and t:
             judged = [(ti, ei) for ti, ei in pairs if "seat" in e[ei]]
             right = sum(1 for ti, ei in judged if e[ei]["seat"] == (t[ti].get("label") in SEAT_LABELS))
             print(f"  seat flag right {right}/{len(judged)} judged, {len(pairs) - len(judged)} matched objects not judged")
+            negatives = [(ti, ei) for ti, ei in judged if t[ti].get("label") not in SEAT_LABELS]
+            print(f"  seat flag on matched negatives {sum(1 for ti, ei in negatives if not e[ei]['seat'])}/{len(negatives)} right")
+            matched = {ei for _, ei in pairs}
+            extra = [i for k, i in enumerate(e) if k not in matched]
+            print(f"  unmatched objects flagged seat {sum(1 for i in extra if i.get('seat'))}/{len(extra)}")
+
+    seats_path = truth_path.replace("truth.json", "seats.json")
+    if os.path.exists(seats_path):
+        t = json.load(open(seats_path))["items"]
+        e = [i for i in engine_items if i["class"] == "object" and i.get("kind") == "chair"]
+        pairs = greedy_match(t, e, 0.5)
+        print(row("chair", len(pairs), len(t), len(e)))
 
     t_diagonal = [i for i in truth_items if i["class"] == "diagonal wall"]
     if t_diagonal:
