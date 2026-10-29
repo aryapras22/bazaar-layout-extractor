@@ -83,6 +83,28 @@ private func ring(size: Int, gapAt: Int? = nil) -> [Bool] {
     #expect(!isSwatch(px, seedX: 40, seedY: 15, textHeight: 12))
 }
 
+@Test func swatchSearchSkipsBordersClaimedSwatchesAndBlankBlocks() {
+    let (w, h) = (80, 40)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    func paint(_ xs: Range<Int>, _ ys: Range<Int>, _ c: (UInt8, UInt8, UInt8)) {
+        for y in ys { for x in xs { let i = (y * w + x) * 4; (rgba[i], rgba[i + 1], rgba[i + 2]) = c } }
+    }
+    paint(10..<30, 10..<30, (0, 0, 0))
+    paint(12..<28, 12..<28, (220, 40, 40))
+    paint(50..<70, 10..<30, (0, 0, 0))
+    paint(52..<68, 12..<28, (255, 255, 255))
+    let px = Pixels(width: w, height: h, rgba: rgba)
+    let ground = lab((255, 255, 255))
+    let box = CGRect(x: 32, y: 14, width: 30, height: 12)
+    // A first guess on the dark border finds the red block just inside it.
+    let hit = swatchBeside(px, firstGuess: 29, textBox: box, y: 20, textHeight: 12, claimed: [], ground: ground)
+    #expect(hit.map { (10..<30).contains($0.seed) } == true)
+    // The same swatch is not given to a second line of the entry.
+    #expect(swatchBeside(px, firstGuess: 29, textBox: box, y: 20, textHeight: 12, claimed: [hit!.bounds], ground: ground) == nil)
+    // A framed word has a white inside, which is not a swatch.
+    #expect(swatchBeside(px, firstGuess: 69, textBox: CGRect(x: 72, y: 14, width: 6, height: 12), y: 20, textHeight: 12, claimed: [], ground: ground) == nil)
+}
+
 private func gridWithTiles(side: Int, count: Int, page: Int) -> [Int16] {
     var grid = [Int16](repeating: -1, count: page * page)
     for t in 0..<count {
