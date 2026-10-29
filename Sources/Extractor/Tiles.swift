@@ -268,11 +268,13 @@ func rereadTiles(
         var bestScore = -1.0
         for scale in [2, 3] {
             guard let up = makeMaskedUpscaledCrop(image, item: items[idx], scale: scale) else { continue }
-            for obs in try await makeTextRequest().perform(on: up) {
-                let raw = obs.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+            let read = try await makeTextRequest().perform(on: up)
+            let lines = read.map { ($0.transcript, Double($0.confidence)) } + [(stackedText(read), 0.5)]
+            for (text, confidence) in lines {
+                let raw = text.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !raw.isEmpty else { continue }
                 let cleaned = cleanLabel(raw)
-                let score = (cleaned != nil ? 10.0 : 0.0) + Double(obs.confidence)
+                let score = (cleaned != nil ? 10.0 : 0.0) + confidence
                 if score > bestScore {
                     bestScore = score
                     bestRaw = raw
