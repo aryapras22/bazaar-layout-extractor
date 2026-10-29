@@ -68,8 +68,8 @@ func slantedWalls(_ s: InkScan) -> [Item] {
     var ink = s.rawInk
     for i in 0..<s.n where s.inText[i] { ink[i] = false }
 
-    let axis = zip(longRuns(ink, w: w, h: h, minLen: s.longest, horizontal: true),
-                   longRuns(ink, w: w, h: h, minLen: s.longest, horizontal: false)).map { $0 || $1 }
+    let axis = zip(tiltedRuns(ink, w: w, h: h, minLen: s.longest, horizontal: true, tilt: s.tilt.h),
+                   tiltedRuns(ink, w: w, h: h, minLen: s.longest, horizontal: false, tilt: s.tilt.v)).map { $0 || $1 }
     let axisNear = morph(axis, w: w, h: h, rx: 2, ry: 2, erode: false)
     let axisReach = morph(axis, w: w, h: h, rx: 5, ry: 5, erode: false)
 

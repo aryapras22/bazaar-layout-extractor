@@ -13,6 +13,8 @@ struct InkScan {
     let longest: Int
     let hs: [Bool], vs: [Bool], thick: [Bool], compact: [Bool]
     let solidRegions: [Region]
+    /// Slope of the page's near-horizontal and near-vertical lines; 0 when the page is straight.
+    var tilt: (h: Double, v: Double) = (0, 0)
 }
 
 func scanInk(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> InkScan {
@@ -35,8 +37,9 @@ func scanInk(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> InkScan {
     for i in 0..<n where inText[i] { ink[i] = false }
 
     let longest = max(5, Int((0.025 * Double(mx)).rounded()))
-    var hs = longRuns(ink, w: w, h: h, minLen: longest, horizontal: true)
-    var vs = longRuns(ink, w: w, h: h, minLen: longest, horizontal: false)
+    let tilt = (h: dominantTilt(rawInk, w: w, h: h, horizontal: true), v: dominantTilt(rawInk, w: w, h: h, horizontal: false))
+    var hs = tiltedRuns(ink, w: w, h: h, minLen: longest, horizontal: true, tilt: tilt.h)
+    var vs = tiltedRuns(ink, w: w, h: h, minLen: longest, horizontal: false, tilt: tilt.v)
     let k = max(7, Int((0.004 * Double(mx)).rounded()) | 1)
     let opened = morph(morph(ink, w: w, h: h, rx: k / 2, ry: k / 2, erode: true),
                        w: w, h: h, rx: k / 2, ry: k / 2, erode: false)
@@ -56,5 +59,5 @@ func scanInk(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> InkScan {
     for i in 0..<n where compactNear[i] { hs[i] = false; vs[i] = false }
     return InkScan(
         w: w, h: h, n: n, mx: mx, scale: scale, rawInk: rawInk, ink: ink, textBoxes: textBoxes, inText: inText,
-        longest: longest, hs: hs, vs: vs, thick: thick, compact: compact, solidRegions: pillars)
+        longest: longest, hs: hs, vs: vs, thick: thick, compact: compact, solidRegions: pillars, tilt: tilt)
 }

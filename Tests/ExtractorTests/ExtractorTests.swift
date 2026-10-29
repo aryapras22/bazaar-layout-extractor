@@ -259,6 +259,23 @@ private func stroke(_ mask: inout [Bool], w: Int, from a: (Int, Int), to b: (Int
     #expect(mergedSlants(far, separation: 8, gap: 6).count == 2)
 }
 
+@Test func tiltIsEstimatedFromLongLinesAndRunsFollowIt() {
+    let (w, h) = (800, 400)
+    var mask = [Bool](repeating: false, count: w * h)
+    let slope = 0.0175
+    for line in stride(from: 40, to: 300, by: 60) {
+        for x in 0..<w { mask[(line + Int((Double(x) * slope).rounded())) * w + x] = true }
+    }
+    let tilt = dominantTilt(mask, w: w, h: h, horizontal: true)
+    #expect(abs(tilt - slope) < 0.003)
+    #expect(longRuns(mask, w: w, h: h, minLen: 200, horizontal: true).allSatisfy { !$0 })
+    #expect(tiltedRuns(mask, w: w, h: h, minLen: 200, horizontal: true, tilt: tilt).filter { $0 }.count >= 4 * 750)
+
+    var straight = [Bool](repeating: false, count: w * h)
+    for line in stride(from: 40, to: 300, by: 60) { for x in 0..<w { straight[line * w + x] = true } }
+    #expect(dominantTilt(straight, w: w, h: h, horizontal: true) == 0)
+}
+
 private func columnScan(_ ink: [Bool], size: Int) -> InkScan {
     let off = [Bool](repeating: false, count: size * size)
     return InkScan(

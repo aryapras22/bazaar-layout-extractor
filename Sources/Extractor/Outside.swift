@@ -507,3 +507,62 @@ func mergedSlants(_ input: [Slant], separation: Double, gap: Double) -> [Slant] 
     }
     return slants
 }
+
+/// Slope of the dominant near-horizontal (or near-vertical) lines: the shear that makes the ink pile into the
+/// fewest rows, found by trying slopes up to about 3 degrees. A page that is straight keeps slope 0 unless
+/// another slope packs the ink at least 10% tighter, so clean plans never change.
+func dominantTilt(_ mask: [Bool], w: Int, h: Int, horizontal: Bool) -> Double {
+    var along: [Int32] = [], across: [Int32] = []
+    for i in 0..<mask.count where mask[i] {
+        along.append(Int32(horizontal ? i % w : i / w))
+        across.append(Int32(horizontal ? i / w : i % w))
+    }
+    let (length, lines) = horizontal ? (w, h) : (h, w)
+    let reach = Int(Double(length) * 0.053) + 1
+    var counts = [Int32](repeating: 0, count: lines + 2 * reach + 1)
+    func sharpness(_ slope: Double) -> Double {
+        for i in counts.indices { counts[i] = 0 }
+        for k in along.indices { counts[Int(across[k]) - Int((Double(along[k]) * slope).rounded()) + reach] += 1 }
+        return counts.reduce(0.0) { $0 + Double($1) * Double($1) }
+    }
+    let straight = sharpness(0)
+    var best = (slope: 0.0, score: straight)
+    for step in -30...30 where step != 0 {
+        let slope = tan(Double(step) * 0.1 * .pi / 180)
+        let score = sharpness(slope)
+        if score > best.score { best = (slope, score) }
+    }
+    return best.score >= 1.1 * straight ? best.slope : 0
+}
+
+/// Like `longRuns`, for lines that follow `tilt` (rise per step along them) instead of one row or column. A run
+/// may wander one pixel off the ideal line, because a rotated 1 px line is not straight on the pixel grid.
+func tiltedRuns(_ m: [Bool], w: Int, h: Int, minLen: Int, horizontal: Bool, tilt: Double) -> [Bool] {
+    if tilt == 0 { return longRuns(m, w: w, h: h, minLen: minLen, horizontal: horizontal) }
+    let (length, lines) = horizontal ? (w, h) : (h, w)
+    let reach = Int(Double(length) * abs(tilt)) + 2
+    var out = [Bool](repeating: false, count: m.count)
+    for line in -reach..<(lines + reach) {
+        var hits: [Int] = []
+        var steps = 0
+        for along in 0...length {
+            var found: [Int] = []
+            if along < length {
+                let center = line + Int((Double(along) * tilt).rounded())
+                for across in (center - 1)...(center + 1) where across >= 0 && across < lines {
+                    let i = horizontal ? across * w + along : along * w + across
+                    if m[i] { found.append(i) }
+                }
+            }
+            if !found.isEmpty {
+                hits += found
+                steps += 1
+                continue
+            }
+            if steps >= minLen { for i in hits { out[i] = true } }
+            hits.removeAll(keepingCapacity: true)
+            steps = 0
+        }
+    }
+    return out
+}
