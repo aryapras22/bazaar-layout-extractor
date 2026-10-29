@@ -305,7 +305,7 @@ func boxIoU(_ a: [Int], _ b: [Int]) -> Double {
 // Vision frequently returns Cyrillic homoglyphs for single-letter Latin booth labels and the digit 3.
 let cyrillicLookalikes: [Character: Character] = [
     "\u{0410}": "A", "\u{0412}": "B", "\u{0421}": "C", "\u{0415}": "E", "\u{041D}": "H",
-    "\u{041A}": "K", "\u{041E}": "O", "\u{0425}": "X", "\u{0417}": "3",
+    "\u{041A}": "K", "\u{041E}": "O", "\u{0425}": "X", "\u{0417}": "3", "\u{041C}": "M", "\u{0420}": "P", "\u{0422}": "T",
 ]
 
 func foldLookalikes(_ s: String) -> String {
@@ -2003,9 +2003,10 @@ func computeClassPrefixes(_ items: [Item]) -> [String: String] {
             }
         }
         guard totalParsed > 0, totalParsed * 2 >= indices.count,
-              let majority = prefixCounts.max(by: { $0.value < $1.value })?.key
+              let top = prefixCounts.max(by: { $0.value < $1.value }),
+              top.value * 10 >= totalParsed * 7
         else { continue }
-        out[cls] = majority
+        out[cls] = top.key
     }
     return out
 }
@@ -2171,6 +2172,89 @@ func repairIds(_ items: inout [Item], classPrefixes: [String: String], ruleCount
     }
 }
 
+// The per-class repair assumes one prefix per class. Plans that group booths by country or zone mix
+// prefixes, so OCR slips are found against the plan's own prefix counts and number series instead.
+// Results are suggestions only, like the per-class rules.
+func repairIdsByPrefix(_ items: inout [Item], ruleCounts: inout [String: Int]) {
+    let digitFor: [Character: Character] = ["O": "0", "I": "1", "L": "1", "Z": "2", "S": "5", "B": "8", "G": "6"]
+    let letterPairs: [(Character, Character)] = [("C", "G"), ("B", "E")]
+    let digitPairs: [Character: [Character]] = ["1": ["7"], "7": ["1"], "3": ["8"], "8": ["3", "0", "6"], "0": ["8"], "5": ["6"], "6": ["5", "8"], "4": ["9"], "9": ["4"]]
+    func split(_ id: String) -> (prefix: String, tail: String)? {
+        guard let parsed = parseStrictId(id) else { return nil }
+        return (parsed.prefix, String(id.dropFirst(parsed.prefix.count)))
+    }
+
+    var prefixCounts: [String: Int] = [:]
+    var held = Set<String>()
+    var numbers: [String: Set<Int>] = [:]
+    var idCounts: [String: Int] = [:]
+    var widths: [String: Int] = [:]
+    for item in items {
+        guard let id = item.id else { continue }
+        idCounts[id, default: 0] += 1
+        guard let parts = split(id) else { continue }
+        prefixCounts[parts.prefix, default: 0] += 1
+        held.insert(id)
+        numbers[parts.prefix, default: []].insert(Int(parts.tail) ?? 0)
+        widths[parts.prefix] = max(widths[parts.prefix] ?? 0, parts.tail.count)
+    }
+    func common(_ prefix: String) -> Bool { prefixCounts[prefix, default: 0] >= 5 }
+    func lessCommon(_ prefix: String, than other: String) -> Bool { prefixCounts[prefix, default: 0] < prefixCounts[other, default: 0] }
+
+    for i in items.indices where items[i].suggestedId == nil {
+        guard let id = items[i].id, let parts = split(id) else { continue }
+        var suggestion: (id: String, rule: String, reason: String)?
+
+        if parts.prefix.count >= 2, let last = parts.prefix.last, let digit = digitFor[last] {
+            let short = String(parts.prefix.dropLast())
+            let candidate = short + String(digit) + parts.tail
+            if common(short), lessCommon(parts.prefix, than: short), !held.contains(candidate) {
+                suggestion = (candidate, "ocr-prefix-digit", "\"\(id)\" reads \"\(last)\" for a leading zero after the common prefix \"\(short)\"")
+            }
+        }
+        if suggestion == nil {
+            for (a, b) in letterPairs {
+                for (from, to) in [(a, b), (b, a)] {
+                    for (offset, ch) in parts.prefix.enumerated() where ch == from {
+                        var chars = Array(parts.prefix)
+                        chars[offset] = to
+                        let prefix = String(chars)
+                        if suggestion == nil, common(prefix), prefixCounts[parts.prefix, default: 0] * 3 < prefixCounts[prefix, default: 0], !held.contains(prefix + parts.tail) {
+                            suggestion = (prefix + parts.tail, "ocr-prefix-letter", "prefix \"\(parts.prefix)\" is less common than \"\(prefix)\", which differs by \(from) and \(to)")
+                        }
+                    }
+                }
+            }
+        }
+        if suggestion == nil, idCounts[id, default: 0] > 1, let top = numbers[parts.prefix]?.max(),
+           parts.tail.count == String(top).count || parts.tail.count == widths[parts.prefix] {
+            var landings: [String] = []
+            for (offset, ch) in parts.tail.enumerated() {
+                for swap in digitPairs[ch] ?? [] {
+                    var chars = Array(parts.tail)
+                    chars[offset] = swap
+                    let tail = String(chars)
+                    if let n = Int(tail), n >= 1, n <= top, !(numbers[parts.prefix]?.contains(n) ?? false) {
+                        landings.append(parts.prefix + tail)
+                    }
+                }
+            }
+            if Set(landings).count == 1, let only = landings.first {
+                suggestion = (only, "ocr-duplicate", "\"\(id)\" is read twice and one digit swap lands on the missing \(only)")
+            }
+        }
+
+        if let found = suggestion {
+            items[i].suggestedId = found.id
+            items[i].fixRule = found.rule
+            items[i].fixReason = found.reason
+            held.insert(found.id)
+            if let parts = split(found.id) { numbers[parts.prefix, default: []].insert(Int(parts.tail) ?? 0) }
+            ruleCounts[found.rule, default: 0] += 1
+        }
+    }
+}
+
 struct Options {
     var planPath: String
     var legendPath: String
@@ -2307,6 +2391,7 @@ struct Tool {
 
         if opts.repair {
             repairIds(&items, classPrefixes: classPrefixes, ruleCounts: &ruleCounts)
+            repairIdsByPrefix(&items, ruleCounts: &ruleCounts)
         }
 
         let entries = classes.map {

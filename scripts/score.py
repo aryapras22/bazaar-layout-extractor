@@ -83,7 +83,8 @@ def score(layout_path, truth_path):
     print(f"  tile class names equal {same_class}/{len(pairs)}")
     ids_truth = [t for t in t_tiles if t.get("id")]
     exact = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and e_tiles[ei].get("id") == t_tiles[ti]["id"])
-    print(f"  tile ids exact {exact}/{len(ids_truth)}")
+    with_suggestion = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and t_tiles[ti]["id"] in (e_tiles[ei].get("id"), e_tiles[ei].get("suggested_id")))
+    print(f"  tile ids exact {exact}/{len(ids_truth)}, with suggested_id {with_suggestion}/{len(ids_truth)}")
 
     for cls in ("object", "pillar", "door"):
         t = [i for i in truth_items if i["class"] == cls]
