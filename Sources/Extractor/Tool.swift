@@ -15,6 +15,7 @@ struct Options {
     var featurePrint: Bool = false
     var judgeMode: String = "off"
     var layers: Set<Layer> = Set(Layer.allCases)
+    var upscaleSmall: Bool = false
 }
 
 func parseOptions(_ args: [String]) -> Options? {
@@ -27,6 +28,7 @@ func parseOptions(_ args: [String]) -> Options? {
     var featurePrint = false
     var judgeMode = "off"
     var layers = Set(Layer.allCases)
+    var upscaleSmall = false
 
     var i = 1
     while i < args.count {
@@ -55,6 +57,9 @@ func parseOptions(_ args: [String]) -> Options? {
             guard i + 1 < args.count, ["off", "fm", "mlx"].contains(args[i + 1]) else { return nil }
             judgeMode = args[i + 1]
             i += 2
+        case "--upscale-small":
+            upscaleSmall = true
+            i += 1
         case "--layers":
             guard i + 1 < args.count else { return nil }
             let named = args[i + 1].split(separator: ",").map { Layer(rawValue: String($0)) }
@@ -71,28 +76,48 @@ func parseOptions(_ args: [String]) -> Options? {
     return Options(
         planPath: positional[0], legendPath: positional[1], outDir: outDir,
         repair: repair, reread: reread, bridge: bridge, regroup: regroup,
-        featurePrint: featurePrint, judgeMode: judgeMode, layers: layers
+        featurePrint: featurePrint, judgeMode: judgeMode, layers: layers, upscaleSmall: upscaleSmall
     )
 }
 
 public enum ExtractTool {
     public static func run(arguments: [String]) async throws {
         guard let opts = parseOptions(arguments) else {
-            fputs("usage: fp-extract layout.png legend.png [--out dir] [--no-repair] [--no-reread] [--no-bridge] [--no-regroup] [--feature-print] [--judge off|fm|mlx] [--layers booth,wall,door,seat]\n", stderr)
+            fputs("usage: fp-extract layout.png legend.png [--out dir] [--no-repair] [--no-reread] [--no-bridge] [--no-regroup] [--feature-print] [--judge off|fm|mlx] [--layers booth,wall,door,seat] [--upscale-small]\n", stderr)
             exit(2)
         }
         let outDir = URL(fileURLWithPath: opts.outDir)
         try FileManager.default.createDirectory(at: outDir, withIntermediateDirectories: true)
 
-        let planImage = try loadImage(URL(fileURLWithPath: opts.planPath))
-        let legendImage = try loadImage(URL(fileURLWithPath: opts.legendPath))
+        let originalImage = try loadImage(URL(fileURLWithPath: opts.planPath))
+        var planImage = originalImage
+        var legendImage = try loadImage(URL(fileURLWithPath: opts.legendPath))
+        if let clean = smoothedIfNoisy(legendImage, threshold: 0.04) {
+            FileHandle.standardError.write(Data("note: pixel noise found in the legend, smoothing it before reading it\n".utf8))
+            legendImage = clean
+        }
         let legendClasses = try await readLegend(legendImage)
         guard !legendClasses.isEmpty else { throw ExtractError.noLegend }
         for warning in legendWarnings(legendClasses) {
             FileHandle.standardError.write(Data("warning: \(warning)\n".utf8))
         }
 
-        let px = pixels(of: planImage)
+        if let clean = smoothedIfNoisy(planImage, threshold: 0.07) {
+            FileHandle.standardError.write(Data("note: pixel noise found, smoothing the plan before reading it\n".utf8))
+            planImage = clean
+        }
+        var px = pixels(of: planImage)
+        // Small tiles are read badly by Vision and fall under the size thresholds, so --upscale-small enlarges the plan.
+        // Off by default: it lifts plan 5 and half-size plan 2, but breaks plan 6 when it is faded or halved,
+        // because the fixed outline cut loses lines that resampling lightens.
+        let tileSide = opts.upscaleSmall
+            ? smallTileSide(classify(px, legend: legendClasses), w: px.width, h: px.height, area: px.area) : nil
+        let upscale = upscaleFactor(smallTileSide: tileSide)
+        if upscale > 1, let bigger = upscaled(planImage, by: upscale) {
+            FileHandle.standardError.write(Data("note: tiles are small, reading the plan at \(upscale)x\n".utf8))
+            planImage = bigger
+            px = pixels(of: planImage)
+        }
         var classes = legendClasses
         let (w, h) = (px.width, px.height)
         let scale = Double(px.page) / 2000
@@ -168,10 +193,10 @@ public enum ExtractTool {
             }
         }
 
-        items = items.filter { opts.layers.contains(Layer.of($0)) }
+        items = items.map { scaledBack($0, by: upscale) }.filter { opts.layers.contains(Layer.of($0)) }
 
         let swift4Rep = report(items)
-        let result = Result(image: ImageInfo(width: w, height: h), legend: entries, items: items, report: swift4Rep)
+        let result = Result(image: ImageInfo(width: originalImage.width, height: originalImage.height), legend: entries, items: items, report: swift4Rep)
 
         let suggestions: [SuggestedFix] = items.compactMap { it in
             guard let s = it.suggestedId else { return nil }
@@ -200,10 +225,10 @@ public enum ExtractTool {
         try encoder.encode(result).write(to: outDir.appendingPathComponent("layout.json"))
         try encoder.encode(diffReport).write(to: outDir.appendingPathComponent("report_diff.json"))
         for layer in opts.layers.sorted() {
-            let file = LayerFile(layer: layer.rawValue, image: ImageInfo(width: w, height: h), items: items.filter { Layer.of($0) == layer })
+            let file = LayerFile(layer: layer.rawValue, image: ImageInfo(width: originalImage.width, height: originalImage.height), items: items.filter { Layer.of($0) == layer })
             try encoder.encode(file).write(to: outDir.appendingPathComponent(layer.file))
         }
-        writeOverlay(planImage, items: items, to: outDir.appendingPathComponent("overlay.png"))
+        writeOverlay(originalImage, items: items, to: outDir.appendingPathComponent("overlay.png"))
         print(String(decoding: try encoder.encode(swift4Rep), as: UTF8.self))
     }
 }

@@ -334,3 +334,95 @@ func boxIoU(_ a: [Int], _ b: [Int]) -> Double {
     let inter = Double(w * h)
     return inter / (Double(a[2] * a[3] + b[2] * b[3]) - inter)
 }
+
+func makeImage(_ px: Pixels) -> CGImage? {
+    guard let context = CGContext(
+        data: nil, width: px.width, height: px.height, bitsPerComponent: 8, bytesPerRow: px.width * 4,
+        space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue),
+        let target = context.data
+    else { return nil }
+    px.rgba.withUnsafeBytes { target.copyMemory(from: $0.baseAddress!, byteCount: px.rgba.count) }
+    return context.makeImage()
+}
+
+func upscaled(_ image: CGImage, by factor: Int) -> CGImage? {
+    guard let context = CGContext(
+        data: nil, width: image.width * factor, height: image.height * factor, bitsPerComponent: 8, bytesPerRow: 0,
+        space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)
+    else { return nil }
+    context.interpolationQuality = .high
+    context.draw(image, in: CGRect(x: 0, y: 0, width: image.width * factor, height: image.height * factor))
+    return context.makeImage()
+}
+
+/// Whole-number upscale that brings the small tiles to about `targetTileSide`, or 1 when they are already big enough.
+func upscaleFactor(smallTileSide side: Double?, targetTileSide: Double = 45, enoughTileSide: Double = 30) -> Int {
+    guard let side, side < enoughTileSide else { return 1 }
+    return min(2, Int((targetTileSide / side).rounded(.up)))
+}
+
+/// The image smoothed when its noise score is over `threshold`, or nil when it is clean. Plans use 0.07; legends,
+/// mostly white, clip the noise and need the lower 0.04.
+func smoothedIfNoisy(_ image: CGImage, threshold: Double) -> CGImage? {
+    let px = pixels(of: image)
+    guard noiseScore(px) > threshold else { return nil }
+    return makeImage(sigmaFiltered(px))
+}
+
+/// Share of sampled pixels that differ from their 3x3 median by more than 24 summed over channels.
+/// Clean renders sit below 0.05; added pixel noise puts it above 0.09.
+func noiseScore(_ px: Pixels) -> Double {
+    let (w, h) = (px.width, px.height)
+    var hits = 0, total = 0
+    var window = [UInt8](repeating: 0, count: 9)
+    for y in stride(from: 2, to: h - 2, by: 4) {
+        for x in stride(from: 2, to: w - 2, by: 4) {
+            var spread = 0
+            for channel in 0..<3 {
+                var k = 0
+                for dy in -1...1 { for dx in -1...1 { window[k] = px.rgba[((y + dy) * w + x + dx) * 4 + channel]; k += 1 } }
+                window.sort()
+                spread += abs(Int(px.rgba[(y * w + x) * 4 + channel]) - Int(window[4]))
+            }
+            if spread > 24 { hits += 1 }
+            total += 1
+        }
+    }
+    return total == 0 ? 0 : Double(hits) / Double(total)
+}
+
+/// 3x3 average over the neighbours within `limit` of the centre in every channel. Edges and thin lines
+/// keep their neighbours out of the average, so they survive, unlike under a median filter.
+func sigmaFiltered(_ px: Pixels, limit: Int = 30) -> Pixels {
+    let (w, h) = (px.width, px.height)
+    var out = px.rgba
+    for y in 1..<(h - 1) {
+        for x in 1..<(w - 1) {
+            let c = (y * w + x) * 4
+            var sums = (0, 0, 0), count = 0
+            for dy in -1...1 {
+                for dx in -1...1 {
+                    let i = ((y + dy) * w + x + dx) * 4
+                    if abs(Int(px.rgba[i]) - Int(px.rgba[c])) <= limit, abs(Int(px.rgba[i + 1]) - Int(px.rgba[c + 1])) <= limit,
+                       abs(Int(px.rgba[i + 2]) - Int(px.rgba[c + 2])) <= limit {
+                        sums.0 += Int(px.rgba[i]); sums.1 += Int(px.rgba[i + 1]); sums.2 += Int(px.rgba[i + 2]); count += 1
+                    }
+                }
+            }
+            out[c] = UInt8(sums.0 / count); out[c + 1] = UInt8(sums.1 / count); out[c + 2] = UInt8(sums.2 / count)
+        }
+    }
+    return Pixels(width: w, height: h, rgba: out, contentSide: px.contentSide, contentArea: px.contentArea, contentRect: px.contentRect)
+}
+
+/// An item mapped back from an upscaled image to the original: boxes, polygons and areas.
+func scaledBack(_ item: Item, by factor: Int) -> Item {
+    guard factor > 1 else { return item }
+    let f = Double(factor)
+    var out = item
+    out.box = item.box.map { Int((Double($0) / f).rounded()) }
+    out.area = Int((Double(item.area) / (f * f)).rounded())
+    out.polygon = item.polygon?.map { $0.map { Int((Double($0) / f).rounded()) } }
+    out.fillBox = item.fillBox?.map { Int((Double($0) / f).rounded()) }
+    return out
+}

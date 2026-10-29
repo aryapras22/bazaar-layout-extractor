@@ -167,4 +167,56 @@ private func squareRegion(_ x0: Int, _ y0: Int, side: Int, w: Int) -> Region {
     #expect(parseOptions(["fp", "a.png", "b.png"])?.layers == Set(Layer.allCases))
     #expect(parseOptions(["fp", "a.png", "b.png", "--layers", "booth,wall"])?.layers == [.booth, .wall])
     #expect(parseOptions(["fp", "a.png", "b.png", "--layers", "tile"]) == nil)
+    #expect(parseOptions(["fp", "a.png", "b.png"])?.upscaleSmall == false)
+    #expect(parseOptions(["fp", "a.png", "b.png", "--upscale-small"])?.upscaleSmall == true)
+}
+
+@Test func upscaleOnlyEnlargesSmallTilesAndNeverBeyondTwice() {
+    #expect(upscaleFactor(smallTileSide: 64) == 1)
+    #expect(upscaleFactor(smallTileSide: 33) == 1)
+    #expect(upscaleFactor(smallTileSide: 26) == 2)
+    #expect(upscaleFactor(smallTileSide: 12) == 2)
+    #expect(upscaleFactor(smallTileSide: nil) == 1)
+}
+
+private func flatPlan(noise: Int) -> Pixels {
+    let (w, h) = (64, 64)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    var seed: UInt32 = 12345
+    for y in 0..<h {
+        for x in 0..<w {
+            let line = x == 32
+            seed = seed &* 1664525 &+ 1013904223
+            for c in 0..<3 {
+                let jitter = noise == 0 ? 0 : Int((seed >> UInt32(8 * c)) & 0xFF) % (2 * noise + 1) - noise
+                rgba[(y * w + x) * 4 + c] = UInt8(max(0, min(255, (line ? 0 : 200) + jitter)))
+            }
+        }
+    }
+    return Pixels(width: w, height: h, rgba: rgba)
+}
+
+@Test func noiseScoreSeparatesCleanFromNoisyAndTheFilterKeepsThinLines() {
+    #expect(noiseScore(flatPlan(noise: 0)) < 0.02)
+    #expect(noiseScore(flatPlan(noise: 14)) > 0.07)
+    let noisy = flatPlan(noise: 14)
+    let smooth = sigmaFiltered(noisy)
+    func range(_ px: Pixels) -> Int {
+        let values = (5..<20).flatMap { y in (5..<25).map { x in Int(px.rgba[(y * 64 + x) * 4]) } }
+        return values.max()! - values.min()!
+    }
+    #expect(range(smooth) < range(noisy))
+    #expect(smooth.rgba[(30 * 64 + 32) * 4] < 40)  // the one-pixel black line is still black
+}
+
+@Test func resultsMapBackFromAnUpscaledImage() {
+    var item = tile("Booth A", "A1")
+    item.box = [100, 61, 40, 20]
+    item.area = 800
+    item.polygon = [[100, 60], [140, 60], [140, 80]]
+    let back = scaledBack(item, by: 2)
+    #expect(back.box == [50, 31, 20, 10])
+    #expect(back.area == 200)
+    #expect(back.polygon == [[50, 30], [70, 30], [70, 40]])
+    #expect(scaledBack(item, by: 1).box == item.box)
 }

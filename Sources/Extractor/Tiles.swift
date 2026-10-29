@@ -39,21 +39,27 @@ func rebuildLabelledReasons(_ items: inout [Item], labelledClasses: Set<String>,
 // never grows past the page scale.
 let referenceTileSide = 25.0
 
-func tileScale(_ grid: [Int16], w: Int, h: Int, page pageSide: Int, area: Int) -> Double {
-    let page = Double(pageSide) / 2000
+/// Side in pixels of the small tiles: the area-weighted 25th percentile of sqrt(area), or nil with too few regions.
+func smallTileSide(_ grid: [Int16], w: Int, h: Int, area: Int) -> Double? {
     let cap = max(2500, area / 200)
     let regions = components(grid.map { $0 >= 0 }, w: w, h: h, eight: false)
         .filter { $0.area >= 25 && $0.area <= cap }
         .map { (side: Double($0.area).squareRoot(), weight: $0.area) }
         .sorted { $0.side < $1.side }
-    guard regions.count >= 8 else { return page }
+    guard regions.count >= 8 else { return nil }
     let half = regions.reduce(0) { $0 + $1.weight }
     var seen = 0
     for region in regions {
         seen += region.weight
-        if seen * 4 >= half { return min(page, region.side / referenceTileSide) }
+        if seen * 4 >= half { return region.side }
     }
-    return page
+    return nil
+}
+
+func tileScale(_ grid: [Int16], w: Int, h: Int, page pageSide: Int, area: Int) -> Double {
+    let page = Double(pageSide) / 2000
+    guard let side = smallTileSide(grid, w: w, h: h, area: area) else { return page }
+    return min(page, side / referenceTileSide)
 }
 
 func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async throws -> LegendLayerOutput {

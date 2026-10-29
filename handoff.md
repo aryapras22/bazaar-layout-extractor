@@ -81,6 +81,9 @@ Notes on reading the table:
 
 ## What changed this session
 
+23. Noise: `noiseScore` (share of sampled pixels more than 24 from their 3x3 median, summed over channels) separates added pixel noise (0.09 to 0.16) from clean plans (0.01 to 0.04). Over 0.07 for a plan, or 0.04 for a legend (its white ground clips the noise), the image is smoothed with `sigmaFiltered`, a 3x3 average over neighbours within 30 per channel, which keeps edges and 1 pixel lines that a median filter would erase. Noisy variants: plan 1 0/160 to 160/160 tiles, plans 2 and 3 crash to 211/211 and 68/68, plan 5 0/265 to 243/265 (222 exact IDs). Pillars, walls and objects on noisy plans 1 and 3 are still mostly lost, because the ink passes are sensitive to the remaining noise; a second smoothing pass helped plan 1 walls (22% to 56%) but cost IDs, so it was not kept. All six clean plans are byte-identical.
+24. `--upscale-small`, off by default: when small tiles (area-weighted 25th percentile of the legend-coloured regions) measure under 30 px, read the plan at 2x and scale every result back. Plan 5 gains 17 exact IDs (224 to 241), half-size plan 2 regains all 211 tiles, 26/26 objects (from 1) and 176/209 IDs (from 149), and rotated plan 5 recovers (101 to 247 tiles). It breaks plan 6 when that is faded (270 to 113) or halved (272 to 239) because the fixed outline cut (`darkPixels` below 60) loses lines that resampling lightens, and plan 3 objects collapse at 3x so the factor is capped at 2. Branch `experiment/outline-local-contrast` adds a local-contrast outline rule (a pixel much darker than its 11x11 neighbourhood counts as outline) that brings faded plan 6 under upscaling to 268 but still loses half-size plan 6 (242 against 267 unscaled) and costs 5 booths there even with upscaling off. Other tried and dropped: edge-slope and gray-percentile statistics cannot detect blur.
+
 22. Layer scaffold, no behaviour change: the 290-line `outsideLayer` is split into a shared `scanInk` and four stages with their bodies unchanged: `wallLayer` (wall strokes) and `columnLayer` (solid and hollow squares) as the wall layer, `doorLayer` (gaps in wall bands) and `seatLayer` (what is left, as `object`). `layout.json` and `report_diff.json` are byte-identical on all six plans. Layers: booth (everything that is not one of the others, including tiles and sponsor boxes), wall (class `wall` and `pillar`), door, seat (class `object`). Each run also writes `booths.json`, `walls.json`, `doors.json` and `seats.json` next to `layout.json`, with the same item format plus a `layer` name, and `--layers booth,wall,door,seat` keeps only the named layers. A booth-only run is no faster: its time is booth ID reading, not the ink analysis. The wall, door and seat layers still need the booth layer's claimed areas, so they run it first. Decisions taken: walls own columns, seats own round tables with one shared circle detector still to build, one file per layer plus the merged file, and a text mask in each layer later.
 
 19. `seat` field: objects carry an optional `seat` (true or false) taken from the judge's label (table with chairs and audience seating are seats; stairs, door, pillar, wall and noise are not). It is written only when the judge ran, so judge-off output is byte-identical on all six plans. Against the truth labels it is right on every matched object (136/136, 26/26, 8/8), but nearly all matched truth objects are seats, so that test has almost no negatives.
@@ -119,6 +122,21 @@ Notes on reading the table:
 ## Benchmark summary (full tables in `LEARNING/hybrid-mlx-vlm-benchmark.md`)
 
 Nine models on Apple M5, 24 GB, in `floor-plan-vlm-bench`. Qwen3.5-9B-MLX-4bit backs `--judge mlx`: 6.97 GB peak, 22.8 tok/s, 160/201 (79.6%) on non-noise items, but 30/52 on per-group accuracy. Qwen3.5-4B-MLX-4bit scores higher per group (34/52, 65.4%) because it rejects noise crops, at 4.11 GB. All nine models read the 11 hard booth tiles correctly, so that test does not separate them, and four of the 11 now read correctly without the judge. The two models added later do not displace the 9B: `gemma-4-26b-a4b-it-4bit` gets 33/52 groups but only 145/201 non-noise items in 111s at 16.1 GB, and `Qwen3.8-27B-4bit` gets 146/201 in 142s at 17.3 GB. Qwen3.8-27B ties the best box detection at 11/20 (mean IoU 0.598) but at 7.5 tok/s and 17.7 GB. The benchmark scripts live outside this folder, in `~/.gemini/antigravity-cli/brain/.../scratch/`, so it cannot be rerun from here; phase 1 there now reads `data/plan1/` and must be run from the project root. VLM bounding-box detection tops out at 11/20 boxes and cannot replace `legendLayer`.
+
+## Robustness (scripts/robustness.py)
+
+`scripts/robustness.py 1,2,3,5,6` degrades each plan (half and double size, 90 degree rotation, 1 degree skew, margins, JPEG quality 40, blur, pixel noise, faded colours), moves the truth the same way, runs `fp-extract` and prints one table to `output/robustness/report.md`. Set `FP_EXTRACT` to test another binary. Baseline failures before the noise fix, original in parentheses:
+
+| Transform | What breaks |
+|---|---|
+| Pixel noise | plan 1 0/160 tiles (160), plans 2 and 3 crash, plan 5 0/265 (244): now fixed |
+| Half resolution | objects 1/141, 1/26, 3/11 (136, 26, 8); plan 3 tiles 35/68 and no IDs; plan 5 tiles 89/265 and no IDs |
+| Blur (sigma 1.2) | plan 2 tiles 123/211, plan 3 walls 0%, plan 5 no IDs, plan 6 tiles 11/281 (280) |
+| JPEG quality 40 | plan 3 objects 0/11, pillars 6/31, walls 0%; plan 5 tiles 78/265 |
+| Faded colours | plan 2 tiles 123/211, plan 6 tiles 270/281 |
+| 1 degree skew | wall coverage 85% to 65% (plan 1), 92% to 81% (plan 2), 37% to 0% (plan 3); plan 3 objects 1/11 |
+| 90 degree rotation | plan 5 tiles 101/265 and no IDs |
+| Double size, margins | no loss |
 
 ## Environments
 
