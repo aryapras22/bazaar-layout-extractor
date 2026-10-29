@@ -13,7 +13,7 @@ Swift 4 (`extractor/extract_swift4.swift` + `extractor/Judge.swift`) and `extrac
 ```
 data/plan{1,2,3}/      layout.png, legend.png, truth.json (inputs and hand-checked ground truth)
 data/plan4/            more-market: source.png (rotated scan), layout.png, legend.png; no truth yet (scripts/make_plan4.py)
-data/plan5/            cosmo: source.pdf (vector), layout.png, legend.png; no truth yet (scripts/make_pdf_plans.py)
+data/plan5/            cosmo: source.pdf (vector), layout.png, legend.png, truth.json generated from the PDF (scripts/make_pdf_plans.py, scripts/make_plan5_truth.py)
 data/plan6/            women-fest: source.pdf, layout.png, legend.png, truth.json generated from the PDF (scripts/make_plan6_truth.py)
 extractor/             extract_swift4.swift, Judge.swift, render_swift4.swift
 scripts/               score.py (scorer), make_pdf.py (writes output/swift4/layouts.pdf)
@@ -52,19 +52,20 @@ Add `--judge mlx` for the VLM pass (25 s, 22 s, and 16 s for plans 1 to 3, conda
 
 Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use greedy matching at IoU of at least 0.3. Walls use pixel coverage within 6 px. Precision is matches divided by engine items of that class.
 
-| | Plan 1 | Plan 2 | Plan 3 | Plan 6 (not tuned on) |
-|---|---|---|---|---|
-| Tiles found, precision | 160/160, 93% | 211/211, 100% | 68/68, 92% | 281/281, 88% |
-| Tile IDs exact | 154/154 | 208/209 | 67/67 | 271/281 |
-| Objects | 134/141, precision 79% | 26/26, 59% | 8/11, 40% | no truth |
-| Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth |
-| Doors | 0/10 | 0/4 | 0/1 | no truth |
-| Walls, pixel recall / precision | 86% / 80% | 92% / 88% | not meaningful, see notes | no truth |
+| | Plan 1 | Plan 2 | Plan 3 | Plan 5 (not tuned on) | Plan 6 (not tuned on) |
+|---|---|---|---|---|---|
+| Tiles found, precision | 160/160, 93% | 211/211, 100% | 68/68, 92% | 101/265, 75% | 281/281, 88% |
+| Tile IDs exact | 154/154 | 208/209 | 67/67 | 94/265 | 271/281 |
+| Objects | 134/141, precision 79% | 26/26, 59% | 8/11, 40% | no truth | no truth |
+| Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth | no truth |
+| Doors | 0/10 | 0/4 | 0/1 | no truth | no truth |
+| Walls, pixel recall / precision | 86% / 80% | 92% / 88% | not meaningful, see notes | no truth | no truth |
 
 Before this session's changes: plan 1 objects 122/141 at 56% precision, pillars 0/23; plan 3 objects 0/11, pillars 25/31.
 
 Notes on reading the table:
 - Tiles match on box and ID only. Precision counts every engine tile, including real legend tiles the truth does not list: 9 `ENTRANCE` on plan 1, 3 `Seating` on plan 2, 6 `Tenant space` on plan 3. Class names equal the truth on every matched tile of plans 1 to 3 and on 270 of 281 on plan 6.
+- Plan 5 truth is generated from the PDF by painting the coloured blocks, drawing every stroked line over them and taking each enclosed cell with one ID label (`scripts/make_plan5_truth.py`): 265 booths, not checked by eye. It leaves out cells with two labels, labels outside coloured blocks, and the small black-and-white stalls (`T`, `PERKOSMI`). PyMuPDF's `Rect.intersects` is false for a straight line, so clip tests on divider lines must compare bounds by hand.
 - Plan 6 truth is generated from the PDF vector data by `scripts/make_plan6_truth.py`: 281 booths, not checked by eye. It leaves out two rectangles that hold two labels each and the sponsor boxes with no label. The plan prints `B38` and `B39` twice and the truth keeps both.
 - The one plan 2 ID miss is `FI` read for printed `F1` (flagged as `suggested_id`). Plan 1 has a `prefix-conflict` suggestion on the plan's printed `D6` in the `C6` slot.
 - Plan 3 truth has 8 tenant boundary regions, now classed `boundary` and not scored, and one `wall` that is the stairwell box. The plan 3 wall number is therefore meaningless until walls get real truth.
@@ -100,7 +101,7 @@ macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27. Con
 - Plan 6 sponsor booths: 10 black booths keep no ID. The legend-colour pass outlines only fragments of each black box because the white text splits it, so the retry crops are mostly blank. Inverting dark crops for OCR made no difference and was backed out. A fix needs the whole black rectangle, for example by filling holes in the black mask.
 - Plan 6 extra tiles (37) are mostly real legend tiles the truth does not list (22 `FACILITIES`, 6 sponsor boxes, 4 `GRID NETWORK`), plus `M21` and `B75`, which are real booths the truth skipped as ambiguous.
 - Plan 4 (more-market): 52 goods tiles but only 26 valid IDs, and 15 of 22 food booths with 8 valid IDs. Misreads like `CD28` for `GD28` could be fixed by repairing IDs against the class's majority prefix.
-- Plan 5 (cosmo): 134 tiles and 106 IDs from a plan with about 291 labelled booths. It needs truth before this can be scored, and its booths are not all filled rectangles.
+- Plan 5 (cosmo): 101 of 265 booths found and 94 exact IDs. Where a booth is found its ID is right 94 times in 101 (misreads such as `NO4` for `N04`), so detection is the gap. Booths are small (about 55 px) coloured blocks cut into stalls by thin divider lines, and the legend is printed inside the plan.
 - Doors need a detector for door-leaf symbols (see above).
 - Object precision is still 40% to 79%. Layout 3 misses 3 of 11 objects.
 - Layout 1 pillars: 5 north-wall squares missed behind `ENTRANCE` tiles, 4 false pillars at wall corners and the south wall.
