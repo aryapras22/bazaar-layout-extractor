@@ -155,6 +155,15 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
         let withLabel = members.filter { $0.item.id != nil }.count
         if !members.isEmpty, withLabel * 2 >= members.count { labelledIndices.insert(k) }
     }
+    // On a numbered plan a class that read few IDs is a blurred class, not an unnumbered one: a class of twenty tiles
+    // with one ID stays labelled when most of the plan's tiles are in labelled classes.
+    let inLabelled = found.filter { labelledIndices.contains($0.cls) }.count
+    if inLabelled * 2 >= found.count {
+        for k in legend.indices where !labelledIndices.contains(k) && legend[k].lab.l > 8 && legend[k].lab.l < 95 {
+            let members = found.filter { $0.cls == k }
+            if members.count >= 20, members.contains(where: { $0.item.id != nil }) { labelledIndices.insert(k) }
+        }
+    }
     let labelledNames = Set(labelledIndices.map { legend[$0].name })
     // Blur can leave a class with too few readable IDs to count as labelled, so a small tile also passes when it is as
     // wide as the plan's typical booth, which the thin fragments that the rule is there to drop are not.
@@ -376,7 +385,13 @@ func rereadTiles(
 
     let labelledShorts = items.filter { labelledClasses.contains($0.cls) }.map(\.shortSide).sorted()
     let medianShort = labelledShorts.isEmpty ? 40.0 : labelledShorts[labelledShorts.count / 2]
-    let pageObs = try await recognizePageText(makeTextRequest(), in: image, content: content, minimumTextHeight: 0.15 * medianShort)
+    var pageObs = try await recognizePageText(makeTextRequest(), in: image, content: content, minimumTextHeight: 0.15 * medianShort)
+    // When a fifth of the tiles are still unread the plan is blurred or compressed, and the enlarged strips read more.
+    let labelledCount = items.filter { labelledClasses.contains($0.cls) }.count
+    if blankIndices.count * 5 > labelledCount {
+        pageObs += try await recognizeSharpenedStrips(makeTextRequest(), in: image, content: content)
+        pageObs += try await recognizeSharpenedStrips(makeTextRequest(), in: image, content: content, factor: 2, sharpen: false)
+    }
 
     // Assign each page-level text box to the single labelled tile that owns its center pixel.
     var pageHits: [Int: (raw: String, cleaned: String?, score: Double)] = [:]
