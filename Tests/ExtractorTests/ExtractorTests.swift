@@ -264,3 +264,17 @@ private func inkWithRings(centers: [(Int, Int)], radius: Int, size: Int) -> [Boo
     let tables = (0..<4).map { blob(Double($0) * 102, 0, chairs: 4) }
     #expect(mergeChairGrids(tables, gap: 8).count == 4)
 }
+
+@Test func tablesJoinTheirChairsWithAGrowthThatShrinksOnSmallPrints() {
+    func chairs(side: Double, count: Int) -> [CGRect] { (0..<count).map { CGRect(x: Double($0) * 40, y: 0, width: side, height: side) } }
+    #expect(objectJoinRadius(chairs: chairs(side: 12, count: 20)) == 2)
+    #expect(objectJoinRadius(chairs: chairs(side: 30, count: 20)) == 2)
+    #expect(objectJoinRadius(chairs: chairs(side: 6, count: 20)) == 1)
+    #expect(objectJoinRadius(chairs: chairs(side: 6, count: 3)) == 2)
+}
+
+@Test func blackLinesAreUsedOnlyWhenTheSaturationTestHasLostThem() {
+    let black = [Bool](repeating: true, count: 100)
+    #expect(!inkLosesBlackLines(black: black, ink: [Bool](repeating: true, count: 40) + [Bool](repeating: false, count: 60)))
+    #expect(inkLosesBlackLines(black: black, ink: [Bool](repeating: true, count: 10) + [Bool](repeating: false, count: 90)))
+}
