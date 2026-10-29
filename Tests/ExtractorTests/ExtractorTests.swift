@@ -153,3 +153,18 @@ private func squareRegion(_ x0: Int, _ y0: Int, side: Int, w: Int) -> Region {
     #expect(outline(faceSide: 18) != nil)
     #expect(outline(faceSide: 4) == nil)
 }
+
+@Test func everyClassBelongsToTheLayerThatOwnsIt() {
+    #expect(Layer.of(tile("Booth A", "A1")) == .booth)
+    #expect(Layer.of(tile("SPONSOR BOOTH", nil)) == .booth)
+    #expect(Layer.of(tile("wall", nil)) == .wall)
+    #expect(Layer.of(tile("pillar", nil)) == .wall)
+    #expect(Layer.of(tile("door", nil)) == .door)
+    #expect(Layer.of(tile("object", nil)) == .seat)
+}
+
+@Test func layersOptionTakesNamesAndRejectsUnknownOnes() {
+    #expect(parseOptions(["fp", "a.png", "b.png"])?.layers == Set(Layer.allCases))
+    #expect(parseOptions(["fp", "a.png", "b.png", "--layers", "booth,wall"])?.layers == [.booth, .wall])
+    #expect(parseOptions(["fp", "a.png", "b.png", "--layers", "tile"]) == nil)
+}

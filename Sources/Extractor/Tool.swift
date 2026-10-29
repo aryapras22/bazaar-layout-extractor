@@ -14,6 +14,7 @@ struct Options {
     var regroup: Bool = true
     var featurePrint: Bool = false
     var judgeMode: String = "off"
+    var layers: Set<Layer> = Set(Layer.allCases)
 }
 
 func parseOptions(_ args: [String]) -> Options? {
@@ -25,6 +26,7 @@ func parseOptions(_ args: [String]) -> Options? {
     var regroup = true
     var featurePrint = false
     var judgeMode = "off"
+    var layers = Set(Layer.allCases)
 
     var i = 1
     while i < args.count {
@@ -53,6 +55,12 @@ func parseOptions(_ args: [String]) -> Options? {
             guard i + 1 < args.count, ["off", "fm", "mlx"].contains(args[i + 1]) else { return nil }
             judgeMode = args[i + 1]
             i += 2
+        case "--layers":
+            guard i + 1 < args.count else { return nil }
+            let named = args[i + 1].split(separator: ",").map { Layer(rawValue: String($0)) }
+            guard !named.isEmpty, !named.contains(nil) else { return nil }
+            layers = Set(named.compactMap { $0 })
+            i += 2
         default:
             if arg.hasPrefix("--") { return nil }
             positional.append(arg)
@@ -63,14 +71,14 @@ func parseOptions(_ args: [String]) -> Options? {
     return Options(
         planPath: positional[0], legendPath: positional[1], outDir: outDir,
         repair: repair, reread: reread, bridge: bridge, regroup: regroup,
-        featurePrint: featurePrint, judgeMode: judgeMode
+        featurePrint: featurePrint, judgeMode: judgeMode, layers: layers
     )
 }
 
 public enum ExtractTool {
     public static func run(arguments: [String]) async throws {
         guard let opts = parseOptions(arguments) else {
-            fputs("usage: fp-extract layout.png legend.png [--out dir] [--no-repair] [--no-reread] [--no-bridge] [--no-regroup] [--feature-print] [--judge off|fm|mlx]\n", stderr)
+            fputs("usage: fp-extract layout.png legend.png [--out dir] [--no-repair] [--no-reread] [--no-bridge] [--no-regroup] [--feature-print] [--judge off|fm|mlx] [--layers booth,wall,door,seat]\n", stderr)
             exit(2)
         }
         let outDir = URL(fileURLWithPath: opts.outDir)
@@ -105,7 +113,9 @@ public enum ExtractTool {
         for item in legendItems where !largeTile(item) {
             fillRect(&claimed, item.rect.insetBy(dx: -6 * scale, dy: -6 * scale), w: w, h: h, value: true)
         }
-        var outside = await outsideLayer(planImage, px, claimed: claimed)
+        // The booth layer needs nothing from the others, so a booth-only run skips the ink analysis.
+        var outside = opts.layers.isDisjoint(with: [.wall, .door, .seat])
+            ? [] : await outsideLayers(planImage, px, claimed: claimed).all
         outside.removeAll { item in
             guard item.cls == "object" || item.cls == "pillar" else { return false }
             let center = CGPoint(x: item.rect.midX, y: item.rect.midY)
@@ -158,6 +168,8 @@ public enum ExtractTool {
             }
         }
 
+        items = items.filter { opts.layers.contains(Layer.of($0)) }
+
         let swift4Rep = report(items)
         let result = Result(image: ImageInfo(width: w, height: h), legend: entries, items: items, report: swift4Rep)
 
@@ -187,6 +199,10 @@ public enum ExtractTool {
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         try encoder.encode(result).write(to: outDir.appendingPathComponent("layout.json"))
         try encoder.encode(diffReport).write(to: outDir.appendingPathComponent("report_diff.json"))
+        for layer in opts.layers.sorted() {
+            let file = LayerFile(layer: layer.rawValue, image: ImageInfo(width: w, height: h), items: items.filter { Layer.of($0) == layer })
+            try encoder.encode(file).write(to: outDir.appendingPathComponent(layer.file))
+        }
         writeOverlay(planImage, items: items, to: outDir.appendingPathComponent("overlay.png"))
         print(String(decoding: try encoder.encode(swift4Rep), as: UTF8.self))
     }

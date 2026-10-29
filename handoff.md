@@ -21,10 +21,10 @@ notebooks/             render_swift4.ipynb (predates this session's changes)
 output/swift5/plan*/   layout.json, report_diff.json, overlay.png, render.png, crops/, judge_crops/ (generated, gitignored)
 bin/                   compiled render_swift4 (gitignored); fp-extract is built into .build/release/
 Package.swift         SwiftPM package, macOS 27
-Sources/Extractor/     the extractor by stage: Imaging, Text, Model, Legend, Tiles, Outside, Regroup, IdRepair, Judge, Tool
+Sources/Extractor/     the extractor by stage: Imaging, Text, Model, Legend, Tiles (booth layer), Scan, WallLayer, DoorLayer, SeatLayer, Layers (the layer list and composer), Outside (wall helpers), Regroup, IdRepair, Judge, Tool
 Sources/fp-extract/    four-line executable around ExtractTool.run
 Sources/FloorPlanCore/, Sources/fp-fix/   older ID-repair library and tool; duplicates part of IdRepair, not merged yet
-Tests/                 ExtractorTests (7) and FloorPlanCoreTests (9); all pass
+Tests/                 ExtractorTests (13) and FloorPlanCoreTests (9); all pass
 LEARNING/              notes on tile detection, polygon-masked OCR with monotone bands, and the MLX VLM benchmark
 .archived/             swift 1 to 4 sources, old notebooks and outputs, SAM3 experiment (mostly untracked)
 ```
@@ -47,6 +47,7 @@ bin/render_swift4
 /Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/make_pdf.py
 /Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/score.py
 swift test
+# optional: only some layers, e.g. --layers booth,wall (default is all four)
 /Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/scale_stress.py 1,5,6 2,3
 ```
 
@@ -79,6 +80,8 @@ Notes on reading the table:
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session
+
+22. Layer scaffold, no behaviour change: the 290-line `outsideLayer` is split into a shared `scanInk` and four stages with their bodies unchanged: `wallLayer` (wall strokes) and `columnLayer` (solid and hollow squares) as the wall layer, `doorLayer` (gaps in wall bands) and `seatLayer` (what is left, as `object`). `layout.json` and `report_diff.json` are byte-identical on all six plans. Layers: booth (everything that is not one of the others, including tiles and sponsor boxes), wall (class `wall` and `pillar`), door, seat (class `object`). Each run also writes `booths.json`, `walls.json`, `doors.json` and `seats.json` next to `layout.json`, with the same item format plus a `layer` name, and `--layers booth,wall,door,seat` keeps only the named layers. A booth-only run is no faster: its time is booth ID reading, not the ink analysis. The wall, door and seat layers still need the booth layer's claimed areas, so they run it first. Decisions taken: walls own columns, seats own round tables with one shared circle detector still to build, one file per layer plus the merged file, and a text mask in each layer later.
 
 19. `seat` field: objects carry an optional `seat` (true or false) taken from the judge's label (table with chairs and audience seating are seats; stairs, door, pillar, wall and noise are not). It is written only when the judge ran, so judge-off output is byte-identical on all six plans. Against the truth labels it is right on every matched object (136/136, 26/26, 8/8), but nearly all matched truth objects are seats, so that test has almost no negatives.
 20. Diagonal wall truth (`scripts/make_wall_truth.py`, run after the booth truth scripts): the slanted wall strokes in the plan 5 and 6 PDFs, 2 and 6 segments, class `diagonal wall`. The scorer draws segments with thickness and reports "diagonal wall found". Swift 5 finds 0 of 2 and 0 of 6, because walls come only from horizontal and vertical runs (`longRuns`). Axis-aligned wall truth from the PDFs is not generated: zone dividers and stage outlines are stroked like walls.
