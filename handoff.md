@@ -133,18 +133,20 @@ Nine models on Apple M5, 24 GB, in `floor-plan-vlm-bench`. Qwen3.5-9B-MLX-4bit b
 
 ## Robustness (scripts/robustness.py)
 
-`scripts/robustness.py 1,2,3,5,6` degrades each plan (half and double size, 90 degree rotation, 1 degree skew, margins, JPEG quality 40, blur, pixel noise, faded colours), moves the truth the same way, runs `fp-extract` and prints one table to `output/robustness/report.md`. Set `FP_EXTRACT` to test another binary. Baseline failures before the noise fix, original in parentheses:
+`scripts/robustness.py 1,2,3,5,6` degrades each plan (half and double size, 90 degree rotation, 1 degree skew, margins, JPEG quality 40, blur, pixel noise, faded colours), moves the truth the same way, runs `fp-extract` and prints one table to `output/robustness/report.md`. Set `FP_EXTRACT` to test another binary. A 50-row run takes about 15 minutes.
 
-| Transform | What breaks |
+Against the first run (before any robustness work), the merged build is better in 48 of 173 compared cells, worse in 2 and within a few points in the rest. Largest gains: blur (plan 2 tiles 123 to 211, plan 5 IDs 0 to 102, plan 6 tiles 11 to 274), noise (plans 1, 2, 3 and 5 recover; plans 2 and 3 no longer crash), 90 degree rotation of plan 5 (101 to 248 tiles), half size of plan 1 and plan 2 objects (1 to 136 and 1 to 23), JPEG on plan 3 (pillars 6 to 31, walls 0% to 36%), faded plan 2 (tiles 123 to 211), 1 degree skew on plan 3 walls (0% to 46%).
+
+Still weak, against the same plan unchanged:
+
+| Row | Result |
 |---|---|
-| Pixel noise | plan 1 0/160 tiles (160), plans 2 and 3 crash, plan 5 0/265 (244): now fixed |
-| Half resolution | objects 1/141, 1/26, 3/11 (136, 26, 8); plan 3 tiles 35/68 and no IDs; plan 5 tiles 89/265 and no IDs |
-| Blur (sigma 1.2) | plan 2 tiles 123/211, plan 3 walls 0%, plan 5 no IDs, plan 6 tiles 11/281 (280) |
-| JPEG quality 40 | plan 3 objects 0/11, pillars 6/31, walls 0%; plan 5 tiles 78/265 |
-| Faded colours | plan 2 tiles 123/211, plan 6 tiles 270/281 |
-| 1 degree skew | wall coverage 85% to 65% (plan 1), 92% to 81% (plan 2), 37% to 0% (plan 3); plan 3 objects 1/11 |
-| 90 degree rotation | plan 5 tiles 101/265 and no IDs |
-| Double size, margins | no loss |
+| Plan 3 half size | tiles 35/68, no IDs |
+| Plan 5 half size | tiles 89/265, no IDs (text is 4 px) |
+| Plan 5 JPEG 40 | tiles 107/265, IDs 91 (its legend loses INDONESIA) |
+| Plan 5 blur | IDs 102/265 |
+| Plan 3 blur | walls 0% |
+| Plan 6 half size | tiles 267/281 (272 before the merge), IDs 266 (270): the only regression |
 
 ## Environments
 
