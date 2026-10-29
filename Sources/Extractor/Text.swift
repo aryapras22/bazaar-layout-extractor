@@ -7,7 +7,7 @@ import Vision
 // Vision frequently returns Cyrillic homoglyphs for single-letter Latin booth labels and the digit 3.
 let cyrillicLookalikes: [Character: Character] = [
     "\u{0410}": "A", "\u{0412}": "B", "\u{0421}": "C", "\u{0415}": "E", "\u{041D}": "H",
-    "\u{041A}": "K", "\u{041E}": "O", "\u{0425}": "X", "\u{0417}": "3", "\u{041C}": "M", "\u{0420}": "P", "\u{0422}": "T",
+    "\u{041A}": "K", "\u{041E}": "O", "\u{0425}": "X", "\u{0417}": "3", "\u{041C}": "M", "\u{0420}": "P", "\u{0422}": "T", "\u{0406}": "I",
 ]
 
 func foldLookalikes(_ s: String) -> String {
@@ -24,8 +24,20 @@ func makeTextRequest() -> RecognizeTextRequest {
 func readLabel(_ image: CGImage, in rect: CGRect) async throws -> String? {
     let bounds = CGRect(x: 0, y: 0, width: image.width, height: image.height)
     guard let crop = image.cropping(to: rect.insetBy(dx: 4, dy: 4).intersection(bounds)) else { return nil }
-    let found = try await makeTextRequest().perform(on: crop)
-    return found.max { $0.confidence < $1.confidence }?.transcript
+    let first = try await makeTextRequest().perform(on: crop).max { $0.confidence < $1.confidence }?.transcript
+    if let first, cleanLabel(first) != nil { return first }
+    // A blurred or compressed tile reads as nothing at its own size. Vision is jumpy on crops this small,
+    // so several enlarged and sharpened crops vote and the most common readable label wins.
+    var votes: [String: (count: Int, raw: String)] = [:]
+    for (factor, inset) in [(3, 3.0), (3, 4.0), (3, 2.0), (2, 3.0), (2, 4.0)] {
+        guard let wide = image.cropping(to: rect.insetBy(dx: inset, dy: inset).intersection(bounds)),
+              let sharp = sharpened(wide, by: factor) else { continue }
+        for obs in try await makeTextRequest().perform(on: sharp) {
+            if let label = cleanLabel(obs.transcript) { votes[label, default: (0, obs.transcript)].count += 1 }
+        }
+    }
+    let best = votes.max { $0.value.count < $1.value.count }?.value.raw ?? first
+    return best
 }
 
 func cleanLabel(_ raw: String) -> String? {

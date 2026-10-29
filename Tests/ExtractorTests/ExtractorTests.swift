@@ -259,3 +259,17 @@ private func flatPlan(noise: Int) -> Pixels {
     #expect(outline[10 * w + 15])
     #expect(!outline[27 * w + 45])
 }
+
+@Test func ukrainianIReadsAsLatinI() {
+    #expect(cleanLabel("\u{0406}3") == "I3")
+}
+
+@Test func sharpenedImageIsEnlargedAndDeepensAGreyStroke() {
+    let (w, h) = (12, 12)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    for y in 0..<h { for x in 5..<7 { for c in 0..<3 { rgba[(y * w + x) * 4 + c] = 140 } } }  // a blurred stroke
+    let image = makeImage(Pixels(width: w, height: h, rgba: rgba))!
+    let sharp = pixels(of: sharpened(image, by: 3)!)
+    #expect(sharp.width == 36)
+    #expect(sharp.rgb(18, 18).0 < 140)
+}
