@@ -7,14 +7,10 @@ import Vision
 /// Seat layer: what is left once walls, columns and text are set aside, grouped by shape, plus each round chair
 /// on its own. Tables with chairs, audience seating and stairs all arrive here as `object`. An object that holds
 /// chairs is a seat; the judge may add seats the chair test missed but never removes one.
-func seatLayer(_ s: InkScan, hollow: [Bool], px: Pixels, claimed: [Bool]) -> [Item] {
+func seatLayer(_ s: InkScan, hollow: [Bool]) -> [Item] {
     let (w, h, n, mx, scale) = (s.w, s.h, s.n, s.mx, s.scale)
     let (inText, hs, vs, thick, compact) = (s.inText, s.hs, s.vs, s.thick, s.compact)
-    var ink = s.ink
-    let black = nearBlack(px)
-    if inkLosesBlackLines(black: black, ink: s.rawInk) {
-        for i in 0..<n where black[i] && !claimed[i] && !inText[i] { ink[i] = true }
-    }
+    let ink = s.ink
     var items: [Item] = []
     let chairRects = chairs(ink: ink, w: w, h: h, page: mx)
 
@@ -87,37 +83,6 @@ func seatLayer(_ s: InkScan, hollow: [Bool], px: Pixels, claimed: [Bool]) -> [It
     }
     let chairSide = chairRects.map(\.width).sorted().dropFirst(chairRects.count / 2).first ?? 0
     return mergeChairGrids(items, gap: chairSide)
-}
-
-/// Dark pixels whatever their colour.
-func nearBlack(_ px: Pixels) -> [Bool] {
-    let n = px.width * px.height
-    var gray = [UInt8](repeating: 0, count: n)
-    var hist = [Int](repeating: 0, count: 256)
-    for i in 0..<n {
-        let v = UInt8((299 * Int(px.rgba[i * 4]) + 587 * Int(px.rgba[i * 4 + 1]) + 114 * Int(px.rgba[i * 4 + 2])) / 1000)
-        gray[i] = v
-        hist[Int(v)] += 1
-    }
-    var background = 255, seen = 0
-    for v in 0..<256 {
-        seen += hist[v]
-        if seen * 2 >= n { background = v; break }
-    }
-    let cut = UInt8(Double(background) * 0.3)
-    return gray.map { $0 < cut }
-}
-
-/// The shared ink mask needs low saturation, but JPEG and pixel noise tint the 1 px black outlines of chairs and
-/// tables until they pass for a colour, and the lines vanish. On clean plans at least a third of the black pixels pass
-/// (the rest border coloured fills); when under a fifth do, the saturation test is failing and black alone is used.
-func inkLosesBlackLines(black: [Bool], ink: [Bool]) -> Bool {
-    var total = 0, kept = 0
-    for i in black.indices where black[i] {
-        total += 1
-        if ink[i] { kept += 1 }
-    }
-    return total > 0 && Double(kept) < 0.2 * Double(total)
 }
 
 /// How far ink is grown to join a table to its chairs. Two pixels suits chairs about twelve pixels across; on a

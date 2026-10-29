@@ -433,12 +433,6 @@ private func inkWithRings(centers: [(Int, Int)], radius: Int, size: Int) -> [Boo
     #expect(objectJoinRadius(chairs: chairs(side: 6, count: 3)) == 2)
 }
 
-@Test func blackLinesAreUsedOnlyWhenTheSaturationTestHasLostThem() {
-    let black = [Bool](repeating: true, count: 100)
-    #expect(!inkLosesBlackLines(black: black, ink: [Bool](repeating: true, count: 40) + [Bool](repeating: false, count: 60)))
-    #expect(inkLosesBlackLines(black: black, ink: [Bool](repeating: true, count: 10) + [Bool](repeating: false, count: 90)))
-}
-
 @Test func outlineKeepsLinesBlurHasLightenedButNotAFlatGreyFill() {
     let (w, h) = (60, 40)
     var rgba = [UInt8](repeating: 255, count: w * h * 4)
