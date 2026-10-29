@@ -62,6 +62,8 @@ func tileScale(_ grid: [Int16], w: Int, h: Int, page pageSide: Int, area: Int) -
     return min(page, side / referenceTileSide)
 }
 
+private func isColoured(_ entry: LegendClass) -> Bool { hypot(entry.lab.a, entry.lab.b) >= 15 }
+
 func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async throws -> LegendLayerOutput {
     let (w, h) = (px.width, px.height)
     let canvas = CGRect(x: 0, y: 0, width: w, height: h)
@@ -128,8 +130,9 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
     }
 
     // The booth size of the plan is the typical short side of a region, which a divider that vanished does not move.
-    let shortSides = candidates.map { min($0.rect.width, $0.rect.height) }.sorted()
-    let unit = shortSides.isEmpty ? referenceTileSide : shortSides[shortSides.count / 2]
+    // The text and outline fragments of a faded black class can outnumber the booths, so the unit has a floor.
+    let shortSides = candidates.map { Double(min($0.rect.width, $0.rect.height)) }.sorted()
+    let unit = max(shortSides.isEmpty ? referenceTileSide : shortSides[shortSides.count / 2], 0.8 * referenceTileSide * page)
     for c in candidates {
         let entry = legend[c.cls]
         let raw = try await readLabel(image, in: c.rect)
@@ -159,7 +162,7 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
     // with one ID stays labelled when most of the plan's tiles are in labelled classes.
     let inLabelled = found.filter { labelledIndices.contains($0.cls) }.count
     if inLabelled * 2 >= found.count {
-        for k in legend.indices where !labelledIndices.contains(k) && legend[k].lab.l > 8 && legend[k].lab.l < 95 {
+        for k in legend.indices where !labelledIndices.contains(k) && isColoured(legend[k]) {
             let members = found.filter { $0.cls == k }
             if members.count >= 20, members.contains(where: { $0.item.id != nil }) { labelledIndices.insert(k) }
         }
@@ -169,7 +172,10 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
     // wide as the plan's typical booth, which the thin fragments that the rule is there to drop are not.
     let readSides = found.filter { $0.item.id != nil }.map(\.item.shortSide).sorted()
     let boothSide = readSides.count >= 8 ? readSides[readSides.count / 2] : unit
-    found = found.filter { !$0.small || labelledIndices.contains($0.cls) || $0.item.shortSide >= 0.8 * boothSide }
+    // White, black and grey classes are left out of that: their regions are the plan's own text and outlines.
+    found = found.filter {
+        !$0.small || labelledIndices.contains($0.cls) || (isColoured(legend[$0.cls]) && $0.item.shortSide >= 0.8 * boothSide)
+    }
     var items: [Item] = []
     var colorReasons: [[String]] = []
     for var f in found {

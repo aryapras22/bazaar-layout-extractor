@@ -209,7 +209,37 @@ func adaptLegendToPlan(_ legend: [LegendClass], _ px: Pixels, classes only: [Int
         guard let j = mode, distance(clusters[j].lab, want) > gateDeltaE / 2 else { continue }
         result[k] = LegendClass(name: legend[k].name, rgb: clusters[j].rgb, lab: clusters[j].lab)
     }
-    return result
+    return applyFadeToAchromatic(legend, to: result)
+}
+
+/// Fading maps every colour c to a*c + b. The classes that moved onto plan colours show a and b, and black and grey
+/// swatches, which the colour search skips because dark and grey pixels are mostly text, take the faded value. A plan
+/// whose classes did not move by a clear fade is left alone.
+func applyFadeToAchromatic(_ legend: [LegendClass], to result: [LegendClass]) -> [LegendClass] {
+    func channels(_ c: (UInt8, UInt8, UInt8)) -> [Double] { [Double(c.0), Double(c.1), Double(c.2)] }
+    let moved = legend.indices.filter { distance(legend[$0].lab, result[$0].lab) > 4 }
+    guard moved.count >= 2 else { return result }
+    var pairs: [(from: Double, to: Double)] = []
+    for k in moved { pairs += zip(channels(legend[k].rgb), channels(result[k].rgb)).map { (from: $0, to: $1) } }
+    let n = Double(pairs.count)
+    let sx = pairs.reduce(0.0) { $0 + $1.from }, sy = pairs.reduce(0.0) { $0 + $1.to }
+    let sxx = pairs.reduce(0.0) { $0 + $1.from * $1.from }, sxy = pairs.reduce(0.0) { $0 + $1.from * $1.to }
+    let spread = n * sxx - sx * sx
+    guard spread > 0 else { return result }
+    let gain = (n * sxy - sx * sy) / spread, offset = (sy - gain * sx) / n
+    let squares = pairs.reduce(0.0) { total, pair in
+        let miss = gain * pair.from + offset - pair.to
+        return total + miss * miss
+    }
+    guard (0.5...0.95).contains(gain), offset > 10, (squares / n).squareRoot() < 15 else { return result }
+    var faded = result
+    for k in legend.indices where !moved.contains(k) && !isNearWhite(legend[k].rgb) {
+        let c = legend[k].lab
+        guard (c.a * c.a + c.b * c.b).squareRoot() < 15 else { continue }
+        let v = channels(legend[k].rgb).map { UInt8(max(0, min(255, (gain * $0 + offset).rounded()))) }
+        faded[k] = LegendClass(name: legend[k].name, rgb: (v[0], v[1], v[2]), lab: lab((v[0], v[1], v[2])))
+    }
+    return faded
 }
 
 func legendWarnings(_ classes: [LegendClass]) -> [String] {
