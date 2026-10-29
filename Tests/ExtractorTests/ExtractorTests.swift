@@ -94,9 +94,24 @@ private func gridWithTiles(side: Int, count: Int, page: Int) -> [Int16] {
 
 @Test func tileScaleShrinksForSmallTilesAndNeverPassesThePageScale() {
     let small = gridWithTiles(side: 24, count: 20, page: 3000)
-    #expect(abs(tileScale(small, w: 3000, h: 3000) - 24.0 / referenceTileSide) < 0.01)
+    #expect(abs(tileScale(small, w: 3000, h: 3000, page: 3000, area: 9000000) - 24.0 / referenceTileSide) < 0.01)
     let large = gridWithTiles(side: 100, count: 20, page: 2000)
-    #expect(tileScale(large, w: 2000, h: 2000) == 1.0)
+    #expect(tileScale(large, w: 2000, h: 2000, page: 2000, area: 4000000) == 1.0)
     let few = gridWithTiles(side: 24, count: 3, page: 3000)
-    #expect(tileScale(few, w: 3000, h: 3000) == 1.5)
+    #expect(tileScale(few, w: 3000, h: 3000, page: 3000, area: 9000000) == 1.5)
+}
+
+@Test func contentExtentIgnoresMarginsAndSpecks() {
+    let (w, h) = (100, 80)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    func paint(_ x: Int, _ y: Int) {
+        let i = (y * w + x) * 4
+        (rgba[i], rgba[i + 1], rgba[i + 2]) = (0, 0, 0)
+    }
+    for y in 40..<50 { for x in 30..<50 { paint(x, y) } }
+    paint(95, 5)  // a lone speck must not stretch the box
+    let extent = contentExtent(rgba, width: w, height: h)
+    #expect(extent.side == 20)
+    #expect(extent.area == 200)
+    #expect(extent.rect == CGRect(x: 30, y: 40, width: 20, height: 10))
 }

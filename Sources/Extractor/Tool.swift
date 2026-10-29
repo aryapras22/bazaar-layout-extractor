@@ -87,7 +87,7 @@ public enum ExtractTool {
         let px = pixels(of: planImage)
         var classes = legendClasses
         let (w, h) = (px.width, px.height)
-        let scale = Double(max(w, h)) / 2000
+        let scale = Double(px.page) / 2000
 
         var legendOut = try await legendLayer(planImage, px, legend: classes)
         let silent = classes.indices.filter { k in !legendOut.items.contains { $0.cls == classes[k].name } }
@@ -100,7 +100,7 @@ public enum ExtractTool {
         legendItems += await outlinedLayer(planImage, px, existing: legendItems, scale: legendOut.scale)
 
         var claimed = [Bool](repeating: false, count: w * h)
-        let largeTile = { (item: Item) in item.rect.width * item.rect.height > 0.01 * Double(w * h) }
+        let largeTile = { (item: Item) in item.rect.width * item.rect.height > 0.01 * Double(px.area) }
         for item in legendItems where !largeTile(item) {
             fillRect(&claimed, item.rect.insetBy(dx: -6 * scale, dy: -6 * scale), w: w, h: h, value: true)
         }
@@ -118,14 +118,14 @@ public enum ExtractTool {
 
         var ruleCounts: [String: Int] = [:]
         let rereadStats = try await rereadTiles(
-            planImage, items: &legendItems, labelledClasses: legendOut.labelledClasses,
+            planImage, content: px.contentRect, items: &legendItems, labelledClasses: legendOut.labelledClasses,
             colorReasons: legendOut.colorReasons, outDir: outDir, apply: opts.reread,
             ruleCounts: &ruleCounts
         )
 
         var items = legendItems + outside
         if opts.bridge {
-            bridgeWalls(&items, width: w, height: h, ruleCounts: &ruleCounts)
+            bridgeWalls(&items, page: px.page, ruleCounts: &ruleCounts)
         }
 
         let fpStats = await regroupObjects(

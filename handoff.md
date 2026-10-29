@@ -60,12 +60,12 @@ Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use gree
 
 | | Plan 1 | Plan 2 | Plan 3 | Plan 5 (not tuned on) | Plan 6 (not tuned on) |
 |---|---|---|---|---|---|
-| Tiles found, precision | 160/160, 93% | 211/211, 100% | 68/68, 92% | 244/265, 81% | 280/281, 88% |
+| Tiles found, precision | 160/160, 92% | 211/211, 100% | 68/68, 92% | 244/265, 81% | 280/281, 88% |
 | Tile IDs exact, with `suggested_id` | 154/154, 154 | 208/209, 209 | 67/67, 67 | 224/265, 232 | 270/281, 270 |
-| Objects | 134/141, precision 79% | 26/26, 59% | 8/11, 40% | no truth | no truth |
+| Objects | 136/141, precision 80% | 26/26, 59% | 8/11, 40% | no truth | no truth |
 | Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth | no truth |
 | Doors | 0/10 | 0/4 | 0/1 | no truth | no truth |
-| Walls, pixel recall / precision | 86% / 80% | 92% / 88% | not meaningful, see notes | no truth | no truth |
+| Walls, pixel recall / precision | 85% / 80% | 92% / 84% | not meaningful, see notes | no truth | no truth |
 
 Before this session's changes: plan 1 objects 122/141 at 56% precision, pillars 0/23; plan 3 objects 0/11, pillars 25/31.
 
@@ -79,6 +79,8 @@ Notes on reading the table:
 - Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
 
 ## What changed this session
+
+16. Page measure: every page-size threshold now uses the bounding box of the content (everything that differs from the most common colour) instead of the image, so margins around a plan change nothing (`contentExtent`, `Pixels.page`, `Pixels.area`, `Pixels.contentRect`). The two page-level Vision text passes read only that box (`recognizePageText`): on a 3x padded page Vision returned tall "text" boxes of digits with confidence 1.0 over rows of chairs, and the extractor erased the tables under them. The "large tile" test and the region cap in `tileScale` use the content area too. Result of `scripts/scale_stress.py` on plans 1, 2, 3, 5 and 6 padded 2x and 3x: tiles, IDs, objects, pillars and wall recall are identical to the unpadded plans, apart from wall recall on plan 3 (36.8% against 38.8%). Before this, plan 1 padded 3x kept 2 of 141 objects and 0 of 23 pillars at 2x, and plan 2 padded 2x kept none of its 26 objects. Unpadded plan 1 objects rise from 134 to 136 of 141.
 
 15. Tile scale (`tileScale` in `Tiles.swift`): tile thresholds followed the page size, so a plan whose booths are small for its page lost them. Padding plans with white margins showed it: at 3x padding plan 1 fell to 27% of its booths, plan 5 to 3% and plan 6 to 6%. The scale is now the smaller of the page scale and the area-weighted 25th percentile of legend-coloured region sizes divided by 25 px, so it shrinks for small tiles and never grows. The minimums (erosion radius, `minArea`, seam length, the `outlinedLayer` minimum side) follow it; the upper bounds (largest hole, largest booth side) stay on the page scale, because larger booths exist on the same plan; tiles admitted only because the minimum shrank are kept only in labelled classes. Padded plans now score about the same as unpadded (plan 1 x3: 156/160 booths, plan 5 x3: 242/265, plan 6 x3: 278/281). On the unpadded plans plan 5 gains 2 booths and 1 ID and plan 6 loses `M3` and `M15`, both Vision reading a crop one pixel different; plans 1, 2 and 3 do not change. `scripts/scale_stress.py` reruns the padding test.
 

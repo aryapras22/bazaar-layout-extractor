@@ -39,9 +39,9 @@ func rebuildLabelledReasons(_ items: inout [Item], labelledClasses: Set<String>,
 // never grows past the page scale.
 let referenceTileSide = 25.0
 
-func tileScale(_ grid: [Int16], w: Int, h: Int) -> Double {
-    let page = Double(max(w, h)) / 2000
-    let cap = max(2500, w * h / 200)
+func tileScale(_ grid: [Int16], w: Int, h: Int, page pageSide: Int, area: Int) -> Double {
+    let page = Double(pageSide) / 2000
+    let cap = max(2500, area / 200)
     let regions = components(grid.map { $0 >= 0 }, w: w, h: h, eight: false)
         .filter { $0.area >= 25 && $0.area <= cap }
         .map { (side: Double($0.area).squareRoot(), weight: $0.area) }
@@ -60,10 +60,10 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
     let (w, h) = (px.width, px.height)
     let canvas = CGRect(x: 0, y: 0, width: w, height: h)
     let grid = classify(px, legend: legend)
-    let scale = tileScale(grid, w: w, h: h)
+    let scale = tileScale(grid, w: w, h: h, page: px.page, area: px.area)
     let r = max(1, Int((3 * scale).rounded()))
     let minArea = Int(400 * scale * scale)
-    let page = Double(max(w, h)) / 2000
+    let page = Double(px.page) / 2000
     let maxHole = Int(2000 * page * page)  // an upper bound, so it follows the page, not the smallest tile
     let seamLength = Int(20 * scale)
     let outlines = morph(darkPixels(px, below: 60), w: w, h: h, rx: 1, ry: 1, erode: false)
@@ -185,7 +185,7 @@ func makeMaskedUpscaledCrop(_ image: CGImage, item: Item, scale: Int) -> CGImage
 func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Double) async -> [Item] {
     let (w, h) = (px.width, px.height)
     let outlines = morph(darkPixels(px, below: 60), w: w, h: h, rx: 1, ry: 1, erode: false)
-    let minSide = Int(16 * scale), maxSide = Int(140 * Double(max(w, h)) / 2000)
+    let minSide = Int(16 * scale), maxSide = Int(140 * Double(px.page) / 2000)
     var items: [Item] = []
     for face in components(outlines.map { !$0 }, w: w, h: h, eight: false) {
         guard min(face.width, face.height) >= minSide, max(face.width, face.height) <= maxSide,
@@ -219,6 +219,7 @@ func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Doub
 
 func rereadTiles(
     _ image: CGImage,
+    content: CGRect,
     items: inout [Item],
     labelledClasses: Set<String>,
     colorReasons: [[String]],
@@ -280,10 +281,7 @@ func rereadTiles(
 
     let labelledShorts = items.filter { labelledClasses.contains($0.cls) }.map(\.shortSide).sorted()
     let medianShort = labelledShorts.isEmpty ? 40.0 : labelledShorts[labelledShorts.count / 2]
-    var pageReq = makeTextRequest()
-    pageReq.minimumTextHeightFraction = Float(max(0.001, 0.15 * medianShort / Double(image.height)))
-    let pageObs = try await pageReq.perform(on: image)
-    let pageSize = CGSize(width: image.width, height: image.height)
+    let pageObs = try await recognizePageText(makeTextRequest(), in: image, content: content, minimumTextHeight: 0.15 * medianShort)
 
     // Assign each page-level text box to the single labelled tile that owns its center pixel.
     var pageHits: [Int: (raw: String, cleaned: String?, score: Double)] = [:]
@@ -291,7 +289,7 @@ func rereadTiles(
     for obs in pageObs {
         let raw = obs.transcript.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !raw.isEmpty else { continue }
-        let b = obs.boundingBox.toImageCoordinates(pageSize, origin: .upperLeft)
+        let b = obs.box
         let center = CGPoint(x: b.midX, y: b.midY)
         var owner: Int?
         var ownerArea = Int.max

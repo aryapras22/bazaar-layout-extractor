@@ -45,3 +45,31 @@ func cleanLabel(_ raw: String) -> String? {
     guard (1...3).contains(tail.count), tail.allSatisfy({ $0.isNumber }) else { return nil }
     return String(head) + String(tail)
 }
+
+struct PageText {
+    let transcript: String
+    let confidence: Float
+    let box: CGRect
+}
+
+/// Reads text over the content area only, with boxes returned in whole-image coordinates. Vision reads
+/// very large pages badly (it saw rows of chairs as long digit strings), so a plan inside wide margins
+/// must give it the same input as the plan alone.
+func recognizePageText(
+    _ request: RecognizeTextRequest, in image: CGImage, content: CGRect, minimumTextHeight: Double? = nil
+) async throws -> [PageText] {
+    let bounds = CGRect(x: 0, y: 0, width: image.width, height: image.height)
+    let area = (content.isEmpty ? bounds : content.insetBy(dx: -24, dy: -24).intersection(bounds))
+    guard let crop = image.cropping(to: area) else { return [] }
+    var request = request
+    if let minimumTextHeight {
+        request.minimumTextHeightFraction = Float(max(0.001, minimumTextHeight / Double(crop.height)))
+    }
+    let size = CGSize(width: crop.width, height: crop.height)
+    return try await request.perform(on: crop).map { observation in
+        var box = observation.boundingBox.toImageCoordinates(size, origin: .upperLeft)
+        box.origin.x += area.minX
+        box.origin.y += area.minY
+        return PageText(transcript: observation.transcript, confidence: observation.confidence, box: box)
+    }
+}

@@ -95,7 +95,7 @@ func readLegend(_ image: CGImage) async throws -> [LegendClass] {
 func adaptLegendToPlan(_ legend: [LegendClass], _ px: Pixels, classes only: [Int]) -> [LegendClass] {
     struct Cluster { var lab: Lab; var rgb: (UInt8, UInt8, UInt8); var count: Int }
     let stride = 2
-    let scale = Double(max(px.width, px.height)) / 2000
+    let scale = Double(px.page) / 2000
     let minCount = 3 * Int(400 * scale * scale)
     var counts: [UInt32: Int] = [:]
     for i in Swift.stride(from: 0, to: px.width * px.height, by: stride) {

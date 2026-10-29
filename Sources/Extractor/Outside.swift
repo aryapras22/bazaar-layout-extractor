@@ -109,7 +109,7 @@ func darkPixels(_ px: Pixels, below: Int) -> [Bool] {
 func outsideLayer(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> [Item] {
     let (w, h) = (px.width, px.height)
     let n = w * h
-    let mx = max(w, h)
+    let mx = px.page
     var items: [Item] = []
 
     let rawInk = inkMask(px)
@@ -119,9 +119,9 @@ func outsideLayer(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> [Ite
 
     var textBoxes: [CGRect] = []
     let size = CGSize(width: w, height: h)
-    if let found = try? await makeTextRequest().perform(on: image) {
+    if let found = try? await recognizePageText(makeTextRequest(), in: image, content: px.contentRect) {
         for o in found where o.confidence >= 0.5 {
-            textBoxes.append(o.boundingBox.toImageCoordinates(size, origin: .upperLeft).insetBy(dx: -3, dy: -3))
+            textBoxes.append(o.box.insetBy(dx: -3, dy: -3))
         }
     }
     var inText = [Bool](repeating: false, count: n)
@@ -316,8 +316,8 @@ func mergeWallBoxes(_ pieces: [Item], rule: String, reason: String) -> Item {
     )
 }
 
-func bridgeWalls(_ items: inout [Item], width: Int, height: Int, ruleCounts: inout [String: Int]) {
-    let mx = Double(max(width, height))
+func bridgeWalls(_ items: inout [Item], page: Int, ruleCounts: inout [String: Int]) {
+    let mx = Double(page)
     let openingGapTol = 0.03 * mx
     let dashGapTol = 0.03 * mx
     let bridgeGapTol = 0.015 * mx

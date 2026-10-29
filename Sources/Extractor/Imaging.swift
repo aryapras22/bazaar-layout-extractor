@@ -36,6 +36,12 @@ struct Pixels {
     let width: Int
     let height: Int
     let rgba: [UInt8]
+    /// Longest side and area of the box that holds content, or 0 to use the whole image.
+    var contentSide: Int = 0
+    var contentArea: Int = 0
+    var contentRect: CGRect = .zero
+    var page: Int { contentSide > 0 ? contentSide : max(width, height) }
+    var area: Int { contentArea > 0 ? contentArea : width * height }
 
     func rgb(_ x: Int, _ y: Int) -> (UInt8, UInt8, UInt8) {
         let i = (y * width + x) * 4
@@ -68,7 +74,34 @@ func pixels(of image: CGImage) -> Pixels {
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
         context.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
     }
-    return Pixels(width: w, height: h, rgba: data)
+    let extent = contentExtent(data, width: w, height: h)
+    return Pixels(width: w, height: h, rgba: data, contentSide: extent.side, contentArea: extent.area, contentRect: extent.rect)
+}
+
+/// Longest side and area of the bounding box of everything that differs from the most common colour.
+/// Every size threshold is proportional to these, so white margins around a plan do not change them.
+func contentExtent(_ rgba: [UInt8], width w: Int, height h: Int) -> (side: Int, area: Int, rect: CGRect) {
+    let whole = CGRect(x: 0, y: 0, width: w, height: h)
+    var counts: [UInt32: Int] = [:]
+    for i in stride(from: 0, to: w * h, by: 7) {
+        counts[UInt32(rgba[i * 4] >> 3) << 16 | UInt32(rgba[i * 4 + 1] >> 3) << 8 | UInt32(rgba[i * 4 + 2] >> 3), default: 0] += 1
+    }
+    guard let ground = counts.max(by: { $0.value < $1.value })?.key else { return (max(w, h), w * h, whole) }
+    let (gr, gg, gb) = (Int(ground >> 16) << 3 | 4, Int((ground >> 8) & 31) << 3 | 4, Int(ground & 31) << 3 | 4)
+    var rowHits = [Int](repeating: 0, count: h), columnHits = [Int](repeating: 0, count: w)
+    for y in 0..<h {
+        for x in 0..<w {
+            let i = (y * w + x) * 4
+            if abs(Int(rgba[i]) - gr) + abs(Int(rgba[i + 1]) - gg) + abs(Int(rgba[i + 2]) - gb) > 60 {
+                rowHits[y] += 1
+                columnHits[x] += 1
+            }
+        }
+    }
+    let rows = rowHits.indices.filter { rowHits[$0] >= 3 }, columns = columnHits.indices.filter { columnHits[$0] >= 3 }
+    guard let top = rows.first, let bottom = rows.last, let left = columns.first, let right = columns.last else { return (max(w, h), w * h, whole) }
+    let (spanY, spanX) = (bottom - top + 1, right - left + 1)
+    return (max(spanY, spanX), spanY * spanX, CGRect(x: left, y: top, width: spanX, height: spanY))
 }
 
 func morph(_ src: [Bool], w: Int, h: Int, rx: Int, ry: Int, erode: Bool) -> [Bool] {
