@@ -84,6 +84,15 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
         let small: Bool
     }
     var found: [Found] = []
+    struct Candidate {
+        let cls: Int
+        let region: Region
+        let rect: CGRect
+        let reasons: [String]
+        let tileArea: Int
+        let small: Bool
+    }
+    var candidates: [Candidate] = []
 
     for (k, entry) in legend.enumerated() {
         let whole = fillHoles(grid.map { $0 == Int16(k) }, w: w, h: h, maxHole: maxHole, seamLength: seamLength)
@@ -114,21 +123,29 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
             }
             guard Double(tileArea) >= minColorCover * rect.width * rect.height else { continue }
 
-            let raw = try await readLabel(image, in: rect)
-            let label = raw.flatMap { cleanLabel($0) }
-            let rgb = [Int(entry.rgb.0), Int(entry.rgb.1), Int(entry.rgb.2)]
-            let polygon = tilePolygon(reg, rect: rect, faces: faces, faceOf: faceOf, w: w, epsilon: 2 * scale)
-            // A divider that faded or fell between pixels leaves several booths in one region.
-            let slices = try await mergedTiles(image, rect)
-            for part in slices ?? [(rect, raw, label)] {
-                found.append(Found(
-                    item: Item(
-                        cls: entry.name, box: box(part.rect), area: tileArea / (slices?.count ?? 1), fillRgb: rgb, legendRgb: rgb,
-                        text: part.raw ?? "", id: part.label, needsReview: !reasons.isEmpty,
-                        reason: reasons.isEmpty ? nil : reasons.joined(separator: "; "),
-                        polygon: slices == nil ? polygon : nil),
-                    cls: k, colorReasons: reasons, small: small))
-            }
+            candidates.append(Candidate(cls: k, region: reg, rect: rect, reasons: reasons, tileArea: tileArea, small: small))
+        }
+    }
+
+    // The booth size of the plan is the typical short side of a region, which a divider that vanished does not move.
+    let shortSides = candidates.map { min($0.rect.width, $0.rect.height) }.sorted()
+    let unit = shortSides.isEmpty ? referenceTileSide : shortSides[shortSides.count / 2]
+    for c in candidates {
+        let entry = legend[c.cls]
+        let raw = try await readLabel(image, in: c.rect)
+        let label = raw.flatMap { cleanLabel($0) }
+        let rgb = [Int(entry.rgb.0), Int(entry.rgb.1), Int(entry.rgb.2)]
+        let polygon = tilePolygon(c.region, rect: c.rect, faces: faces, faceOf: faceOf, w: w, epsilon: 2 * scale)
+        // A divider that faded or fell between pixels leaves several booths in one region.
+        let slices = try await mergedTiles(image, c.rect, unit: unit)
+        for part in slices ?? [(c.rect, raw, label)] {
+            found.append(Found(
+                item: Item(
+                    cls: entry.name, box: box(part.rect), area: c.tileArea / (slices?.count ?? 1), fillRgb: rgb, legendRgb: rgb,
+                    text: part.raw ?? "", id: part.label, needsReview: !c.reasons.isEmpty,
+                    reason: c.reasons.isEmpty ? nil : c.reasons.joined(separator: "; "),
+                    polygon: slices == nil ? polygon : nil),
+                cls: c.cls, colorReasons: c.reasons, small: c.small))
         }
     }
 
@@ -139,7 +156,11 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
         if !members.isEmpty, withLabel * 2 >= members.count { labelledIndices.insert(k) }
     }
     let labelledNames = Set(labelledIndices.map { legend[$0].name })
-    found = found.filter { !$0.small || labelledIndices.contains($0.cls) }
+    // Blur can leave a class with too few readable IDs to count as labelled, so a small tile also passes when it is as
+    // wide as the plan's typical booth, which the thin fragments that the rule is there to drop are not.
+    let readSides = found.filter { $0.item.id != nil }.map(\.item.shortSide).sorted()
+    let boothSide = readSides.count >= 8 ? readSides[readSides.count / 2] : unit
+    found = found.filter { !$0.small || labelledIndices.contains($0.cls) || $0.item.shortSide >= 0.8 * boothSide }
     var items: [Item] = []
     var colorReasons: [[String]] = []
     for var f in found {
@@ -154,24 +175,27 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
     return LegendLayerOutput(items: items, labelledClasses: labelledNames, colorReasons: colorReasons, scale: scale)
 }
 
-/// Splits a region that is a whole number of squarish booths long (at least two) into equal slices and reads
-/// each. The split stands only when every slice reads a different valid ID, so a real double-width booth, which
-/// has one label, is left alone. The whole region can read as its first label, so this runs for every region.
-func mergedTiles(_ image: CGImage, _ rect: CGRect) async throws -> [(rect: CGRect, raw: String?, label: String?)]? {
-    let long = max(rect.width, rect.height), short = min(rect.width, rect.height)
-    let count = Int((long / short).rounded())
-    guard count >= 2, count <= 4, abs(long / short - Double(count)) <= 0.4 else { return nil }
-    let wide = rect.width >= rect.height
+/// Splits a region that is a whole number of small booths across and down (at least two booths) into equal cells
+/// and reads each. The split stands when at least two cells and half of them read different valid IDs, so a real
+/// double-width booth, which has one label, is left alone. The whole region can read as its first label, so this
+/// runs for every region.
+func mergedTiles(_ image: CGImage, _ rect: CGRect, unit: Double) async throws -> [(rect: CGRect, raw: String?, label: String?)]? {
+    let (cols, rows) = (Int((rect.width / unit).rounded()), Int((rect.height / unit).rounded()))
+    guard cols * rows >= 2, cols * rows <= 12, cols >= 1, rows >= 1,
+          abs(rect.width / unit - Double(cols)) <= 0.35, abs(rect.height / unit - Double(rows)) <= 0.35 else { return nil }
     var slices: [(rect: CGRect, raw: String?, label: String?)] = []
-    for i in 0..<count {
-        let part = wide
-            ? CGRect(x: rect.minX + rect.width * Double(i) / Double(count), y: rect.minY, width: rect.width / Double(count), height: rect.height)
-            : CGRect(x: rect.minX, y: rect.minY + rect.height * Double(i) / Double(count), width: rect.width, height: rect.height / Double(count))
-        let raw = try await readLabel(image, in: part)
-        guard let label = raw.flatMap({ cleanLabel($0) }) else { return nil }
-        slices.append((part, raw, label))
+    for row in 0..<rows {
+        for col in 0..<cols {
+            let part = CGRect(
+                x: rect.minX + rect.width * Double(col) / Double(cols), y: rect.minY + rect.height * Double(row) / Double(rows),
+                width: rect.width / Double(cols), height: rect.height / Double(rows))
+            let raw = try await readLabel(image, in: part)
+            slices.append((part, raw, raw.flatMap { cleanLabel($0) }))
+        }
     }
-    return Set(slices.compactMap(\.label)).count == count ? slices : nil
+    let labels = slices.compactMap(\.label)
+    let readsWell = labels.count >= 2 && labels.count * 2 >= slices.count && Set(labels).count == labels.count
+    return readsWell ? slices : nil
 }
 
 func makeMaskedUpscaledCrop(_ image: CGImage, item: Item, scale: Int) -> CGImage? {
