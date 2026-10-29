@@ -131,7 +131,7 @@ public enum ExtractTool {
             legendOut = try await legendLayer(planImage, px, legend: classes)
         }
         var legendItems = legendOut.items
-        legendItems += await outlinedLayer(planImage, px, existing: legendItems, scale: legendOut.scale)
+        legendItems += await outlinedLayer(planImage, px, existing: legendItems, scale: legendOut.scale, lineScale: upscale)
 
         var claimed = [Bool](repeating: false, count: w * h)
         let largeTile = { (item: Item) in item.rect.width * item.rect.height > 0.01 * Double(px.area) }

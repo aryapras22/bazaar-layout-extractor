@@ -429,7 +429,7 @@ func scaledBack(_ item: Item, by factor: Int) -> Item {
 
 /// Outline pixels: anything very dark, plus anything much darker than its 11 x 11 surroundings. The second
 /// rule keeps thin lines that blur, fading or resampling has turned mid-grey, which a fixed cut would lose.
-func outlinePixels(_ px: Pixels, below: Int = 60) -> [Bool] {
+func outlinePixels(_ px: Pixels, below: Int = 60, lineScale: Int = 1) -> [Bool] {
     let (w, h) = (px.width, px.height)
     var gray = [Int32](repeating: 0, count: w * h)
     for i in 0..<(w * h) {
@@ -444,7 +444,8 @@ func outlinePixels(_ px: Pixels, below: Int = 60) -> [Bool] {
             integral[(y + 1) * (w + 1) + x + 1] = integral[y * (w + 1) + x + 1] + row
         }
     }
-    let r = 5
+    let r = 5 * lineScale
+    let contrast = 70 / lineScale
     var out = [Bool](repeating: false, count: w * h)
     for y in 0..<h {
         let y0 = max(0, y - r), y1 = min(h, y + r + 1)
@@ -454,7 +455,7 @@ func outlinePixels(_ px: Pixels, below: Int = 60) -> [Bool] {
             if g >= 200 { continue }
             let x0 = max(0, x - r), x1 = min(w, x + r + 1)
             let sum = integral[y1 * (w + 1) + x1] - integral[y0 * (w + 1) + x1] - integral[y1 * (w + 1) + x0] + integral[y0 * (w + 1) + x0]
-            if g + 70 < Int(sum) / ((x1 - x0) * (y1 - y0)) { out[y * w + x] = true }
+            if g + contrast < Int(sum) / ((x1 - x0) * (y1 - y0)) { out[y * w + x] = true }
         }
     }
     return out
