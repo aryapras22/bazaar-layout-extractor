@@ -21,8 +21,6 @@ All three floor plans ([data/plan1/layout.png](file:///Users/arya/projects/ada/b
 - Reducing `restNear` dilation from `rx: 3, ry: 3` (6px bridge) to `rx: 2, ry: 2` (4px bridge) and saving simplified convex-hull polygons on `object` items in [`outsideLayer`](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/extract_swift4_fixed.swift#L1184-L1228) separates adjacent 27x27 tables across 5px gaps on Layout 1 (raising matched objects from 30/141 to 122/141) and renders octagons in [`RenderSwift4`](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/render_swift4_fixed.swift#L181-L216).
 - Remaining deterministic CV gap on Layout 1 and Layout 3: perimeter round columns on Layout 1 (`20x20` hollow circles with thin outlines) are eroded away by `opened` (`rx: 5, ry: 5`), and blue tables/chairs on Layout 3 have HSV saturation around 130 so [`inkMask`](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/extract_swift4_fixed.swift#L1054) (`sat < 40`) filters them out before `outsideLayer` runs.
 
-Queued, not yet run: `mlx-community/gemma-4-26b-a4b-it-4bit` and `mlx-community/Qwen3.8-27B-4bit`. Both are listed in the benchmark runner scripts and need downloading first, because the runs are offline.
-
 ````carousel
 ![Layout 1 before Phase 3 fixes](/Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/swift4_orig_l1.png)
 <!-- slide -->
@@ -37,9 +35,9 @@ Queued, not yet run: `mlx-community/gemma-4-26b-a4b-it-4bit` and `mlx-community/
 ![Layout 3 after Phase 3 fixes](/Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/phase3_fix_l3.png)
 ````
 
-## 2. Local MLX VLM benchmark (7 models, Phase 1 + Phase 2)
+## 2. Local MLX VLM benchmark (9 models, Phase 1 + Phase 2)
 
-All 7 models were benchmarked offline on Apple M5 (24 GB unified memory) in the `floor-plan-vlm-bench` conda environment via [phase1_bench.py](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/phase1_bench.py) (1000x800 dense crop detection, 20 core truth booths) and [phase2_run_model.py](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/phase2_run_model.py) (52 feature-print object groups covering 248 items across all 3 plans, plus 11 hard/sloped/OCR-confused booth tile crops).
+All 9 models were benchmarked offline on Apple M5 (24 GB unified memory) in the `floor-plan-vlm-bench` conda environment via [phase1_bench.py](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/phase1_bench.py) (1000x800 dense crop detection, 20 core truth booths) and [phase2_run_model.py](file:///Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/scratch/phase2_run_model.py) (52 feature-print object groups covering 248 items across all 3 plans, plus 11 hard/sloped/OCR-confused booth tile crops).
 
 | Model | Weights (GB) | Peak RAM (GB) | P1 speed (tok/s) | P1 core ID recall | P1 box IoU>=0.5 | P1 mean IoU | P2 groups (52) | P2 all items (248) | P2 non-noise (201) | P2 groups time (L1 / L2 / L3) | P2 hard tiles (11) |
 |---|---|---|---|---|---|---|---|---|---|---|---|
@@ -50,6 +48,8 @@ All 7 models were benchmarked offline on Apple M5 (24 GB unified memory) in the 
 | `Qwen3-VL-8B-Instruct-4bit` | 5.38 | 6.74 | 22.5 | 20/20 | 3/20 | 0.191 | 30/52 (57.7%) | 129/248 (52.0%) | 114/201 (56.7%) | 36.8s (16.8s / 8.4s / 11.7s) | 11/11 (9.5s) |
 | `InternVL3-8B-MLX-4bit` | 4.58 | 5.79 | 25.4 | 20/20 | 0/20 | 0.000 | 17/52 (32.7%) | 119/248 (48.0%) | 118/201 (58.7%) | 89.9s (38.5s / 20.7s / 30.7s) | 11/11 (19.0s) |
 | `gemma-4-e4b-it-4bit` | 4.82 | 5.76 | 35.8 | 20/20 | 1/20 | 0.001 | 23/52 (44.2%) | 122/248 (49.2%) | 113/201 (56.2%) | 37.6s (16.7s / 8.8s / 12.1s) | 11/11 (6.8s) |
+| `gemma-4-26b-a4b-it-4bit` | 14.32 | 16.09 | 45.4 | 20/20 | 0/20 | 0.337 | 33/52 (63.5%) | 159/248 (64.1%) | 145/201 (72.1%) | 111.1s (70.9s / 17.0s / 23.2s) | 11/11 (15.7s) |
+| `Qwen3.8-27B-4bit` | 14.98 | 17.72 | 7.5 | 20/20 | 11/20 | 0.598 | 29/52 (55.8%) | 155/248 (62.5%) | 146/201 (72.6%) | 142.4s (65.6s / 29.6s / 47.2s) | 11/11 (31.5s) |
 
 ````carousel
 ![52 object groups composite crops (left: tight zoom, right: context with red box)](/Users/arya/.gemini/antigravity-cli/brain/2a635bb0-eacf-4531-9dc5-7131ff33c9f6/object_groups_contact_sheet.png)
@@ -59,8 +59,9 @@ All 7 models were benchmarked offline on Apple M5 (24 GB unified memory) in the 
 
 ### Key findings from the 7-model benchmark
 
-- End-to-end VLM bounding-box detection (Phase 1) cannot replace `legendLayer`: even the best box detector (`gemma-4-12B-it-qat-4bit`, 11/20 boxes at IoU >= 0.5, mean IoU 0.478) drifts by 10-40 pixels on dense booth grids, whereas `legendLayer` + solidity achieves 439/439 (100%) exact booth boxes and polygons across all 3 plans in under 2 seconds.
-- Crop-level VLM reading and classification (Phase 2) is fast and accurate: all 7 models read 11/11 (100%) of the hardest sloped and OCR-confused booth tiles (`G11, H3, X1, D6, C6, C2, F1, F7, I3, I9, H71`), and `Qwen3.5-9B-MLX-4bit` classifies 160/201 (79.6%) of non-noise structural/furniture items (`table_with_chairs`, `audience_seating`, `stairs`, `door`, `wall`) in 13.7s to 26.8s per plan.
+- End-to-end VLM bounding-box detection (Phase 1) cannot replace `legendLayer`: even the best box detectors (`Qwen3.8-27B-4bit`, 11/20 boxes at IoU >= 0.5 with 11/20 exact IDs and mean IoU 0.598, at 7.5 tok/s and 17.7 GB; `gemma-4-12B-it-qat-4bit`, 11/20 at mean IoU 0.478; `gemma-4-26b-a4b-it-4bit` finds 0/20) drift by 10-40 pixels on dense booth grids, whereas `legendLayer` + solidity achieves 439/439 (100%) exact booth boxes and polygons across all 3 plans in under 2 seconds.
+- Crop-level VLM reading and classification (Phase 2) is fast and accurate: all 9 models read 11/11 (100%) of the hardest sloped and OCR-confused booth tiles (`G11, H3, X1, D6, C6, C2, F1, F7, I3, I9, H71`), and `Qwen3.5-9B-MLX-4bit` classifies 160/201 (79.6%) of non-noise structural/furniture items (`table_with_chairs`, `audience_seating`, `stairs`, `door`, `wall`) in 13.7s to 26.8s per plan.
+- The two models added later do not displace it. `gemma-4-26b-a4b-it-4bit` gets more groups right (33/52, 63.5%, against 30/52) but fewer non-noise items (145/201, 72.1%, against 160/201) and needs 16.1 GB and 111.1s. `Qwen3.8-27B-4bit` scores 146/201 (72.6%) on non-noise items in 142.4s at 17.3 GB peak and is the slowest on Phase 1 (122s for one crop).
 - `Qwen3.5-9B-MLX-4bit` is the best local model overall: it edges out `gemma-3-27b-it-qat-4bit` in accuracy (170/248 vs 169/248 all items; 160/201 vs 159/201 non-noise items) while running 3.9x faster (57.8s vs 223.6s) and using 6.97 GB RAM instead of 16.94 GB RAM.
 - `Qwen3.5-4B-MLX-4bit` is the best lightweight/noise-filtering model: it achieves the highest per-group accuracy (34/52 groups, 65.4%) because it correctly rejects single-item text/dimension noise crops on Layouts 2 and 3, running in 45.9s at 4.11 GB RAM.
 
