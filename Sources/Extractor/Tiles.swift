@@ -218,6 +218,7 @@ func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Doub
     let outlines = morph(outlinePixels(px, lineScale: lineScale), w: w, h: h, rx: 1, ry: 1, erode: false)
     let minSide = Int(16 * scale), maxSide = Int(140 * Double(px.page) / 2000)
     var items: [Item] = []
+    var misread: [(Item, String)] = []
     for face in components(outlines.map { !$0 }, w: w, h: h, eight: false) {
         guard min(face.width, face.height) >= minSide, max(face.width, face.height) <= maxSide,
               face.minX > 0, face.minY > 0, face.maxX < w - 1, face.maxY < h - 1,
@@ -233,19 +234,38 @@ func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Doub
         guard !existing.contains(where: { boxIoU($0.box, box(rect)) >= 0.3 }) else { continue }
         var tile = outsideItem("Booth", rect, review: false, reason: nil)
         guard let crop = makeMaskedUpscaledCrop(image, item: tile, scale: 3),
-              let found = try? await makeTextRequest().perform(on: crop),
-              let read = found.sorted(by: { $0.confidence > $1.confidence })
-                  .compactMap({ obs in cleanLabel(obs.transcript).map { (obs.transcript, $0) } }).first
-        else { continue }
-        tile.cls = "Booth " + String(read.1.prefix { $0.isLetter })
+              let found = try? await makeTextRequest().perform(on: crop) else { continue }
+        let reads = found.sorted { $0.confidence > $1.confidence }.map(\.transcript)
         tile.fillRgb = [255, 255, 255]
         tile.legendRgb = [255, 255, 255]
-        tile.text = read.0
-        tile.id = read.1
         tile.source = "outlined"
+        if let read = reads.compactMap({ text in cleanLabel(text).map { (text, $0) } }).first {
+            tile.cls = "Booth " + String(read.1.prefix { $0.isLetter })
+            tile.text = read.0
+            tile.id = read.1
+            items.append(tile)
+        } else if let text = reads.first(where: { $0.contains { $0.isNumber } }) {
+            misread.append((tile, text))
+        }
+    }
+    // A booth whose prefix letter read as a digit takes the prefix of the nearest booth that read cleanly.
+    for (var tile, text) in misread {
+        guard let near = items.min(by: { distance($0, tile) < distance($1, tile) }),
+              distance(near, tile) <= 3 * max(near.longSide, tile.longSide),
+              let prefix = near.id?.first(where: { $0.isLetter }),
+              let label = labelWithLeadingLookalike(text, prefix: prefix),
+              !items.contains(where: { $0.id == label })
+        else { continue }
+        tile.cls = near.cls
+        tile.text = text
+        tile.id = label
         items.append(tile)
     }
     return items
+}
+
+private func distance(_ a: Item, _ b: Item) -> Double {
+    hypot(a.centerX - b.centerX, a.centerY - b.centerY)
 }
 
 func rereadTiles(

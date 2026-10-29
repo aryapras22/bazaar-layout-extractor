@@ -105,6 +105,15 @@ private func ring(size: Int, gapAt: Int? = nil) -> [Bool] {
     #expect(swatchBeside(px, firstGuess: 69, textBox: CGRect(x: 72, y: 14, width: 6, height: 12), y: 20, textHeight: 12, claimed: [], ground: ground) == nil)
 }
 
+@Test func aPrefixLetterReadAsADigitIsRestoredOnlyFromItsLookalikes() {
+    #expect(labelWithLeadingLookalike("82", prefix: "S") == "S2")
+    #expect(labelWithLeadingLookalike("$10", prefix: "S") == "S10")
+    #expect(labelWithLeadingLookalike("82", prefix: "B") == "B2")
+    #expect(labelWithLeadingLookalike("82", prefix: "W") == nil)
+    #expect(labelWithLeadingLookalike("8", prefix: "S") == nil)
+    #expect(labelWithLeadingLookalike("8A2", prefix: "S") == nil)
+}
+
 private func gridWithTiles(side: Int, count: Int, page: Int) -> [Int16] {
     var grid = [Int16](repeating: -1, count: page * page)
     for t in 0..<count {
