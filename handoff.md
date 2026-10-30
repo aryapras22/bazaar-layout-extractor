@@ -1,31 +1,38 @@
 # Handoff: floor plan extractor, swift 5
 
-Folder: `/Users/arya/Projects/ADA/bazaar/floor-plan-extractor/legend-only`. It is a git repo (initialised this session, local only, nothing pushed).
+Folder: `/Users/arya/Projects/ADA/bazaar/floor-plan-extractor/legend-only`. It is a git repo on branch `master`, pushed to `origin` (https://github.com/aryapras22/bazaar-layout-extractor) at commit `5135d40`.
+
+## State of play
+
+- `master` holds the four merged layers (booth, wall, door, seat), the robustness work and the cleanup; 34 extractor tests and 9 older ones pass.
+- In flight: a booth round 2 agent on branch `layer/booth-2` (7 commits, not merged and not verified by me; it was resumed after a usage limit). Its targets are plan 3 half size, plan 5 JPEG and blur, and plan 6 half size. Merge it only after checking the guardrails in the scores table and rerunning `scripts/robustness.py`.
+- Local branches not on the remote: `layer/booth`, `layer/wall`, `layer/door`, `layer/seat` (all merged into `master`), `experiment/outline-local-contrast` (parked, not merged), `layer/booth-2`, and four `worktree-agent-*` branches created by the agent tool.
+- Uncommitted in the working tree and not mine: the `.env` line in `.gitignore`, `notebooks/extract_interactive.ipynb` and `scripts/make_pdf.py`.
 
 ## Goal
 
 Read a floor plan image and its legend image. Find each booth tile by legend colour, read its ID, extract walls, doors, pillars, and objects outside the legend, and write `layout.json`, `report_diff.json`, `overlay.png`, and `render.png`. An optional on-device MLX VLM judge (`--judge mlx`) classifies grouped objects and unresolved tiles once per group. The judge writes only to `report_diff.json`. It does not change `layout.json`.
 
-Swift 5 is the same extractor as swift 4 split into a SwiftPM library (`Sources/Extractor`) with a thin executable (`fp-extract`) and tests. On all six plans its `layout.json` and `report_diff.json` are byte-identical to the last swift 4 build. `extractor/render_swift4.swift` is still the renderer. The single-file swift 4 sources and older tools are archived in `.archived`. Some JSON keys keep their swift 3 and swift 4 names (`swift4_items_per_class`) so outputs stay identical.
+Swift 5 is the same extractor as swift 4 split into a SwiftPM library (`Sources/Extractor`) with a thin executable (`fp-extract`) and tests. At its first commit its `layout.json` and `report_diff.json` were byte-identical to the last swift 4 build on all six plans; since then the four layers (items 25 to 30 below) have changed the output on purpose. `extractor/render_swift4.swift` is still the renderer. The single-file swift 4 sources and older tools are archived in `.archived`. Some JSON keys keep their swift 3 and swift 4 names (`swift4_items_per_class`) so outputs stay identical.
 
 ## What is in the folder
 
 ```
-data/plan{1,2,3}/      layout.png, legend.png, truth.json (inputs and hand-checked ground truth)
-data/plan4/            more-market: source.png (rotated scan), layout.png, legend.png; no truth yet (scripts/make_plan4.py)
-data/plan5/            cosmo: source.pdf (vector), layout.png, legend.png, truth.json generated from the PDF (scripts/make_pdf_plans.py, scripts/make_plan5_truth.py)
-data/plan6/            women-fest: source.pdf, layout.png, legend.png, truth.json generated from the PDF (scripts/make_plan6_truth.py)
+data/plan{1,2,3}/      layout.png, legend.png, truth.json (inputs and hand-checked ground truth), seats.json (chair lists produced by the detector and checked by eye by the seat agent, not independent)
+data/plan4/            more-market: source.png (rotated scan), layout.png, legend.png, columns.json (15 round columns, checked by eye); no booth truth (scripts/make_plan4.py)
+data/plan5/            cosmo: source.pdf (vector), layout.png, legend.png, truth.json generated from the PDF: booths, diagonal walls and doors (scripts/make_pdf_plans.py, make_plan5_truth.py, make_wall_truth.py, make_door_truth.py, run in that order)
+data/plan6/            women-fest: source.pdf, layout.png, legend.png, truth.json generated from the PDF: booths, diagonal walls and doors (scripts/make_plan6_truth.py, then make_wall_truth.py and make_door_truth.py)
 extractor/             render_swift4.swift (renderer, compiled by hand into bin/)
-scripts/               score.py (scorer), make_pdf.py (writes output/swift5/layouts.pdf), plan and truth generators
+scripts/               score.py (scorer), robustness.py (degraded-copy battery), scale_stress.py (margin test), make_pdf.py (writes output/swift5/layouts.pdf), plan and truth generators
 notebooks/             render_swift4.ipynb (predates this session's changes)
 output/swift5/plan*/   layout.json, report_diff.json, overlay.png, render.png, crops/, judge_crops/ (generated, gitignored)
 bin/                   compiled render_swift4 (gitignored); fp-extract is built into .build/release/
 Package.swift         SwiftPM package, macOS 27
-Sources/Extractor/     the extractor by stage: Imaging, Text, Model, Legend, Tiles (booth layer), Scan, WallLayer, DoorLayer, SeatLayer, Layers (the layer list and composer), Outside (wall helpers), Regroup, IdRepair, Judge, Tool
+Sources/Extractor/     the extractor by stage: Imaging, Text, Model, Legend, Tiles and IdReader and IdRepair (booth layer), Scan, WallLayer and Outside (wall layer), DoorLayer, DoorArcs and DoorVerify (door layer), SeatLayer, Regroup and Judge (seat layer), Layers (the layer list and composer), Tool (options and the entry point)
 Sources/fp-extract/    four-line executable around ExtractTool.run
 Sources/FloorPlanCore/, Sources/fp-fix/   older ID-repair library and tool; duplicates part of IdRepair, not merged yet
-Tests/                 ExtractorTests (13) and FloorPlanCoreTests (9); all pass
-LEARNING/              notes on tile detection, polygon-masked OCR with monotone bands, and the MLX VLM benchmark
+Tests/                 ExtractorTests (34) and FloorPlanCoreTests (9); all pass
+LEARNING/              notes on tile detection, polygon-masked OCR with monotone bands, reading degraded tiles, slanted walls and page tilt, door swing arcs, chair detection, and the MLX VLM benchmark
 .archived/             swift 1 to 4 sources, old notebooks and outputs, SAM3 experiment (mostly untracked)
 ```
 
@@ -48,10 +55,13 @@ bin/render_swift4
 /Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/score.py
 swift test
 # optional: only some layers, e.g. --layers booth,wall (default is all four)
+/Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/robustness.py 1,2,3,5,6   # about 15 minutes
 /Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/scale_stress.py 1,5,6 2,3
 ```
 
 `bin/render_swift4` with no arguments renders the three default output folders (plans 1 to 3).
+
+Flags of `fp-extract` beyond `--out` and `--feature-print`: `--layers booth,wall,door,seat` keeps only those layers; `--upscale-small` reads plans whose small tiles measure under 30 px at 2x (off: it breaks faded and halved plan 6); `--judge off|mlx|fm` labels object groups and fills in seats; `--verify-doors` asks Qwen3.5-9B about each door candidate; `--model-ids` asks Qwen3.5-9B to read unread tile IDs into `suggested_id`; `--no-repair`, `--no-reread`, `--no-bridge`, `--no-regroup` switch single steps off. The model flags need the `floor-plan-vlm-bench` conda env and take the lock directory `/tmp/fp-vlm.lock`, so only one model process runs at a time.
 
 Add `--judge mlx` for the VLM pass (25 s, 22 s, and 16 s for plans 1 to 3, conda env `floor-plan-vlm-bench`). If that env path is missing, the judge records `missing-env-floor-plan-vlm-bench` in `report_diff.json` and the run carries on without an error. The `--judge fm` mode only compiles with Swift 6.4 or later.
 
@@ -128,6 +138,10 @@ Notes on reading the table:
 2. Area floor of 160 px² (at 2000 px max side, scaled by area) on object candidates.
 3. OCR boxes under 0.5 confidence no longer erase ink. Vision read layout 3's table icons as "TEIL" at 0.3 and wiped them out. The handoff's earlier explanation (blue fills and grey pillars) was wrong.
 4. Legend tiles over 1% of the image no longer mask ink inside them. This recovered the pillars inside tenant tiles (they are black, not grey). Side effect: more wall fragments, layout 2 wall precision fell from 94% to 88%.
+
+## Where a VLM is used
+
+None of the default pipeline: it is classical image processing, Apple Vision text recognition and Apple image feature prints. A VLM runs only behind four flags, always to read or verify a crop, never to find a box (the benchmark below shows they classify well and localise badly): `--judge mlx` (object groups and the seat flag; 160 of 201 items right, 3 false seats on plan 1), `--judge fm` (Apple's on-device model, wired but never benchmarked), `--verify-doors` (drops 15 of 27 false door candidates and 4 of 36 true ones, tuned on the same crops), and `--model-ids` (plan 4 goods go from 39 to 50 valid IDs in about 30 s).
 
 ## Benchmark summary (full tables in `LEARNING/hybrid-mlx-vlm-benchmark.md`)
 
