@@ -209,7 +209,10 @@ func mergedTiles(_ image: CGImage, _ rect: CGRect, unit: Double) async throws ->
         }
     }
     let labels = slices.compactMap(\.label)
-    let readsWell = labels.count >= 2 && labels.count * 2 >= slices.count && Set(labels).count == labels.count
+    // Booths of one block are one series, so their labels share a prefix; a sponsor box whose name reads as scraps does not.
+    let prefixes = Dictionary(grouping: labels) { $0.prefix { $0.isLetter } }
+    let sameSeries = (prefixes.values.map(\.count).max() ?? 0) * 10 >= labels.count * 7
+    let readsWell = labels.count >= 2 && labels.count * 2 >= slices.count && Set(labels).count == labels.count && sameSeries
     return readsWell ? slices : nil
 }
 
