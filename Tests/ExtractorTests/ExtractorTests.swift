@@ -172,15 +172,20 @@ private func planWithBlocks(limeSide: Int) -> Pixels {
         (UInt8(Double(c.0) * 0.8 + 51), UInt8(Double(c.1) * 0.8 + 51), UInt8(Double(c.2) * 0.8 + 51))
     }
     func entry(_ name: String, _ c: (UInt8, UInt8, UInt8)) -> LegendClass { LegendClass(name: name, rgb: c, lab: lab(c)) }
-    let legend = [entry("A", (240, 40, 40)), entry("B", (40, 40, 220)), entry("BLACK", (0, 0, 0)), entry("WHITE", (255, 255, 255))]
+    let colours: [(UInt8, UInt8, UInt8)] = [(240, 40, 40), (40, 40, 220), (30, 180, 60), (250, 200, 20)]
+    let legend = colours.map { entry("C", $0) } + [entry("BLACK", (0, 0, 0)), entry("WHITE", (255, 255, 255))]
     var seen = legend
-    seen[0] = entry("A", faded((240, 40, 40)))
-    seen[1] = entry("B", faded((40, 40, 220)))
+    for k in colours.indices { seen[k] = entry("C", faded(colours[k])) }
     let carried = applyFadeToAchromatic(legend, to: seen)
-    #expect(carried[2].rgb == (51, 51, 51))
-    #expect(carried[3].rgb == (255, 255, 255))
+    #expect(carried[4].rgb == (51, 51, 51))
+    #expect(carried[5].rgb == (255, 255, 255))
     // Classes that kept their swatch colour show no fade, so black stays black.
-    #expect(applyFadeToAchromatic(legend, to: legend)[2].rgb == (0, 0, 0))
+    #expect(applyFadeToAchromatic(legend, to: legend)[4].rgb == (0, 0, 0))
+    // Two classes that happen to move are not enough to call it a fade.
+    var few = legend
+    few[0] = seen[0]
+    few[1] = seen[1]
+    #expect(applyFadeToAchromatic(legend, to: few)[4].rgb == (0, 0, 0))
 }
 
 private func plan(_ blocks: [(side: Int, color: (UInt8, UInt8, UInt8))]) -> Pixels {

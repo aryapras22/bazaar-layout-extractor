@@ -218,7 +218,8 @@ func adaptLegendToPlan(_ legend: [LegendClass], _ px: Pixels, classes only: [Int
 func applyFadeToAchromatic(_ legend: [LegendClass], to result: [LegendClass]) -> [LegendClass] {
     func channels(_ c: (UInt8, UInt8, UInt8)) -> [Double] { [Double(c.0), Double(c.1), Double(c.2)] }
     let moved = legend.indices.filter { distance(legend[$0].lab, result[$0].lab) > 4 }
-    guard moved.count >= 2 else { return result }
+    // Two classes that moved a little by chance fit a line too, so a fade needs at least four of them.
+    guard moved.count >= 4 else { return result }
     var pairs: [(from: Double, to: Double)] = []
     for k in moved { pairs += zip(channels(legend[k].rgb), channels(result[k].rgb)).map { (from: $0, to: $1) } }
     let n = Double(pairs.count)
