@@ -1,183 +1,160 @@
 # Handoff: floor plan extractor, swift 5
 
-Folder: `/Users/arya/Projects/ADA/bazaar/floor-plan-extractor/legend-only`. It is a git repo on branch `master`, pushed to `origin` (https://github.com/aryapras22/bazaar-layout-extractor) at commit `5135d40`.
+Folder: `/Users/arya/Projects/ADA/bazaar/floor-plan-extractor/legend-only`. Git repo, branch `master`, remote `origin` is https://github.com/aryapras22/bazaar-layout-extractor. Written 2026-10-30. The previous handoff, with its long changelog of items 1 to 30, is in git history before this commit.
 
 ## State of play
 
-- `master` holds the four merged layers (booth, wall, door, seat), the robustness work and the cleanup; 34 extractor tests and 9 older ones pass.
-- In flight: a booth round 2 agent on branch `layer/booth-2` (7 commits, not merged and not verified by me; it was resumed after a usage limit). Its targets are plan 3 half size, plan 5 JPEG and blur, and plan 6 half size. Merge it only after checking the guardrails in the scores table and rerunning `scripts/robustness.py`.
-- Local branches not on the remote: `layer/booth`, `layer/wall`, `layer/door`, `layer/seat` (all merged into `master`), `experiment/outline-local-contrast` (parked, not merged), `layer/booth-2`, and four `worktree-agent-*` branches created by the agent tool.
-- Uncommitted in the working tree and not mine: the `.env` line in `.gitignore`, `notebooks/extract_interactive.ipynb` and `scripts/make_pdf.py`.
+- `master` holds the four layers (booth, wall, door, seat), the robustness work and booth round 2 (`layer/booth-2`, merged as `3f5bd53`). 37 extractor tests and 9 older ones pass.
+- `origin/master` is at the merge `3f5bd53`; only this handoff commit is local. Pushing needs an explicit ask from the user.
+- The clean-plan scores below and the stress rows for plans 2, 3, 5 and 6 (half, jpeg40, blur, faded) were rerun by me on the merged build and match the booth agent's report. The full `robustness.py 1,2,3,5,6` battery was not rerun.
+- Local branches not on the remote: `layer/booth`, `layer/wall`, `layer/door`, `layer/seat`, `layer/booth-2` (all merged), `experiment/outline-local-contrast` (parked, not merged), and several `worktree-agent-*` branches made by the agent tool. The booth-2 worktree is still at `.claude/worktrees/agent-a332e465f47c88c4a`. Deleting branches or worktrees needs the user's say.
+- Uncommitted and not mine: the `.env` line in `.gitignore`, `notebooks/extract_interactive.ipynb`, `scripts/make_pdf.py`.
 
 ## Goal
 
-Read a floor plan image and its legend image. Find each booth tile by legend colour, read its ID, extract walls, doors, pillars, and objects outside the legend, and write `layout.json`, `report_diff.json`, `overlay.png`, and `render.png`. An optional on-device MLX VLM judge (`--judge mlx`) classifies grouped objects and unresolved tiles once per group. The judge writes only to `report_diff.json`. It does not change `layout.json`.
+Read a floor plan image and its legend image. Find booth tiles by legend colour and read their IDs, then find walls (including diagonal ones), doors, pillars and seats. Write `layout.json`, `report_diff.json`, `overlay.png`, `render.png` and one JSON per layer (`booths.json`, `walls.json`, `doors.json`, `seats.json`).
 
-Swift 5 is the same extractor as swift 4 split into a SwiftPM library (`Sources/Extractor`) with a thin executable (`fp-extract`) and tests. At its first commit its `layout.json` and `report_diff.json` were byte-identical to the last swift 4 build on all six plans; since then the four layers (items 25 to 30 below) have changed the output on purpose. `extractor/render_swift4.swift` is still the renderer. The single-file swift 4 sources and older tools are archived in `.archived`. Some JSON keys keep their swift 3 and swift 4 names (`swift4_items_per_class`) so outputs stay identical.
+The extractor is a SwiftPM library (`Sources/Extractor`) with a thin executable (`fp-extract`). Some JSON keys keep their swift 3 and 4 names (`swift4_items_per_class`).
+
+## How a run flows
+
+```
+fp-extract (Sources/fp-extract) → ExtractTool.run (Tool.swift)
+  → readLegend (Legend.swift): swatches, labels, wrapped lines
+  → booth layer
+    → legendLayer, adaptLegendToPlan, outlinedLayer, rereadTiles (Tiles.swift)
+    → region splitting for merged booths, enlarged strips for unread tiles (round 2)
+    → repairIds, repairIdsByPrefix (IdRepair.swift), suggestions only
+  → scanInk (Scan.swift), shared by the other three layers, in the order of Layers.swift
+    → wallLayer, columnLayer (WallLayer.swift, Outside.swift)
+    → doorLayer (DoorLayer.swift, DoorArcs.swift)
+    → seatLayer (SeatLayer.swift)
+  → optional: runJudge (Judge.swift), verifyDoors (DoorVerify.swift), model ID reader (IdReader.swift)
+  → layout.json, report_diff.json, per-layer files, overlay.png
+```
+
+Wall owns classes `wall` and `pillar`, door owns `door`, seat owns `object` (items carry `kind: "chair"` or `"chair_group"`, `chairs: N`, `seat: true`), booth owns everything else. The wall, door and seat layers need the booth layer's claimed areas, so a booth-only run is no faster.
 
 ## What is in the folder
 
 ```
-data/plan{1,2,3}/      layout.png, legend.png, truth.json (inputs and hand-checked ground truth), seats.json (chair lists produced by the detector and checked by eye by the seat agent, not independent)
-data/plan4/            more-market: source.png (rotated scan), layout.png, legend.png, columns.json (15 round columns, checked by eye); no booth truth (scripts/make_plan4.py)
-data/plan5/            cosmo: source.pdf (vector), layout.png, legend.png, truth.json generated from the PDF: booths, diagonal walls and doors (scripts/make_pdf_plans.py, make_plan5_truth.py, make_wall_truth.py, make_door_truth.py, run in that order)
-data/plan6/            women-fest: source.pdf, layout.png, legend.png, truth.json generated from the PDF: booths, diagonal walls and doors (scripts/make_plan6_truth.py, then make_wall_truth.py and make_door_truth.py)
-extractor/             render_swift4.swift (renderer, compiled by hand into bin/)
-scripts/               score.py (scorer), robustness.py (degraded-copy battery), scale_stress.py (margin test), make_pdf.py (writes output/swift5/layouts.pdf), plan and truth generators
-notebooks/             render_swift4.ipynb (predates this session's changes)
-output/swift5/plan*/   layout.json, report_diff.json, overlay.png, render.png, crops/, judge_crops/ (generated, gitignored)
-bin/                   compiled render_swift4 (gitignored); fp-extract is built into .build/release/
-Package.swift         SwiftPM package, macOS 27
-Sources/Extractor/     the extractor by stage: Imaging, Text, Model, Legend, Tiles and IdReader and IdRepair (booth layer), Scan, WallLayer and Outside (wall layer), DoorLayer, DoorArcs and DoorVerify (door layer), SeatLayer, Regroup and Judge (seat layer), Layers (the layer list and composer), Tool (options and the entry point)
-Sources/fp-extract/    four-line executable around ExtractTool.run
-Sources/FloorPlanCore/, Sources/fp-fix/   older ID-repair library and tool; duplicates part of IdRepair, not merged yet
-Tests/                 ExtractorTests (34) and FloorPlanCoreTests (9); all pass
-LEARNING/              notes on tile detection, polygon-masked OCR with monotone bands, reading degraded tiles, slanted walls and page tilt, door swing arcs, chair detection, and the MLX VLM benchmark
+data/plan{1,2,3}/      layout.png, legend.png, truth.json, seats.json (detector output checked by eye, not independent)
+data/plan4/            more-market: layout.png, legend.png, columns.json (15 round columns); no booth truth
+data/plan5/            cosmo: source.pdf, layout.png, legend.png, truth.json generated from the PDF
+data/plan6/            women-fest: source.pdf, layout.png, legend.png, truth.json generated from the PDF
+extractor/             render_swift4.swift, the renderer, compiled by hand into bin/
+scripts/               score.py, robustness.py, scale_stress.py, make_pdf.py, truth generators (make_plan5_truth, make_plan6_truth, make_wall_truth, make_door_truth, make_pdf_plans, make_plan4)
+Sources/Extractor/     the stages above, plus Imaging.swift (noise, upscale, content extent), Text.swift (label cleaning, page OCR), Model.swift, Regroup.swift
+Sources/FloorPlanCore/, Sources/fp-fix/   older ID-repair library and tool, overlaps IdRepair, not merged
+Tests/                 ExtractorTests (37), FloorPlanCoreTests (9)
+LEARNING/              notes: tile detection, polygon-masked OCR, reading degraded tiles, slanted walls, door arcs, chair detection, the VLM benchmark
 .archived/             swift 1 to 4 sources, old notebooks and outputs, SAM3 experiment (mostly untracked)
 ```
 
-Plan 1 is 2349 x 2871 (355 truth items), plan 2 is 1750 x 2106 (255), plan 3 is 3413 x 988 (124), plan 6 is 2304 x 2520 (281). `scripts/score.py` is the source of every number below. Plans 4 to 6 were not used to tune anything, and swift 4 does badly on them: it finds few tiles and reads no IDs, because their tiles do not match the legend colours (plan 4), the legend lists zones not booths (plans 5 and 6), or the booths are white boxes (plan 6). Plan 6's truth is generated from its PDF vector data. Plan 5 (cosmo) draws most booths another way and still needs a truth approach. `cluster.ipynb`, `map.json`, and `map.svg` in the root belong to a separate clustering experiment, not to swift 4.
+Truth for plans 5 and 6 comes from the PDF vector data. Run order matters: the booth truth script first (`make_plan5_truth.py` or `make_plan6_truth.py`), then `make_wall_truth.py`, then `make_door_truth.py`, because the later scripts append to `truth.json`. PyMuPDF's `Rect.intersects` is false for zero-height rects, so compare bounds by hand. Plans 5 and 6 truth were not checked by eye. `output/` and `bin/` are generated and gitignored.
 
 ## How to run
 
-Run everything from the project root.
+From the project root. The scorer and robustness script need `cv2`, which the default `python3` lacks; use the conda env `floor-plan-extractor` or `floor-plan-extractor-apple`.
 
 ```
 swift build -c release --product fp-extract
-swiftc -O -parse-as-library extractor/render_swift4.swift -o bin/render_swift4
-
-for n in 1 2 3 4 5 6; do
-  .build/release/fp-extract data/plan$n/layout.png data/plan$n/legend.png --out output/swift5/plan$n --feature-print
-done
-bin/render_swift4
-
-/Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/make_pdf.py
-/Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/score.py
 swift test
-# optional: only some layers, e.g. --layers booth,wall (default is all four)
-/Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/robustness.py 1,2,3,5,6   # about 15 minutes
-/Users/arya/miniconda3/envs/floor-plan-extractor-apple/bin/python scripts/scale_stress.py 1,5,6 2,3
+
+PY=/Users/arya/miniconda3/envs/floor-plan-extractor/bin/python
+.build/release/fp-extract data/plan1/layout.png data/plan1/legend.png --out output/swift5/plan1 --feature-print
+$PY scripts/score.py output/swift5/plan1/layout.json data/plan1/truth.json
+$PY scripts/robustness.py 1,2,3,5,6                  # about 15 minutes, writes output/robustness/report.md
+$PY scripts/robustness.py 3,5 half,blur              # plans, then transforms
 ```
 
-`bin/render_swift4` with no arguments renders the three default output folders (plans 1 to 3).
+`FP_EXTRACT` selects another binary for `robustness.py`. Flags beyond `--out` and `--feature-print`:
+- `--layers booth,wall,door,seat` keeps only those layers.
+- `--upscale-small` reads plans whose small tiles measure under 30 px at 2x. It is off because it breaks faded and halved plan 6.
+- `--judge off|mlx|fm` labels object groups and adds seats. `fm` needs Swift 6.4 and was never benchmarked.
+- `--verify-doors` asks Qwen3.5-9B about each door candidate.
+- `--model-ids` asks Qwen3.5-9B to read unread tile IDs into `suggested_id`.
+- `--no-repair`, `--no-reread`, `--no-bridge`, `--no-regroup` switch single steps off.
 
-Flags of `fp-extract` beyond `--out` and `--feature-print`: `--layers booth,wall,door,seat` keeps only those layers; `--upscale-small` reads plans whose small tiles measure under 30 px at 2x (off: it breaks faded and halved plan 6); `--judge off|mlx|fm` labels object groups and fills in seats; `--verify-doors` asks Qwen3.5-9B about each door candidate; `--model-ids` asks Qwen3.5-9B to read unread tile IDs into `suggested_id`; `--no-repair`, `--no-reread`, `--no-bridge`, `--no-regroup` switch single steps off. The model flags need the `floor-plan-vlm-bench` conda env and take the lock directory `/tmp/fp-vlm.lock`, so only one model process runs at a time.
+The model flags need the conda env `floor-plan-vlm-bench` and the lock directory `/tmp/fp-vlm.lock`, so one model process runs at a time on this 24 GB machine. A missing env is recorded in `report_diff.json` and the run carries on. Vision OCR varies by about one tile or one ID between runs of the same binary on plan 5, so compare by score.
 
-Add `--judge mlx` for the VLM pass (25 s, 22 s, and 16 s for plans 1 to 3, conda env `floor-plan-vlm-bench`). If that env path is missing, the judge records `missing-env-floor-plan-vlm-bench` in `report_diff.json` and the run carries on without an error. The `--judge fm` mode only compiles with Swift 6.4 or later.
+## Scores, clean plans (rerun on the merged build, `3f5bd53`)
 
-## Scores (from `scripts/score.py`, current outputs)
+Tiles and IDs use IoU of at least 0.5 on box and ID. Objects, pillars and doors use IoU of at least 0.3.
 
-Tiles and tile IDs use IoU of at least 0.5. Objects, pillars, and doors use greedy matching at IoU of at least 0.3. Walls use pixel coverage within 6 px. Precision is matches divided by engine items of that class.
-
-| | Plan 1 | Plan 2 | Plan 3 | Plan 5 (not tuned on) | Plan 6 (not tuned on) |
+| | Plan 1 | Plan 2 | Plan 3 | Plan 5 | Plan 6 |
 |---|---|---|---|---|---|
-| Tiles found, precision | 160/160, 92% | 211/211, 100% | 68/68, 92% | 248/265, 81% | 280/281, 88% |
-| Tile IDs exact, with `suggested_id` | 154/154, 154 | 208/209, 209 | 67/67, 67 | 243/265, 244 | 279/281, 279 |
-| Objects (single chairs excluded) | 137/141, precision 91% | 26/26, 59% | 8/11, 40% | no truth | no truth |
-| Chairs, against the seat agent's checked lists | 744/744 | 104/104 | 36/36 | no truth | no truth |
-| Pillars | 18/23, precision 78% | 0/0, 1 false | 30/31, precision 94% | no truth | no truth |
-| Doors (swing symbols) | 3/6, precision 27% | 4/4, 100% | 0/1 | 9/89, 75% | 20/44, 57% |
-| Diagonal walls found | - | - | - | 2/2 | 5/6 |
-| Walls, pixel recall / precision | 89% / 81% | 98% / 86% | not meaningful, see notes | no truth | no truth |
+| Tiles found, precision | 160/160, 92% | 211/211, 100% | 68/68, 92% | 248/265, 78% | 280/281, 88% |
+| Tile IDs exact (with suggestions) | 154/154 | 208/209 (209) | 67/67 | 243/265 (244) | 279/281 |
+| Objects, single chairs excluded | 137/141 | 26/26 | 8/11 | no truth | no truth |
+| Chairs against checked lists | 744/744 | 104/104 | 36/36 | no truth | no truth |
+| Doors (swing symbols) | 3/6 | 4/4 | 0/1 | 9/89 | 20/44 |
+| Diagonal walls | - | - | - | 2/2 | 5/6 |
+| Walls, pixel recall / precision | 89% / 81% | 98% / 86% | not meaningful | no truth | no truth |
 
-Before this session's changes: plan 1 objects 122/141 at 56% precision, pillars 0/23; plan 3 objects 0/11, pillars 25/31.
+Objects, chairs, doors and walls were not rerun for round 2; they are from the merge of the four layers, and round 2 only touched the booth layer.
 
-Notes on reading the table:
-- Tiles match on box and ID only. Precision counts every engine tile, including real legend tiles the truth does not list: 9 `ENTRANCE` on plan 1, 3 `Seating` on plan 2, 6 `Tenant space` on plan 3. Class names equal the truth on every matched tile of plans 1 to 3 and on 270 of 281 on plan 6.
-- Plan 5 truth is generated from the PDF by painting the coloured blocks, drawing every stroked line over them and taking each enclosed cell with one ID label (`scripts/make_plan5_truth.py`): 265 booths, not checked by eye. It leaves out cells with two labels, labels outside coloured blocks, and the small black-and-white stalls (`T`, `PERKOSMI`). PyMuPDF's `Rect.intersects` is false for a straight line, so clip tests on divider lines must compare bounds by hand.
-- Plan 6 truth is generated from the PDF vector data by `scripts/make_plan6_truth.py`: 281 booths, not checked by eye. It leaves out two rectangles that hold two labels each and the sponsor boxes with no label. The plan prints `B38` and `B39` twice and the truth keeps both.
-- The one plan 2 ID miss is `FI` read for printed `F1` (flagged as `suggested_id`). Plan 1 has a `prefix-conflict` suggestion on the plan's printed `D6` in the `C6` slot.
-- Plan 3 truth has 8 tenant boundary regions, now classed `boundary` and not scored, and one `wall` that is the stairwell box. The plan 3 wall number is therefore meaningless until walls get real truth.
-- The truth cleanup removed three plan 1 pillars that duplicated the `Blocked` tiles, so plan 1 pillar truth is 23.
-- Doors: truth doors are door-leaf symbols (for example 62 x 24 px). The engine reports whole wall openings (140 to 395 px wide). They are different objects, so box shape is not the problem and doors need a swing-symbol detector.
+Reading the table:
+- Precision counts every engine tile, including real legend tiles the truth does not list (`ENTRANCE` on plan 1, `Seating` on plan 2, `Tenant space` on plan 3, `FACILITIES` and sponsor boxes on plan 6). Plan 5 precision fell from 81% to 78% in round 2 (317 engine tiles against 306): the extras are small MALAYSIA tiles.
+- Plan 3 truth has one `wall`, a stairwell box, so its wall numbers mean nothing.
+- Truth doors are swing symbols. Plan 1's truth also holds four non-swing entries, relabelled to class `gate`; gates score separately at 0/4 because no gate detector exists.
+- The one plan 2 ID miss is `FI` for printed `F1`, flagged in `suggested_id`.
 
-## What changed this session
+Plan 4 has no booth truth: 52 goods tiles with 40 valid IDs (50 with `--model-ids`), 15 of 22 food tiles with 9 valid IDs, 12 of 15 columns.
 
-30. Cleanup after the merge: the four layer worktrees are removed (branches kept); the seat branch's own black-line rule (`inkLosesBlackLines`, `nearBlack`, two `seatLayer` parameters) is deleted because the wall branch's gated rule in `inkMask` already keeps those lines, and seat output is identical with it disabled on six degraded rows; plan 1 truth moves four non-swing entries (the three north emergency bays, which are X-box gates, and the east emergency entry, a wall gap with nothing drawn) from class `door` to a new class `gate`, so plan 1 doors score 3 of 6 on swing symbols and gates score separately at 0 of 4. `score.py` counts `gate` as a non-tile class and prints its row. The west emergency box stays a door; the door agent found it sits beside a swing, not on it. Vision varies by a tile or an ID between runs of the same binary on plan 5, so compare plan 5 outputs by score, not byte for byte.
+## Robustness (`scripts/robustness.py`)
 
-25. Four layer agents, each in its own worktree, merged into `master` as four merge commits (`4804b4e` door, `522cc73` wall, `60f0815` seat, `a08a75b` booth). Per-layer reports and the merged scores are in the table above; each branch also has a note in `LEARNING/`.
-26. Door (`DoorArcs.swift`, `DoorLayer.swift`, `DoorVerify.swift`, `scripts/make_door_truth.py`): swing symbols from hinge arcs (circle vote on thin strokes, walked around the circle, standing on a long wall run, grouped into symbols). Plan 2 finds 4/4, plan 1 3/10. Plan 1's truth holds 5 items that are not swing symbols (3 X-box gates, an empty wall gap, a box beside a door), and its horizontal bow ties are truthed as a thin 62x24 band that the symbol box overlaps at IoU 0.20 to 0.28. Plan 3's truth is a red gate bar. `--verify-doors` (Qwen3.5-9B on each candidate crop) drops 15 of 27 false and 4 of 36 true candidates; off by default. Run `make_door_truth.py` after the booth truth scripts.
-27. Wall (`WallLayer.swift`, `Scan.swift`, `Outside.swift`): slanted walls from a Hough pass on the ink left after removing axis-aligned runs (items carry optional `segment` and `width`, and consumers of wall boxes must skip those), round columns as pillars (plan 4 truth in `data/plan4/columns.json`, 12/15), page tilt followed in the long-run search (`dominantTilt`, `tiltedRuns`), and near-black lines kept as ink under colour noise, gated so clean plans do not change. Plan 3 wall precision falls to 3% only because its truth is one stairwell box.
-28. Seat (`SeatLayer.swift`, `Regroup.swift`, `Judge.swift`): single chairs are found as small ink holes and emitted as `object` with `kind: "chair"` and `seat: true`, blobs with several as `kind: "chair_group"` and `chairs: N`, so object counts no longer include single chairs. The seat flag is set without the judge by a rule, and the judge only adds seats. Objects survive half size (plan 1 1/141 to 136/141) and JPEG or noise (plan 3 0/11 to 9/11). The chair lists in `data/plan{1,2,3}/seats.json` were produced by the detector and checked by eye by the agent, so they are not independent truth. Two ink fixes overlap (the wall branch's gated chroma rule in `inkMask` and the seat branch's `inkLosesBlackLines`); both are in `master` and one can be dropped.
-29. Booth (`Legend.swift`, `Tiles.swift`, `Text.swift`, `IdReader.swift`): blurred legends and faded colours (grey halo beside text stopped the swatch search; two classes could take the same shifted colour), local-contrast outlines for light booths, sharpened and enlarged crops for unread tiles (this recovers what `--upscale-small` did for plan 5 without resampling the plan), two-line labels such as GD over 38, and `--model-ids` (Qwen3.5-9B reads unread tiles into `suggested_id` only). `--upscale-small` stays off.
+It degrades each plan (half, double, rot90, skew1, pad2, jpeg40, blur, noise, faded), moves the truth the same way, runs `fp-extract` and scores. Against the first run before any robustness work, the build before round 2 was better in 48 of 173 cells, worse in 2 and within tolerance in the rest.
 
-23. Noise: `noiseScore` (share of sampled pixels more than 24 from their 3x3 median, summed over channels) separates added pixel noise (0.09 to 0.16) from clean plans (0.01 to 0.04). Over 0.07 for a plan, or 0.04 for a legend (its white ground clips the noise), the image is smoothed with `sigmaFiltered`, a 3x3 average over neighbours within 30 per channel, which keeps edges and 1 pixel lines that a median filter would erase. Noisy variants: plan 1 0/160 to 160/160 tiles, plans 2 and 3 crash to 211/211 and 68/68, plan 5 0/265 to 243/265 (222 exact IDs). Pillars, walls and objects on noisy plans 1 and 3 are still mostly lost, because the ink passes are sensitive to the remaining noise; a second smoothing pass helped plan 1 walls (22% to 56%) but cost IDs, so it was not kept. All six clean plans are byte-identical.
-24. `--upscale-small`, off by default: when small tiles (area-weighted 25th percentile of the legend-coloured regions) measure under 30 px, read the plan at 2x and scale every result back. Plan 5 gains 17 exact IDs (224 to 241), half-size plan 2 regains all 211 tiles, 26/26 objects (from 1) and 176/209 IDs (from 149), and rotated plan 5 recovers (101 to 247 tiles). It breaks plan 6 when that is faded (270 to 113) or halved (272 to 239) because the fixed outline cut (`darkPixels` below 60) loses lines that resampling lightens, and plan 3 objects collapse at 3x so the factor is capped at 2. Branch `experiment/outline-local-contrast` adds a local-contrast outline rule (a pixel much darker than its 11x11 neighbourhood counts as outline) that brings faded plan 6 under upscaling to 268 but still loses half-size plan 6 (242 against 267 unscaled) and costs 5 booths there even with upscaling off. Other tried and dropped: edge-slope and gray-percentile statistics cannot detect blur.
+Round 2 results, before to after, rerun on the merged build:
 
-22. Layer scaffold, no behaviour change: the 290-line `outsideLayer` is split into a shared `scanInk` and four stages with their bodies unchanged: `wallLayer` (wall strokes) and `columnLayer` (solid and hollow squares) as the wall layer, `doorLayer` (gaps in wall bands) and `seatLayer` (what is left, as `object`). `layout.json` and `report_diff.json` are byte-identical on all six plans. Layers: booth (everything that is not one of the others, including tiles and sponsor boxes), wall (class `wall` and `pillar`), door, seat (class `object`). Each run also writes `booths.json`, `walls.json`, `doors.json` and `seats.json` next to `layout.json`, with the same item format plus a `layer` name, and `--layers booth,wall,door,seat` keeps only the named layers. A booth-only run is no faster: its time is booth ID reading, not the ink analysis. The wall, door and seat layers still need the booth layer's claimed areas, so they run it first. Decisions taken: walls own columns, seats own round tables with one shared circle detector still to build, one file per layer plus the merged file, and a text mask in each layer later.
+| Row | Tiles | IDs |
+|---|---|---|
+| Plan 3 half | 35 to 68/68 | 0 to 67 |
+| Plan 5 JPEG 40 | 107 to 208 | 91 to 185 |
+| Plan 5 blur | 200 to 244 | 102 to 133 |
+| Plan 6 half | 267 to 274 | 266 to 273 |
+| Plan 6 faded | 270 to 278 | to 277 |
+| Plan 5 half | 89 to 196 | 0 (text is 4 px) |
 
-19. `seat` field: objects carry an optional `seat` (true or false) taken from the judge's label (table with chairs and audience seating are seats; stairs, door, pillar, wall and noise are not). It is written only when the judge ran, so judge-off output is byte-identical on all six plans. Against the truth labels it is right on every matched object (136/136, 26/26, 8/8), but nearly all matched truth objects are seats, so that test has almost no negatives.
-20. Diagonal wall truth (`scripts/make_wall_truth.py`, run after the booth truth scripts): the slanted wall strokes in the plan 5 and 6 PDFs, 2 and 6 segments, class `diagonal wall`. The scorer draws segments with thickness and reports "diagonal wall found". Swift 5 finds 0 of 2 and 0 of 6, because walls come only from horizontal and vertical runs (`longRuns`). Axis-aligned wall truth from the PDFs is not generated: zone dividers and stage outlines are stroked like walls.
-21. Text erasing, tried and not shipped: painting every non-ID word out of plans 5 and 6 with the exact PDF word boxes made results worse (plan 5 tiles 244 to 236, plan 6 tiles 280 to 261 and objects 96 to 110), because the erase boxes cut the booth outlines and divider lines beside the text. Text leaks into about 10% of objects and 5% of walls today. A text mask that makes each layer drop detections lying mostly on text is the better direction.
+Rows that held: plan 6 blur 274 tiles, plan 2 blur and faded 211, plan 6 JPEG 40 280 with 278 IDs, plan 3 at 68/68 tiles and 67 IDs on all four degraded rows. The plan 1 stress rows, the plan 5 noise row and the double, rot90, skew, pad and noise rows of the other plans were not rerun after the last booth fix (`29c9726`, which only tightens region splitting). A full `robustness.py 1,2,3,5,6` run is the check still owed.
 
-18. Dark tiles (`tilePolygon`): the outline of a tile is the face (region between dark lines) holding most of its pixels, but a black tile is itself dark, so its only faces are the white text glyphs and the polygon became one glyph, which blanked the OCR crop. The face must now cover at least half the tile or the tile gets no polygon and a rectangular crop. Plan 6's sponsor booths recover: exact IDs 270 to 279 of 281. Other plans are unchanged.
+## Where a model is used
 
-17. Legend retry on near-silent classes: a class with one or two tiles is now retried like one with none, and moves to the most common similar-hue plan colour only if that colour has at least four times as many pixels as the class already matches. An uncropped page prints the legend inside the plan, so the goods swatch matched its own colour and the class never adapted. Plan 4's rotated scan, rotated upright by hand, run whole with its title block and legend box and upscaled 3x: 52 goods tiles and 29 valid IDs (same as the cropped plan), 14 of 22 food tiles with 7 valid IDs (cropped: 15 and 9). At its native 1x size the tiles are found (52 and 15) but no ID is read, because the text is too small for Vision. Plans 1 to 3, 5 and 6 are unchanged in score. The pipeline does not rotate pages by itself.
+The default pipeline is classical image processing, Apple Vision text recognition and Apple image feature prints. A VLM runs only behind flags, always to read or verify a crop, never to find a box. The benchmark of nine models showed they classify well and localise badly: the best box detection was Qwen3.8-27B at 11/20 with mean IoU 0.598, at 7.5 tok/s and 17.7 GB, against tile counts of 160/160 and 280/281 from colour and ink rules.
 
-16. Page measure: every page-size threshold now uses the bounding box of the content (everything that differs from the most common colour) instead of the image, so margins around a plan change nothing (`contentExtent`, `Pixels.page`, `Pixels.area`, `Pixels.contentRect`). The two page-level Vision text passes read only that box (`recognizePageText`): on a 3x padded page Vision returned tall "text" boxes of digits with confidence 1.0 over rows of chairs, and the extractor erased the tables under them. The "large tile" test and the region cap in `tileScale` use the content area too. Result of `scripts/scale_stress.py` on plans 1, 2, 3, 5 and 6 padded 2x and 3x: tiles, IDs, objects, pillars and wall recall are identical to the unpadded plans, apart from wall recall on plan 3 (36.8% against 38.8%). Before this, plan 1 padded 3x kept 2 of 141 objects and 0 of 23 pillars at 2x, and plan 2 padded 2x kept none of its 26 objects. Unpadded plan 1 objects rise from 134 to 136 of 141.
+- `--judge mlx` (Qwen3.5-9B): object groups and the seat flag, 160/201 items right on non-noise items, 3 false seats on plan 1. It only adds seats.
+- `--verify-doors`: drops 15 of 27 false door candidates and 4 of 36 true ones, tuned on the same crops.
+- `--model-ids`: plan 4 goods go from 39 to 50 valid IDs in about 30 s. On plan 5 blur it found 13 correct and 10 wrong suggestions on 71 asked in about two minutes, so the booth agent reverted its widened gate.
 
-15. Tile scale (`tileScale` in `Tiles.swift`): tile thresholds followed the page size, so a plan whose booths are small for its page lost them. Padding plans with white margins showed it: at 3x padding plan 1 fell to 27% of its booths, plan 5 to 3% and plan 6 to 6%. The scale is now the smaller of the page scale and the area-weighted 25th percentile of legend-coloured region sizes divided by 25 px, so it shrinks for small tiles and never grows. The minimums (erosion radius, `minArea`, seam length, the `outlinedLayer` minimum side) follow it; the upper bounds (largest hole, largest booth side) stay on the page scale, because larger booths exist on the same plan; tiles admitted only because the minimum shrank are kept only in labelled classes. Padded plans now score about the same as unpadded (plan 1 x3: 156/160 booths, plan 5 x3: 242/265, plan 6 x3: 278/281). On the unpadded plans plan 5 gains 2 booths and 1 ID and plan 6 loses `M3` and `M15`, both Vision reading a crop one pixel different; plans 1, 2 and 3 do not change. `scripts/scale_stress.py` reruns the padding test.
+Benchmark tables are in `LEARNING/hybrid-mlx-vlm-benchmark.md`. The benchmark scripts live outside this folder, so it cannot be rerun from here.
 
-14. Swift 5: the 2,433-line `extract_swift4.swift` is split by line range, with no code edits except the entry point, into `Sources/Extractor` (ten files, internal access), run through a public `ExtractTool.run(arguments:)`. Outputs for all six plans are byte-identical to swift 4. Seven new tests cover label cleaning, hole filling, the three ID repairs, class prefix dominance and the legend swatch test. The default output folder is `output/swift5/plan1`.
+## Decisions and dead ends
 
-11. Plan-wide ID repair (`repairIdsByPrefix`), as suggestions only (`suggested_id`, `id` is never overwritten): a two-letter prefix whose last letter looks like a digit and that is less common than its shortened form becomes the zero-padded ID (`NO4` to `N04`, 9 on plan 5); a prefix under a third as common as a one-letter-different neighbour (C and G, B and E) takes the neighbour (`CD28` to `GD28`); a duplicated ID of full series width tries single-digit swaps (1 and 7, 3 and 8 and so on) and is suggested only if exactly one lands on a missing number. Plan 5 gains 8 correct suggestions and 1 wrong (`FO1` for `F07`); plan 4's goods and food booths with a valid ID go from 26 and 7 to 29 and 9. Plans 1 to 3 and 6 get no new suggestions.
-12. `computeClassPrefixes` now needs the leading prefix to cover at least 70% of a class's IDs. Before, a class holding many prefixes (plan 5's countries) got one arbitrary prefix and `id-pattern` flagged 199 tiles for review.
-13. The Cyrillic lookalike table gains `М`, `Р` and `Т`.
-
-10. Small tiles (`legendLayer`): the class mask is eroded by about 3 px before the `minArea` test, so a 24 x 27 px booth (648 px restored) fell to 378 px and was dropped. The size test now uses the restored box. Tiles that pass only that way are kept only when their class turns out to be labelled (at least half its tiles read an ID), because the unlabelled `Entrance` class gained eight thin fragments on plan 1 otherwise. Plan 5 went from 101 to 242 of 265 booths and from 94 to 222 exact IDs; plans 1 to 3 and 6 are unchanged. Rendering the plan at a larger zoom does not help, since booth size and every threshold scale together.
-
-9. Legend colour adaptation (`adaptLegendToPlan`): when a legend class finds no tiles, `legendLayer` runs again with that class moved to the most common plan colour of similar hue (within 45 delta E and 40 degrees) that no other class already explains. The most common colour wins, not the nearest, because anti-aliased edge colours sit nearer the swatch than the flat fill does. Plan 4's goods booths went from 0 to 52 tiles, matching the legend's total of 52, with 26 valid IDs (`GD1` to `GD52` are printed on the plan), 5 misread (`CD28` for `GD28`) and 21 unread. Plans 1 to 3 and 6 are unchanged.
-
-7. Legend parsing (`readLegend`): an entry now needs a real swatch, a bounded block of one colour left of its text, measured against the legend's own background colour. Titles and bare lines no longer become classes, wrapped lines join the entry above, and a leading ":" is stripped. Plan 5's legend sits on a pale cyan ground, so every class was being given the background colour; plan 5 went from 4 tiles to 134 (106 IDs read, no truth to score against). Plan 1 loses the bogus `Class`, `Wall`, `Seating` and `Audience area` classes, which moves its tile precision from 95% to 93% and plan 2's from 99% to 100%.
-8. `cleanLabel` accepts up to three letters before the digits, so `FNB12` reads. Plan 4's food booths now give 10 IDs, a few with OCR slips (`FN91`, `FNE2`).
-
-5. Light booths: `outlinedLayer` finds closed light regions of booth size between dark outlines and keeps those where OCR reads an ID (for example `W12`). Plan 6 went from 11 to 281 of 281 tiles and from 0 to 271 of 281 exact IDs, with plans 1 to 3 unchanged. It adds about 45 ms per booth (plan 6 takes about 20 s, was 3 s).
-6. The ID retry pass (`rereadTiles`) now also covers unlabelled tiles between 0.5 and 2.5 times the median size of tiles that have IDs. It recovered one plan 6 ID (`M15`).
-
-1. Hollow square pillars: fill small closed holes in the ink, open past the wall-line width, keep square cores (`outsideLayer`). Five north-wall squares on layout 1 stay missed because the `ENTRANCE` tile covers their bottom edge.
-2. Area floor of 160 px² (at 2000 px max side, scaled by area) on object candidates.
-3. OCR boxes under 0.5 confidence no longer erase ink. Vision read layout 3's table icons as "TEIL" at 0.3 and wiped them out. The handoff's earlier explanation (blue fills and grey pillars) was wrong.
-4. Legend tiles over 1% of the image no longer mask ink inside them. This recovered the pillars inside tenant tiles (they are black, not grey). Side effect: more wall fragments, layout 2 wall precision fell from 94% to 88%.
-
-## Where a VLM is used
-
-None of the default pipeline: it is classical image processing, Apple Vision text recognition and Apple image feature prints. A VLM runs only behind four flags, always to read or verify a crop, never to find a box (the benchmark below shows they classify well and localise badly): `--judge mlx` (object groups and the seat flag; 160 of 201 items right, 3 false seats on plan 1), `--judge fm` (Apple's on-device model, wired but never benchmarked), `--verify-doors` (drops 15 of 27 false door candidates and 4 of 36 true ones, tuned on the same crops), and `--model-ids` (plan 4 goods go from 39 to 50 valid IDs in about 30 s).
-
-## Benchmark summary (full tables in `LEARNING/hybrid-mlx-vlm-benchmark.md`)
-
-Nine models on Apple M5, 24 GB, in `floor-plan-vlm-bench`. Qwen3.5-9B-MLX-4bit backs `--judge mlx`: 6.97 GB peak, 22.8 tok/s, 160/201 (79.6%) on non-noise items, but 30/52 on per-group accuracy. Qwen3.5-4B-MLX-4bit scores higher per group (34/52, 65.4%) because it rejects noise crops, at 4.11 GB. All nine models read the 11 hard booth tiles correctly, so that test does not separate them, and four of the 11 now read correctly without the judge. The two models added later do not displace the 9B: `gemma-4-26b-a4b-it-4bit` gets 33/52 groups but only 145/201 non-noise items in 111s at 16.1 GB, and `Qwen3.8-27B-4bit` gets 146/201 in 142s at 17.3 GB. Qwen3.8-27B ties the best box detection at 11/20 (mean IoU 0.598) but at 7.5 tok/s and 17.7 GB. The benchmark scripts live outside this folder, in `~/.gemini/antigravity-cli/brain/.../scratch/`, so it cannot be rerun from here; phase 1 there now reads `data/plan1/` and must be run from the project root. VLM bounding-box detection tops out at 11/20 boxes and cannot replace `legendLayer`.
-
-## Robustness (scripts/robustness.py)
-
-`scripts/robustness.py 1,2,3,5,6` degrades each plan (half and double size, 90 degree rotation, 1 degree skew, margins, JPEG quality 40, blur, pixel noise, faded colours), moves the truth the same way, runs `fp-extract` and prints one table to `output/robustness/report.md`. Set `FP_EXTRACT` to test another binary. A 50-row run takes about 15 minutes.
-
-Against the first run (before any robustness work), the merged build is better in 48 of 173 compared cells, worse in 2 and within a few points in the rest. Largest gains: blur (plan 2 tiles 123 to 211, plan 5 IDs 0 to 102, plan 6 tiles 11 to 274), noise (plans 1, 2, 3 and 5 recover; plans 2 and 3 no longer crash), 90 degree rotation of plan 5 (101 to 248 tiles), half size of plan 1 and plan 2 objects (1 to 136 and 1 to 23), JPEG on plan 3 (pillars 6 to 31, walls 0% to 36%), faded plan 2 (tiles 123 to 211), 1 degree skew on plan 3 walls (0% to 46%).
-
-Still weak, against the same plan unchanged:
-
-| Row | Result |
-|---|---|
-| Plan 3 half size | tiles 35/68, no IDs |
-| Plan 5 half size | tiles 89/265, no IDs (text is 4 px) |
-| Plan 5 JPEG 40 | tiles 107/265, IDs 91 (its legend loses INDONESIA) |
-| Plan 5 blur | IDs 102/265 |
-| Plan 3 blur | walls 0% |
-| Plan 6 half size | tiles 267/281 (272 before the merge), IDs 266 (270): the only regression |
-
-## Environments
-
-macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27. Conda env `floor-plan-vlm-bench` (Python 3.12, `mlx-vlm==0.7.10`) runs `--judge mlx`. Conda env `floor-plan-extractor-apple` (`opencv`, `numpy`, `scipy`, `matplotlib`, `jupyter`) runs `score.py` and the render notebook.
+- `--upscale-small` stays off. Upscaling cannot bring back dividers a half-size resize already lost (plan 3 half fell from 35 to 25 tiles), and it breaks faded and halved plan 6.
+- Text erasing with exact PDF word boxes made scores worse because the erase boxes cut booth outlines. A per-layer text mask that drops detections lying mostly on text is the direction left open.
+- `experiment/outline-local-contrast` fixes faded plan 6 under upscaling (113 to 268) but half-size plan 6 still loses. Not merged.
+- Region splitting for merged booths requires at least two cells, half of them with different IDs sharing a letter prefix. The prefix test was added after a sponsor box split wrongly on plan 6 JPEG 40.
+- A fade fitted on fewer than four moved classes is not applied to black and grey. With two it turned plan 1 JPEG 40's black swatch grey and cost three tiles.
+- A whole-row swatch scan up front broke plan 1; the legend retry near the text is used instead.
+- Voting across page OCR passes gave no gain over the most confident read.
+- ID repair never overwrites `id`; it writes `suggested_id` with a rule name. A prefix needs 70% dominance in its class (`computeClassPrefixes`).
+- Page-size thresholds use the content box, not the image, so margins change nothing (`scripts/scale_stress.py` checks this on padded plans).
 
 ## Open items
 
-- Judge output never reaches `layout.json`: `runJudge` takes `items` by value and returns only a report. `agreed_with_rule` is 0 and `compared_with_rule` is 1 on layout 1, so nothing yet measures whether the judge is right. Decision pending after the object noise work above; current recommendation is to keep it report-only.
-- Plan 6 extra tiles (37) are mostly real legend tiles the truth does not list (22 `FACILITIES`, 6 sponsor boxes, 4 `GRID NETWORK`), plus `M21` and `B75`, which are real booths the truth skipped as ambiguous.
-- Plan 4 (more-market): 52 goods tiles but only 29 valid IDs (including suggestions), and 15 of 22 food booths with 9 valid IDs. Unread IDs are the main gap.
-- Plan 5 (cosmo): 242 of 265 booths found, 223 exact IDs and 231 with `suggested_id`. The 23 missed booths and 34 booths with a wrong or missing ID remain; the biggest group is a dropped last digit (`P2` for `P26`, `J3` for `J39`), which no repair rule can recover without geometry. Booths are about 24 px, coloured blocks cut into stalls by thin divider lines, and the legend is printed inside the plan.
-- Remaining per layer: booth (plan 5 JPEG legend loses INDONESIA, plan 3 half size has 35/68 tiles and no IDs, plan 6 faded loses 7 black sponsor boxes, plan 5's tiny T stalls, food booths on plan 4); wall (blur on tinted fills, slanted walls under 10 degrees off an axis, plan 3 truth is not wall truth); door (detecting gates and X boxes, the thin-band box convention for bow ties, tiny plan 5 symbols, 40% to 73% false candidates without `--verify-doors`); seat (plan 3 audience block, round tables versus round columns, half-size chairs, precision on noisy plans).
-- Four worktrees under `.claude/worktrees/` hold the layer branches (`layer/booth`, `layer/wall`, `layer/door`, `layer/seat`, all merged); each has its own `.build`.
-- Object precision is still 40% to 79%. Layout 3 misses 3 of 11 objects.
-- Layout 1 pillars: 5 north-wall squares missed behind `ENTRANCE` tiles, 4 false pillars at wall corners and the south wall.
-- `symbol` items (7, 4, 4 in the truth files) are never emitted and are not scored.
-- `notebooks/render_swift4.ipynb` still holds outputs from before this session; rerun it or drop it in favour of `bin/render_swift4`.
-- `.archived/` (except `swift3/extract_swift3.swift`), `notebooks/`, and `output/` are not tracked in git.
+- Plan 4 food booths: FNB10 to FNB20 break into top and bottom strips around large text and are never found.
+- Plan 5 blur IDs are capped near 130 by Vision, and H read as K repeats. Plan 5 half has no IDs.
+- Plan 6 half still misses S6, S8, W1, W9, W14, M7 and M18. Plan 5 loses 17 booths on the clean plan, mostly a dropped last digit (`P2` for `P26`) that no repair rule can recover without geometry.
+- Plan 3 blur walls are 0%. Wall truth for the raster plans does not exist.
+- Door layer: gates and X boxes are not detected, plan 1 has 3 of 6, plan 5 has 9 of 89, and without `--verify-doors` 40% to 73% of candidates are false.
+- Seat layer: round tables versus round columns, the plan 3 audience block, half-size chairs, and precision on noisy plans. Object precision is 40% to 79%.
+- Plan 1 pillars: 5 north-wall squares are missed behind `ENTRANCE` tiles and 4 pillars are false.
+- Judge output never reaches `layout.json`. Current recommendation is to keep it report-only.
+- `symbol` items in the truth files are never emitted or scored.
+- `notebooks/render_swift4.ipynb` holds old outputs. `Sources/FloorPlanCore` and `fp-fix` duplicate part of `IdRepair.swift`.
+- `.archived/` (except `swift3/extract_swift3.swift`), `notebooks/` and `output/` are not tracked in git.
+
+## Environments
+
+macOS 27.0.1, Apple M5, 24 GB, Swift 6.4. `Package.swift` requires macOS 27, tools-version 6.0, language mode 5, tests use Swift Testing. Conda env `floor-plan-vlm-bench` (Python 3.12, `mlx-vlm==0.7.10`) runs the model flags. Conda envs `floor-plan-extractor` and `floor-plan-extractor-apple` (`opencv`, `numpy`, `scipy`) run `score.py`, `robustness.py` and the PDF scripts.
