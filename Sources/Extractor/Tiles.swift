@@ -62,6 +62,8 @@ func tileScale(_ grid: [Int16], w: Int, h: Int, page pageSide: Int, area: Int) -
     return min(page, side / referenceTileSide)
 }
 
+private func isColoured(_ entry: LegendClass) -> Bool { hypot(entry.lab.a, entry.lab.b) >= 15 }
+
 func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async throws -> LegendLayerOutput {
     let (w, h) = (px.width, px.height)
     let canvas = CGRect(x: 0, y: 0, width: w, height: h)
@@ -84,6 +86,15 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
         let small: Bool
     }
     var found: [Found] = []
+    struct Candidate {
+        let cls: Int
+        let region: Region
+        let rect: CGRect
+        let reasons: [String]
+        let tileArea: Int
+        let small: Bool
+    }
+    var candidates: [Candidate] = []
 
     for (k, entry) in legend.enumerated() {
         let whole = fillHoles(grid.map { $0 == Int16(k) }, w: w, h: h, maxHole: maxHole, seamLength: seamLength)
@@ -114,16 +125,30 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
             }
             guard Double(tileArea) >= minColorCover * rect.width * rect.height else { continue }
 
-            let raw = try await readLabel(image, in: rect)
-            let label = raw.flatMap { cleanLabel($0) }
-            let rgb = [Int(entry.rgb.0), Int(entry.rgb.1), Int(entry.rgb.2)]
+            candidates.append(Candidate(cls: k, region: reg, rect: rect, reasons: reasons, tileArea: tileArea, small: small))
+        }
+    }
+
+    // The booth size of the plan is the typical short side of a region, which a divider that vanished does not move.
+    // The text and outline fragments of a faded black class can outnumber the booths, so the unit has a floor.
+    let shortSides = candidates.map { Double(min($0.rect.width, $0.rect.height)) }.sorted()
+    let unit = max(shortSides.isEmpty ? referenceTileSide : shortSides[shortSides.count / 2], 0.8 * referenceTileSide * page)
+    for c in candidates {
+        let entry = legend[c.cls]
+        let raw = try await readLabel(image, in: c.rect)
+        let label = raw.flatMap { cleanLabel($0) }
+        let rgb = [Int(entry.rgb.0), Int(entry.rgb.1), Int(entry.rgb.2)]
+        let polygon = tilePolygon(c.region, rect: c.rect, faces: faces, faceOf: faceOf, w: w, epsilon: 2 * scale)
+        // A divider that faded or fell between pixels leaves several booths in one region.
+        let slices = try await mergedTiles(image, c.rect, unit: unit)
+        for part in slices ?? [(c.rect, raw, label)] {
             found.append(Found(
                 item: Item(
-                    cls: entry.name, box: box(rect), area: tileArea, fillRgb: rgb, legendRgb: rgb,
-                    text: raw ?? "", id: label, needsReview: !reasons.isEmpty,
-                    reason: reasons.isEmpty ? nil : reasons.joined(separator: "; "),
-                    polygon: tilePolygon(reg, rect: rect, faces: faces, faceOf: faceOf, w: w, epsilon: 2 * scale)),
-                cls: k, colorReasons: reasons, small: small))
+                    cls: entry.name, box: box(part.rect), area: c.tileArea / (slices?.count ?? 1), fillRgb: rgb, legendRgb: rgb,
+                    text: part.raw ?? "", id: part.label, needsReview: !c.reasons.isEmpty,
+                    reason: c.reasons.isEmpty ? nil : c.reasons.joined(separator: "; "),
+                    polygon: slices == nil ? polygon : nil),
+                cls: c.cls, colorReasons: c.reasons, small: c.small))
         }
     }
 
@@ -133,8 +158,24 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
         let withLabel = members.filter { $0.item.id != nil }.count
         if !members.isEmpty, withLabel * 2 >= members.count { labelledIndices.insert(k) }
     }
+    // On a numbered plan a class that read few IDs is a blurred class, not an unnumbered one: a class of twenty tiles
+    // with one ID stays labelled when most of the plan's tiles are in labelled classes.
+    let inLabelled = found.filter { labelledIndices.contains($0.cls) }.count
+    if inLabelled * 2 >= found.count {
+        for k in legend.indices where !labelledIndices.contains(k) && isColoured(legend[k]) {
+            let members = found.filter { $0.cls == k }
+            if members.count >= 20, members.contains(where: { $0.item.id != nil }) { labelledIndices.insert(k) }
+        }
+    }
     let labelledNames = Set(labelledIndices.map { legend[$0].name })
-    found = found.filter { !$0.small || labelledIndices.contains($0.cls) }
+    // Blur can leave a class with too few readable IDs to count as labelled, so a small tile also passes when it is as
+    // wide as the plan's typical booth, which the thin fragments that the rule is there to drop are not.
+    let readSides = found.filter { $0.item.id != nil }.map(\.item.shortSide).sorted()
+    let boothSide = readSides.count >= 8 ? readSides[readSides.count / 2] : unit
+    // White, black and grey classes are left out of that: their regions are the plan's own text and outlines.
+    found = found.filter {
+        !$0.small || labelledIndices.contains($0.cls) || (isColoured(legend[$0.cls]) && $0.item.shortSide >= 0.8 * boothSide)
+    }
     var items: [Item] = []
     var colorReasons: [[String]] = []
     for var f in found {
@@ -147,6 +188,32 @@ func legendLayer(_ image: CGImage, _ px: Pixels, legend: [LegendClass]) async th
     }
     rebuildLabelledReasons(&items, labelledClasses: labelledNames, colorReasons: colorReasons)
     return LegendLayerOutput(items: items, labelledClasses: labelledNames, colorReasons: colorReasons, scale: scale)
+}
+
+/// Splits a region that is a whole number of small booths across and down (at least two booths) into equal cells
+/// and reads each. The split stands when at least two cells and half of them read different valid IDs, so a real
+/// double-width booth, which has one label, is left alone. The whole region can read as its first label, so this
+/// runs for every region.
+func mergedTiles(_ image: CGImage, _ rect: CGRect, unit: Double) async throws -> [(rect: CGRect, raw: String?, label: String?)]? {
+    let (cols, rows) = (Int((rect.width / unit).rounded()), Int((rect.height / unit).rounded()))
+    guard cols * rows >= 2, cols * rows <= 12, cols >= 1, rows >= 1,
+          abs(rect.width / unit - Double(cols)) <= 0.35, abs(rect.height / unit - Double(rows)) <= 0.35 else { return nil }
+    var slices: [(rect: CGRect, raw: String?, label: String?)] = []
+    for row in 0..<rows {
+        for col in 0..<cols {
+            let part = CGRect(
+                x: rect.minX + rect.width * Double(col) / Double(cols), y: rect.minY + rect.height * Double(row) / Double(rows),
+                width: rect.width / Double(cols), height: rect.height / Double(rows))
+            let raw = try await readLabel(image, in: part)
+            slices.append((part, raw, raw.flatMap { cleanLabel($0) }))
+        }
+    }
+    let labels = slices.compactMap(\.label)
+    // Booths of one block are one series, so their labels share a prefix; a sponsor box whose name reads as scraps does not.
+    let prefixes = Dictionary(grouping: labels) { $0.prefix { $0.isLetter } }
+    let sameSeries = (prefixes.values.map(\.count).max() ?? 0) * 10 >= labels.count * 7
+    let readsWell = labels.count >= 2 && labels.count * 2 >= slices.count && Set(labels).count == labels.count && sameSeries
+    return readsWell ? slices : nil
 }
 
 func makeMaskedUpscaledCrop(_ image: CGImage, item: Item, scale: Int) -> CGImage? {
@@ -193,6 +260,7 @@ func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Doub
     let outlines = morph(outlinePixels(px, lineScale: lineScale), w: w, h: h, rx: 1, ry: 1, erode: false)
     let minSide = Int(16 * scale), maxSide = Int(140 * Double(px.page) / 2000)
     var items: [Item] = []
+    var misread: [(Item, String)] = []
     for face in components(outlines.map { !$0 }, w: w, h: h, eight: false) {
         guard min(face.width, face.height) >= minSide, max(face.width, face.height) <= maxSide,
               face.minX > 0, face.minY > 0, face.maxX < w - 1, face.maxY < h - 1,
@@ -208,19 +276,56 @@ func outlinedLayer(_ image: CGImage, _ px: Pixels, existing: [Item], scale: Doub
         guard !existing.contains(where: { boxIoU($0.box, box(rect)) >= 0.3 }) else { continue }
         var tile = outsideItem("Booth", rect, review: false, reason: nil)
         guard let crop = makeMaskedUpscaledCrop(image, item: tile, scale: 3),
-              let found = try? await makeTextRequest().perform(on: crop),
-              let read = found.sorted(by: { $0.confidence > $1.confidence })
-                  .compactMap({ obs in cleanLabel(obs.transcript).map { (obs.transcript, $0) } }).first
-        else { continue }
-        tile.cls = "Booth " + String(read.1.prefix { $0.isLetter })
+              let found = try? await makeTextRequest().perform(on: crop) else { continue }
+        let reads = found.sorted { $0.confidence > $1.confidence }.map(\.transcript)
         tile.fillRgb = [255, 255, 255]
         tile.legendRgb = [255, 255, 255]
-        tile.text = read.0
-        tile.id = read.1
         tile.source = "outlined"
+        if let read = reads.compactMap({ text in cleanLabel(text).map { (text, $0) } }).first {
+            tile.cls = "Booth " + String(read.1.prefix { $0.isLetter })
+            tile.text = read.0
+            tile.id = read.1
+            items.append(tile)
+        } else if let text = reads.first(where: { $0.contains { $0.isNumber } }) {
+            misread.append((tile, text))
+        }
+    }
+    // A booth whose prefix letter read as a digit takes the prefix of the nearest booth that read cleanly.
+    for (var tile, text) in misread {
+        guard let near = items.min(by: { distance($0, tile) < distance($1, tile) }),
+              distance(near, tile) <= 3 * max(near.longSide, tile.longSide),
+              let prefix = near.id?.first(where: { $0.isLetter }),
+              let label = labelWithLeadingLookalike(text, prefix: prefix),
+              !items.contains(where: { $0.id == label })
+        else { continue }
+        tile.cls = near.cls
+        tile.text = text
+        tile.id = label
         items.append(tile)
     }
     return items
+}
+
+private func distance(_ a: Item, _ b: Item) -> Double {
+    hypot(a.centerX - b.centerX, a.centerY - b.centerY)
+}
+
+/// Tiles without an ID whose text is a number with a lookalike where the letter belongs ("521" for S21) take the
+/// prefix of the nearest tile that read an ID, if that prefix's letter is a lookalike of the first character and the
+/// result is not taken. Booths of one series sit together, so the nearest read tile is the best witness for the letter.
+func restoreMisreadPrefixes(_ items: inout [Item], among indices: [Int]) {
+    let read = items.indices.filter { items[$0].id != nil }
+    var taken = Set(items.compactMap(\.id))
+    for idx in indices where items[idx].id == nil {
+        guard let near = read.min(by: { distance(items[$0], items[idx]) < distance(items[$1], items[idx]) }),
+              distance(items[near], items[idx]) <= 3 * max(items[near].longSide, items[idx].longSide),
+              let prefix = items[near].id?.first(where: { $0.isLetter }),
+              let label = labelWithLeadingLookalike(items[idx].text, prefix: prefix),
+              !taken.contains(label)
+        else { continue }
+        items[idx].id = label
+        taken.insert(label)
+    }
 }
 
 func rereadTiles(
@@ -289,7 +394,13 @@ func rereadTiles(
 
     let labelledShorts = items.filter { labelledClasses.contains($0.cls) }.map(\.shortSide).sorted()
     let medianShort = labelledShorts.isEmpty ? 40.0 : labelledShorts[labelledShorts.count / 2]
-    let pageObs = try await recognizePageText(makeTextRequest(), in: image, content: content, minimumTextHeight: 0.15 * medianShort)
+    var pageObs = try await recognizePageText(makeTextRequest(), in: image, content: content, minimumTextHeight: 0.15 * medianShort)
+    // When a fifth of the tiles are still unread the plan is blurred or compressed, and the enlarged strips read more.
+    let labelledCount = items.filter { labelledClasses.contains($0.cls) }.count
+    if blankIndices.count * 5 > labelledCount {
+        pageObs += try await recognizeSharpenedStrips(makeTextRequest(), in: image, content: content)
+        pageObs += try await recognizeSharpenedStrips(makeTextRequest(), in: image, content: content, factor: 2, sharpen: false)
+    }
 
     // Assign each page-level text box to the single labelled tile that owns its center pixel.
     var pageHits: [Int: (raw: String, cleaned: String?, score: Double)] = [:]
@@ -358,6 +469,7 @@ func rereadTiles(
     }
 
     if apply {
+        restoreMisreadPrefixes(&items, among: blankIndices)
         rebuildLabelledReasons(&items, labelledClasses: labelledClasses, colorReasons: colorReasons)
     }
 

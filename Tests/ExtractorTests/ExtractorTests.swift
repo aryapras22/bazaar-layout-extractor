@@ -83,6 +83,37 @@ private func ring(size: Int, gapAt: Int? = nil) -> [Bool] {
     #expect(!isSwatch(px, seedX: 40, seedY: 15, textHeight: 12))
 }
 
+@Test func swatchSearchSkipsBordersClaimedSwatchesAndBlankBlocks() {
+    let (w, h) = (80, 40)
+    var rgba = [UInt8](repeating: 255, count: w * h * 4)
+    func paint(_ xs: Range<Int>, _ ys: Range<Int>, _ c: (UInt8, UInt8, UInt8)) {
+        for y in ys { for x in xs { let i = (y * w + x) * 4; (rgba[i], rgba[i + 1], rgba[i + 2]) = c } }
+    }
+    paint(10..<30, 10..<30, (0, 0, 0))
+    paint(12..<28, 12..<28, (220, 40, 40))
+    paint(50..<70, 10..<30, (0, 0, 0))
+    paint(52..<68, 12..<28, (255, 255, 255))
+    let px = Pixels(width: w, height: h, rgba: rgba)
+    let ground = lab((255, 255, 255))
+    let box = CGRect(x: 32, y: 14, width: 30, height: 12)
+    // A first guess on the dark border finds the red block just inside it.
+    let hit = swatchBeside(px, firstGuess: 29, textBox: box, y: 20, textHeight: 12, claimed: [], ground: ground)
+    #expect(hit.map { (10..<30).contains($0.seed) } == true)
+    // The same swatch is not given to a second line of the entry.
+    #expect(swatchBeside(px, firstGuess: 29, textBox: box, y: 20, textHeight: 12, claimed: [hit!.bounds], ground: ground) == nil)
+    // A framed word has a white inside, which is not a swatch.
+    #expect(swatchBeside(px, firstGuess: 69, textBox: CGRect(x: 72, y: 14, width: 6, height: 12), y: 20, textHeight: 12, claimed: [], ground: ground) == nil)
+}
+
+@Test func aPrefixLetterReadAsADigitIsRestoredOnlyFromItsLookalikes() {
+    #expect(labelWithLeadingLookalike("82", prefix: "S") == "S2")
+    #expect(labelWithLeadingLookalike("$10", prefix: "S") == "S10")
+    #expect(labelWithLeadingLookalike("82", prefix: "B") == "B2")
+    #expect(labelWithLeadingLookalike("82", prefix: "W") == nil)
+    #expect(labelWithLeadingLookalike("8", prefix: "S") == nil)
+    #expect(labelWithLeadingLookalike("8A2", prefix: "S") == nil)
+}
+
 private func gridWithTiles(side: Int, count: Int, page: Int) -> [Int16] {
     var grid = [Int16](repeating: -1, count: page * page)
     for t in 0..<count {
@@ -134,6 +165,27 @@ private func planWithBlocks(limeSide: Int) -> Pixels {
     // A class that already matches a block over a quarter of the green one's size keeps its own colour.
     let kept = adaptLegendToPlan([lime], planWithBlocks(limeSide: 110), classes: [0])
     #expect(kept[0].rgb == (196, 214, 82))
+}
+
+@Test func fadeSeenOnColouredClassesCarriesToBlackAndGreyButNotWhite() {
+    func faded(_ c: (UInt8, UInt8, UInt8)) -> (UInt8, UInt8, UInt8) {
+        (UInt8(Double(c.0) * 0.8 + 51), UInt8(Double(c.1) * 0.8 + 51), UInt8(Double(c.2) * 0.8 + 51))
+    }
+    func entry(_ name: String, _ c: (UInt8, UInt8, UInt8)) -> LegendClass { LegendClass(name: name, rgb: c, lab: lab(c)) }
+    let colours: [(UInt8, UInt8, UInt8)] = [(240, 40, 40), (40, 40, 220), (30, 180, 60), (250, 200, 20)]
+    let legend = colours.map { entry("C", $0) } + [entry("BLACK", (0, 0, 0)), entry("WHITE", (255, 255, 255))]
+    var seen = legend
+    for k in colours.indices { seen[k] = entry("C", faded(colours[k])) }
+    let carried = applyFadeToAchromatic(legend, to: seen)
+    #expect(carried[4].rgb == (51, 51, 51))
+    #expect(carried[5].rgb == (255, 255, 255))
+    // Classes that kept their swatch colour show no fade, so black stays black.
+    #expect(applyFadeToAchromatic(legend, to: legend)[4].rgb == (0, 0, 0))
+    // Two classes that happen to move are not enough to call it a fade.
+    var few = legend
+    few[0] = seen[0]
+    few[1] = seen[1]
+    #expect(applyFadeToAchromatic(legend, to: few)[4].rgb == (0, 0, 0))
 }
 
 private func plan(_ blocks: [(side: Int, color: (UInt8, UInt8, UInt8))]) -> Pixels {

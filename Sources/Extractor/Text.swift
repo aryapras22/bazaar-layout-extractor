@@ -71,10 +71,50 @@ func cleanLabel(_ raw: String) -> String? {
     return String(head) + String(tail)
 }
 
+/// A 6 px "S" reads as 8, 5 or $, so "S2" arrives as "82". When the neighbouring booths all carry the prefix
+/// letter `prefix` and the first character of `raw` is one of its lookalikes, the read becomes prefix plus digits.
+func labelWithLeadingLookalike(_ raw: String, prefix: Character) -> String? {
+    let lookalikes: [Character: [Character]] = [
+        "8": ["S", "B"], "5": ["S"], "$": ["S"], "0": ["O", "D"], "6": ["G"], "1": ["I"], "2": ["Z"],
+    ]
+    let s = Array(raw.uppercased().filter { !$0.isWhitespace })
+    guard let first = s.first, lookalikes[first]?.contains(prefix) == true else { return nil }
+    let digits = s.dropFirst()
+    guard (1...3).contains(digits.count), digits.allSatisfy({ $0.isNumber }) else { return nil }
+    return String(prefix) + String(digits)
+}
+
 struct PageText {
     let transcript: String
     let confidence: Float
     let box: CGRect
+}
+
+/// Page text read from enlarged, sharpened strips. A blurred 8 px label that Vision cannot read at its own size reads
+/// from a 3x sharpened copy, and strips keep each request small, since Vision reads very large pages badly. Boxes come
+/// back in whole-image coordinates.
+func recognizeSharpenedStrips(
+    _ request: RecognizeTextRequest, in image: CGImage, content: CGRect, factor: Int = 3, sharpen: Bool = true,
+    strip: Int = 400, overlap: Int = 40
+) async throws -> [PageText] {
+    let bounds = CGRect(x: 0, y: 0, width: image.width, height: image.height)
+    let area = content.isEmpty ? bounds : content.insetBy(dx: -24, dy: -24).intersection(bounds)
+    var out: [PageText] = []
+    for y in Swift.stride(from: Int(area.minY), to: Int(area.maxY), by: strip) {
+        for x in Swift.stride(from: Int(area.minX), to: Int(area.maxX), by: strip) {
+            let piece = CGRect(x: x, y: y, width: strip + overlap, height: strip + overlap).intersection(area)
+            guard let crop = image.cropping(to: piece), let big = sharpen ? sharpened(crop, by: factor) : upscaled(crop, by: factor)
+            else { continue }
+            let size = CGSize(width: big.width, height: big.height)
+            for observation in try await request.perform(on: big) {
+                var box = observation.boundingBox.toImageCoordinates(size, origin: .upperLeft)
+                box = CGRect(x: piece.minX + box.minX / Double(factor), y: piece.minY + box.minY / Double(factor),
+                             width: box.width / Double(factor), height: box.height / Double(factor))
+                out.append(PageText(transcript: observation.transcript, confidence: observation.confidence, box: box))
+            }
+        }
+    }
+    return out
 }
 
 /// Reads text over the content area only, with boxes returned in whole-image coordinates. Vision reads
