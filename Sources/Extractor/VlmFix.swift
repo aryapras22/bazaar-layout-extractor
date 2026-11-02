@@ -12,6 +12,7 @@ struct VlmProposal: Codable {
     var box: [Int]
     var id: String?
     var trigger: String
+    var overlapsItem: Int?
     var snapshot: String
     var action: String?
     var value: String?
@@ -19,7 +20,7 @@ struct VlmProposal: Codable {
     var valid: Bool
 
     enum CodingKeys: String, CodingKey {
-        case layer, itemIndex = "item_index", cls = "class", box, id, trigger, snapshot, action, value, why, valid
+        case layer, itemIndex = "item_index", cls = "class", box, id, trigger, overlapsItem = "overlaps_item", snapshot, action, value, why, valid
     }
 }
 
@@ -109,19 +110,22 @@ func vlmFixSeats(_ image: CGImage, _ items: [Item], dir: URL) -> [VlmTask] {
     ], values: ["set_seat": ["true", "false"]])
 }
 
-/// Items the rules flagged, plus items that mostly cover another item of the same layer.
-/// Half the smaller box is the cut so walls meeting at a corner do not count as overlapping.
+/// Items the rules flagged, plus items drawn over another item of any layer, such as one symbol read as both
+/// a door and a chair. Half the smaller box is the cut so walls meeting at a corner, or a door beside its wall,
+/// do not count. Each item of a pair is asked from its own layer, so the pair gets an answer from both sides.
 /// A flagged group of look-alike shapes is asked about once, through its first member, as the judge does.
-private func vlmTargets(_ items: [Item], layer: Layer) -> [(index: Int, trigger: String)] {
-    let mine = items.indices.filter { Layer.of(items[$0]) == layer }
+private func vlmTargets(_ items: [Item], layer: Layer) -> [(index: Int, partner: Int?)] {
     var askedGroups = Set<String>()
-    return mine.compactMap { i in
-        if items[i].needsReview {
-            guard let reason = items[i].reason, reason.hasPrefix("label this group once (") else { return (i, "review") }
-            return askedGroups.insert(reason).inserted ? (i, "review") : nil
+    return items.indices.filter { Layer.of(items[$0]) == layer }.compactMap { i in
+        let partner = items.indices.first {
+            $0 != i && !isChairInGroup(items[i], items[$0]) && overlapShare(items[i].rect, items[$0].rect) > 0.5
         }
-        let overlaps = mine.contains { $0 != i && !isChairInGroup(items[i], items[$0]) && overlapShare(items[i].rect, items[$0].rect) > 0.5 }
-        return overlaps ? (i, "overlap") : nil
+        guard items[i].needsReview || partner != nil else { return nil }
+        if partner == nil, let reason = items[i].reason, reason.hasPrefix("label this group once ("),
+           !askedGroups.insert(reason).inserted {
+            return nil
+        }
+        return (i, partner)
     }
 }
 
@@ -143,14 +147,22 @@ private func vlmTasks(
     let order = ["keep", "drop", "set_id", "set_class", "set_seat"].filter { actions[$0] != nil }
     return vlmTargets(items, layer: layer).compactMap { target in
         let item = items[target.index]
-        guard let snapshot = vlmSnapshot(image, items: items, layer: layer, target: target.index) else { return nil }
+        guard let snapshot = vlmSnapshot(image, items: items, layer: layer, target: target.index, partner: target.partner)
+        else { return nil }
         let key = "\(layer.rawValue)_\(target.index)"
         let url = dir.appendingPathComponent("\(key).png")
         savePNG(snapshot, to: url)
+        let trigger = [item.needsReview ? "review" : nil, target.partner != nil ? "overlap" : nil].compactMap { $0 }
+        var reasons: [String] = []
+        if item.needsReview { reasons.append("the rules were unsure about it") }
+        if let partner = target.partner {
+            reasons.append("it is drawn over another extracted item, shown orange: \(itemSummary(items[partner])). "
+                + "Decide which of the two the plan really shows here; if the orange item explains this ink better, choose drop")
+        }
         let prompt = """
-        The left half is a crop of the original floor plan. The right half draws the extracted \(about) for the same \
-        area, on white. The item in question is red in both halves; other extracted items are blue. It was sent for \
-        checking because \(target.trigger == "review" ? "the rules were unsure about it" : "it overlaps another item").
+        The left half is a crop of the original floor plan. The right half draws the extracted data for the same area \
+        on white: \(about) in blue, items of other layers in grey. The item in question is red in both halves.
+        It was sent for checking because \(reasons.joined(separator: ", and ")).
         Item: \(itemSummary(item))
         Compare the drawing with the plan and pick one action:
         \(order.map { "- \($0): \(actions[$0]!)" }.joined(separator: "\n"))
@@ -158,7 +170,7 @@ private func vlmTasks(
         """
         let proposal = VlmProposal(
             layer: layer.rawValue, itemIndex: target.index, cls: item.cls, box: item.box, id: item.id,
-            trigger: target.trigger, snapshot: url.path, action: nil, value: nil, why: nil, valid: false)
+            trigger: trigger.joined(separator: "_and_"), overlapsItem: target.partner, snapshot: url.path, action: nil, value: nil, why: nil, valid: false)
         return VlmTask(key: key, proposal: proposal, snapshot: snapshot, prompt: prompt, actions: order, values: values)
     }
 }
@@ -182,9 +194,9 @@ private func isValid(_ answer: VlmAnswer, for task: VlmTask) -> Bool {
     return answer.value.range(of: #"^[A-Z0-9][A-Z0-9-]{0,7}$"#, options: .regularExpression) != nil
 }
 
-/// Original plan on the left, the layer's JSON drawn on white on the right, both over the same region.
-private func vlmSnapshot(_ image: CGImage, items: [Item], layer: Layer, target: Int) -> CGImage? {
-    let box = items[target].rect
+/// Original plan on the left, the extracted JSON drawn on white on the right, both over the same region.
+private func vlmSnapshot(_ image: CGImage, items: [Item], layer: Layer, target: Int, partner: Int?) -> CGImage? {
+    let box = partner.map { items[target].rect.union(items[$0].rect) } ?? items[target].rect
     let pad = max(40, box.width, box.height)
     let region = box.insetBy(dx: -pad, dy: -pad)
         .intersection(CGRect(x: 0, y: 0, width: image.width, height: image.height)).integral
@@ -213,20 +225,25 @@ private func vlmSnapshot(_ image: CGImage, items: [Item], layer: Layer, target: 
     }
     let red = CGColor(red: 1, green: 0, blue: 0, alpha: 1)
     let blue = CGColor(red: 0, green: 0.3, blue: 1, alpha: 1)
+    let orange = CGColor(red: 1, green: 0.55, blue: 0, alpha: 1)
+    let grey = CGColor(red: 0.6, green: 0.6, blue: 0.6, alpha: 1)
 
     ctx.interpolationQuality = .high
     ctx.draw(crop, in: CGRect(x: 0, y: side - shownHeight, width: region.width * s, height: shownHeight))
     ctx.setStrokeColor(red)
     ctx.setLineWidth(2)
-    ctx.stroke(rect(box, panel: 0))
+    ctx.stroke(rect(items[target].rect, panel: 0))
 
     let font = CTFontCreateWithName("Helvetica-Bold" as CFString, 11, nil)
     ctx.saveGState()
     ctx.clip(to: CGRect(x: side + gap, y: 0, width: side, height: side))
-    for (index, item) in items.enumerated() where Layer.of(item) == layer && item.rect.intersects(region) {
-        let color = index == target ? red : blue
+    // The target and its partner go last so nothing is drawn over them.
+    let order = items.indices.filter { $0 != target && $0 != partner } + [partner, target].compactMap { $0 }
+    for index in order where items[index].rect.intersects(region) {
+        let item = items[index]
+        let color = index == target ? red : index == partner ? orange : Layer.of(item) == layer ? blue : grey
         ctx.setStrokeColor(color)
-        ctx.setLineWidth(index == target ? 2.5 : 1.5)
+        ctx.setLineWidth(index == target || index == partner ? 2.5 : 1.5)
         if let seg = item.segment {
             ctx.move(to: point(Double(seg[0]), Double(seg[1]), panel: 1))
             ctx.addLine(to: point(Double(seg[2]), Double(seg[3]), panel: 1))
