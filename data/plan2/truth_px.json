@@ -1,0 +1,2603 @@
+{
+ "source": "checked by eye against layout_2.png; booths from colour components of the legend_2 swatches; walls, doors, objects, and symbols verified from CAD plan",
+ "image": {
+  "width": 1750,
+  "height": 2106
+ },
+ "items": [
+  {
+   "class": "Booth C",
+   "box": [
+    96,
+    72,
+    60,
+    117
+   ],
+   "id": "C14"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    102,
+    66,
+    117,
+    60
+   ],
+   "id": "C13"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    222,
+    66,
+    61,
+    60
+   ],
+   "id": "A100"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    285,
+    66,
+    61,
+    61
+   ],
+   "id": "A99"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    348,
+    66,
+    62,
+    61
+   ],
+   "id": "A98"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    412,
+    66,
+    60,
+    61
+   ],
+   "id": "A97"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    476,
+    66,
+    60,
+    60
+   ],
+   "id": "A96"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    538,
+    66,
+    61,
+    61
+   ],
+   "id": "A95"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    602,
+    66,
+    61,
+    61
+   ],
+   "id": "A94"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    665,
+    66,
+    61,
+    60
+   ],
+   "id": "A93"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    730,
+    66,
+    60,
+    60
+   ],
+   "id": "A92"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    792,
+    66,
+    61,
+    61
+   ],
+   "id": "A91"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    856,
+    66,
+    117,
+    60
+   ],
+   "id": "C12"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    919,
+    72,
+    60,
+    118
+   ],
+   "id": "C11"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    983,
+    66,
+    59,
+    60
+   ],
+   "id": "A72"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    66,
+    60,
+    61
+   ],
+   "id": "A69"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    983,
+    129,
+    59,
+    61
+   ],
+   "id": "A73"
+  },
+  {
+   "class": "Interactive space I",
+   "box": [
+    1110,
+    130,
+    122,
+    123
+   ],
+   "id": "I6"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1236,
+    129,
+    60,
+    61
+   ],
+   "id": "A62"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1300,
+    129,
+    60,
+    61
+   ],
+   "id": "A63"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1362,
+    129,
+    61,
+    61
+   ],
+   "id": "A64"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1425,
+    129,
+    61,
+    61
+   ],
+   "id": "A65"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1489,
+    129,
+    61,
+    61
+   ],
+   "id": "A66"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    129,
+    60,
+    61
+   ],
+   "id": "A68"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    95,
+    193,
+    60,
+    60
+   ],
+   "id": "A106"
+  },
+  {
+   "class": "Interactive space I",
+   "box": [
+    223,
+    194,
+    122,
+    122
+   ],
+   "id": "I7"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    413,
+    193,
+    59,
+    60
+   ],
+   "id": "B21"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    476,
+    193,
+    60,
+    60
+   ],
+   "id": "B20"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    539,
+    194,
+    60,
+    59
+   ],
+   "id": "B19"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    666,
+    194,
+    60,
+    59
+   ],
+   "id": "B18"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    729,
+    194,
+    61,
+    59
+   ],
+   "id": "B17"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    792,
+    193,
+    61,
+    60
+   ],
+   "id": "B16"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    919,
+    193,
+    60,
+    61
+   ],
+   "id": "A79"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    982,
+    193,
+    60,
+    61
+   ],
+   "id": "A74"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1236,
+    193,
+    60,
+    61
+   ],
+   "id": "A61"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1300,
+    193,
+    60,
+    60
+   ],
+   "id": "A60"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1362,
+    193,
+    60,
+    60
+   ],
+   "id": "A59"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1426,
+    193,
+    60,
+    60
+   ],
+   "id": "A58"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1489,
+    193,
+    61,
+    60
+   ],
+   "id": "A57"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    193,
+    60,
+    60
+   ],
+   "id": "A67"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    95,
+    257,
+    60,
+    60
+   ],
+   "id": "A107"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    412,
+    256,
+    60,
+    60
+   ],
+   "id": "B22"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    476,
+    257,
+    60,
+    59
+   ],
+   "id": "B23"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    539,
+    257,
+    60,
+    59
+   ],
+   "id": "B24"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    666,
+    257,
+    60,
+    59
+   ],
+   "id": "B13"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    729,
+    257,
+    60,
+    59
+   ],
+   "id": "B14"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    793,
+    257,
+    59,
+    59
+   ],
+   "id": "B15"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    919,
+    257,
+    61,
+    60
+   ],
+   "id": "A78"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    982,
+    257,
+    60,
+    60
+   ],
+   "id": "A75"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1109,
+    257,
+    61,
+    60
+   ],
+   "id": "A70"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1172,
+    257,
+    60,
+    60
+   ],
+   "id": "A48"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1616,
+    257,
+    60,
+    115
+   ],
+   "id": "C10"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    95,
+    320,
+    61,
+    61
+   ],
+   "id": "A108"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    222,
+    320,
+    61,
+    59
+   ],
+   "id": "A101"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    286,
+    320,
+    60,
+    59
+   ],
+   "id": "A90"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    919,
+    320,
+    60,
+    59
+   ],
+   "id": "A77"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    982,
+    319,
+    60,
+    60
+   ],
+   "id": "A76"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1109,
+    320,
+    61,
+    59
+   ],
+   "id": "A71"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1173,
+    319,
+    59,
+    61
+   ],
+   "id": "A47"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1299,
+    320,
+    61,
+    59
+   ],
+   "id": "A53"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1362,
+    320,
+    60,
+    60
+   ],
+   "id": "A54"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1425,
+    320,
+    61,
+    60
+   ],
+   "id": "A55"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1489,
+    320,
+    61,
+    59
+   ],
+   "id": "A56"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1553,
+    320,
+    112,
+    60
+   ],
+   "id": "C9"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    95,
+    383,
+    60,
+    60
+   ],
+   "id": "A109"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    222,
+    383,
+    61,
+    60
+   ],
+   "id": "A102"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    286,
+    383,
+    60,
+    60
+   ],
+   "id": "A89"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    413,
+    383,
+    59,
+    60
+   ],
+   "id": "B27"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    476,
+    383,
+    60,
+    60
+   ],
+   "id": "B26"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    538,
+    383,
+    61,
+    60
+   ],
+   "id": "B25"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    666,
+    383,
+    60,
+    60
+   ],
+   "id": "B10"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    729,
+    383,
+    61,
+    60
+   ],
+   "id": "B11"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    793,
+    383,
+    60,
+    60
+   ],
+   "id": "B12"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1173,
+    383,
+    59,
+    61
+   ],
+   "id": "A46"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1299,
+    383,
+    61,
+    60
+   ],
+   "id": "A52"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1362,
+    383,
+    60,
+    59
+   ],
+   "id": "A51"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1426,
+    383,
+    60,
+    60
+   ],
+   "id": "A50"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1489,
+    383,
+    60,
+    60
+   ],
+   "id": "A49"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1553,
+    383,
+    117,
+    60
+   ],
+   "id": "C8"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1617,
+    390,
+    59,
+    117
+   ],
+   "id": "C7"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    95,
+    447,
+    60,
+    60
+   ],
+   "id": "A110"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    222,
+    447,
+    61,
+    60
+   ],
+   "id": "A103"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    286,
+    447,
+    60,
+    60
+   ],
+   "id": "A88"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    412,
+    446,
+    60,
+    61
+   ],
+   "id": "B28"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    476,
+    447,
+    60,
+    60
+   ],
+   "id": "B29"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    539,
+    447,
+    60,
+    60
+   ],
+   "id": "B30"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    666,
+    446,
+    60,
+    61
+   ],
+   "id": "B9"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    729,
+    447,
+    61,
+    60
+   ],
+   "id": "B8"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    793,
+    447,
+    59,
+    60
+   ],
+   "id": "B7"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1173,
+    446,
+    59,
+    61
+   ],
+   "id": "A45"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    95,
+    509,
+    61,
+    61
+   ],
+   "id": "A111"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1173,
+    509,
+    59,
+    60
+   ],
+   "id": "A44"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    509,
+    61,
+    61
+   ],
+   "id": "A35"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    222,
+    510,
+    61,
+    60
+   ],
+   "id": "A104"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    285,
+    510,
+    60,
+    116
+   ],
+   "id": "C16"
+  },
+  {
+   "class": "Interactive space I",
+   "box": [
+    1301,
+    510,
+    122,
+    123
+   ],
+   "id": "I4"
+  },
+  {
+   "class": "Interactive space I",
+   "box": [
+    1428,
+    510,
+    122,
+    123
+   ],
+   "id": "I5"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    95,
+    573,
+    61,
+    60
+   ],
+   "id": "A112"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    222,
+    573,
+    61,
+    60
+   ],
+   "id": "A105"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    294,
+    574,
+    115,
+    59
+   ],
+   "id": "C15"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    412,
+    574,
+    61,
+    59
+   ],
+   "id": "A87"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    475,
+    574,
+    61,
+    59
+   ],
+   "id": "A86"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    539,
+    574,
+    61,
+    59
+   ],
+   "id": "A85"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    602,
+    574,
+    60,
+    59
+   ],
+   "id": "A84"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    666,
+    574,
+    60,
+    59
+   ],
+   "id": "A83"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    729,
+    574,
+    61,
+    59
+   ],
+   "id": "A82"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    792,
+    574,
+    61,
+    59
+   ],
+   "id": "A81"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    855,
+    574,
+    61,
+    59
+   ],
+   "id": "A80"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1173,
+    573,
+    59,
+    60
+   ],
+   "id": "A43"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    573,
+    60,
+    60
+   ],
+   "id": "A34"
+  },
+  {
+   "class": "Unlabeled block",
+   "box": [
+    289,
+    652,
+    496,
+    32
+   ],
+   "id": null
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    818,
+    637,
+    46,
+    47
+   ],
+   "id": "F1"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    868,
+    639,
+    47,
+    45
+   ],
+   "id": "F2"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    918,
+    637,
+    48,
+    47
+   ],
+   "id": "F3"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    970,
+    637,
+    46,
+    46
+   ],
+   "id": "F4"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1020,
+    637,
+    46,
+    46
+   ],
+   "id": "F5"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1070,
+    638,
+    48,
+    45
+   ],
+   "id": "F6"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1122,
+    637,
+    46,
+    46
+   ],
+   "id": "F7"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1172,
+    636,
+    60,
+    61
+   ],
+   "id": "A42"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    636,
+    60,
+    61
+   ],
+   "id": "A33"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    688,
+    47,
+    46
+   ],
+   "id": "F8"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1172,
+    700,
+    60,
+    60
+   ],
+   "id": "A41"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    700,
+    61,
+    60
+   ],
+   "id": "A32"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    818,
+    738,
+    46,
+    47
+   ],
+   "id": "F38"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    868,
+    738,
+    47,
+    47
+   ],
+   "id": "F39"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1122,
+    737,
+    46,
+    48
+   ],
+   "id": "F9"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    1332,
+    732,
+    60,
+    59
+   ],
+   "id": "B6"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    1396,
+    732,
+    59,
+    59
+   ],
+   "id": "B5"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    1458,
+    732,
+    61,
+    59
+   ],
+   "id": "B4"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1172,
+    764,
+    60,
+    60
+   ],
+   "id": "A40"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    763,
+    60,
+    60
+   ],
+   "id": "A31"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    817,
+    793,
+    48,
+    43
+   ],
+   "id": "F37"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    868,
+    790,
+    47,
+    46
+   ],
+   "id": "F40"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    789,
+    47,
+    46
+   ],
+   "id": "F10"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    1332,
+    795,
+    61,
+    60
+   ],
+   "id": "B1"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    1396,
+    795,
+    59,
+    60
+   ],
+   "id": "B2"
+  },
+  {
+   "class": "Booth B",
+   "box": [
+    1458,
+    795,
+    61,
+    60
+   ],
+   "id": "B3"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    817,
+    839,
+    48,
+    47
+   ],
+   "id": "F36"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    839,
+    47,
+    47
+   ],
+   "id": "F11"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1173,
+    827,
+    59,
+    59
+   ],
+   "id": "A39"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    827,
+    60,
+    60
+   ],
+   "id": "A30"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    874,
+    840,
+    41,
+    46
+   ],
+   "id": "F41"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    817,
+    890,
+    47,
+    47
+   ],
+   "id": "F35"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    868,
+    890,
+    47,
+    47
+   ],
+   "id": "F42"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    889,
+    47,
+    47
+   ],
+   "id": "F12"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1172,
+    889,
+    60,
+    61
+   ],
+   "id": "A38"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    889,
+    60,
+    61
+   ],
+   "id": "A29"
+  },
+  {
+   "class": "Unlabeled block",
+   "box": [
+    81,
+    954,
+    300,
+    401
+   ],
+   "id": null
+  },
+  {
+   "class": "Interactive space I",
+   "box": [
+    805,
+    941,
+    122,
+    123
+   ],
+   "id": "I8"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    939,
+    47,
+    48
+   ],
+   "id": "F13"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1172,
+    953,
+    60,
+    61
+   ],
+   "id": "A37"
+  },
+  {
+   "class": "Interactive space I",
+   "box": [
+    1301,
+    954,
+    122,
+    122
+   ],
+   "id": "I2"
+  },
+  {
+   "class": "Interactive space I",
+   "box": [
+    1427,
+    954,
+    122,
+    122
+   ],
+   "id": "I3"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    953,
+    60,
+    61
+   ],
+   "id": "A28"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    991,
+    47,
+    46
+   ],
+   "id": "F14"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1172,
+    1016,
+    60,
+    61
+   ],
+   "id": "A36"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    1017,
+    60,
+    60
+   ],
+   "id": "A27"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1122,
+    1041,
+    46,
+    48
+   ],
+   "id": "F15"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    1079,
+    61,
+    62
+   ],
+   "id": "A26"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    1092,
+    47,
+    47
+   ],
+   "id": "F16"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1173,
+    1080,
+    59,
+    114
+   ],
+   "id": "C6"
+  },
+  {
+   "class": "Interactive space I",
+   "box": [
+    805,
+    1169,
+    123,
+    123
+   ],
+   "id": "I9"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    1143,
+    47,
+    46
+   ],
+   "id": "F17"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1179,
+    1144,
+    117,
+    59
+   ],
+   "id": "C5"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1299,
+    1143,
+    60,
+    60
+   ],
+   "id": "A19"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1362,
+    1143,
+    60,
+    60
+   ],
+   "id": "A20"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1426,
+    1143,
+    60,
+    60
+   ],
+   "id": "A21"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1489,
+    1143,
+    61,
+    60
+   ],
+   "id": "A22"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    1143,
+    61,
+    61
+   ],
+   "id": "A25"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1122,
+    1193,
+    46,
+    46
+   ],
+   "id": "F18"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1173,
+    1214,
+    59,
+    116
+   ],
+   "id": "C3"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1178,
+    1207,
+    118,
+    60
+   ],
+   "id": "C4"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1300,
+    1207,
+    60,
+    60
+   ],
+   "id": "A18"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1362,
+    1207,
+    61,
+    60
+   ],
+   "id": "A17"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1425,
+    1207,
+    61,
+    60
+   ],
+   "id": "A16"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1489,
+    1207,
+    61,
+    60
+   ],
+   "id": "A15"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    1207,
+    60,
+    60
+   ],
+   "id": "A24"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1122,
+    1243,
+    46,
+    48
+   ],
+   "id": "F19"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1616,
+    1269,
+    61,
+    60
+   ],
+   "id": "A23"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    817,
+    1295,
+    48,
+    48
+   ],
+   "id": "F34"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    868,
+    1296,
+    47,
+    46
+   ],
+   "id": "F25"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    1293,
+    47,
+    48
+   ],
+   "id": "F20"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    818,
+    1345,
+    46,
+    49
+   ],
+   "id": "F33"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    868,
+    1345,
+    47,
+    49
+   ],
+   "id": "F26"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    1345,
+    47,
+    46
+   ],
+   "id": "F21"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1299,
+    1333,
+    60,
+    60
+   ],
+   "id": "A11"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1362,
+    1333,
+    60,
+    60
+   ],
+   "id": "A12"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1426,
+    1333,
+    60,
+    60
+   ],
+   "id": "A13"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1490,
+    1333,
+    60,
+    60
+   ],
+   "id": "A14"
+  },
+  {
+   "class": "Interactive space I",
+   "box": [
+    1553,
+    1333,
+    119,
+    123
+   ],
+   "id": "I1"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1173,
+    1356,
+    59,
+    60
+   ],
+   "id": "A6"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    817,
+    1400,
+    48,
+    44
+   ],
+   "id": "F32"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    868,
+    1398,
+    47,
+    46
+   ],
+   "id": "F27"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    1395,
+    47,
+    48
+   ],
+   "id": "F22"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1299,
+    1397,
+    61,
+    60
+   ],
+   "id": "A10"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1362,
+    1396,
+    61,
+    61
+   ],
+   "id": "A9"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1425,
+    1397,
+    61,
+    60
+   ],
+   "id": "A8"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1489,
+    1396,
+    61,
+    61
+   ],
+   "id": "A7"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    817,
+    1447,
+    48,
+    48
+   ],
+   "id": "F31"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    868,
+    1447,
+    47,
+    48
+   ],
+   "id": "F28"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    1445,
+    47,
+    47
+   ],
+   "id": "F23"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1173,
+    1442,
+    59,
+    116
+   ],
+   "id": "C2"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    817,
+    1499,
+    48,
+    46
+   ],
+   "id": "F30"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    868,
+    1498,
+    47,
+    47
+   ],
+   "id": "F29"
+  },
+  {
+   "class": "Booth F",
+   "box": [
+    1121,
+    1496,
+    47,
+    47
+   ],
+   "id": "F24"
+  },
+  {
+   "class": "Booth C",
+   "box": [
+    1181,
+    1505,
+    115,
+    60
+   ],
+   "id": "C1"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1299,
+    1505,
+    60,
+    60
+   ],
+   "id": "A5"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1362,
+    1505,
+    60,
+    60
+   ],
+   "id": "A4"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1426,
+    1505,
+    60,
+    60
+   ],
+   "id": "A3"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1489,
+    1505,
+    60,
+    60
+   ],
+   "id": "A2"
+  },
+  {
+   "class": "Booth A",
+   "box": [
+    1552,
+    1505,
+    60,
+    60
+   ],
+   "id": "A1"
+  },
+  {
+   "class": "wall",
+   "box": [
+    13,
+    12,
+    1724,
+    4
+   ],
+   "id": null,
+   "label": "north_wall"
+  },
+  {
+   "class": "wall",
+   "box": [
+    13,
+    12,
+    4,
+    1621
+   ],
+   "id": null,
+   "label": "west_wall"
+  },
+  {
+   "class": "wall",
+   "box": [
+    1737,
+    12,
+    4,
+    1621
+   ],
+   "id": null,
+   "label": "east_wall"
+  },
+  {
+   "class": "wall",
+   "box": [
+    13,
+    1633,
+    1020,
+    4
+   ],
+   "id": null,
+   "label": "south_wall_west"
+  },
+  {
+   "class": "wall",
+   "box": [
+    1475,
+    1633,
+    262,
+    4
+   ],
+   "id": null,
+   "label": "south_wall_east"
+  },
+  {
+   "class": "wall",
+   "box": [
+    969,
+    1633,
+    4,
+    462
+   ],
+   "id": null,
+   "label": "lobby_wall_west"
+  },
+  {
+   "class": "wall",
+   "box": [
+    1585,
+    1633,
+    4,
+    462
+   ],
+   "id": null,
+   "label": "lobby_wall_east"
+  },
+  {
+   "class": "wall",
+   "box": [
+    1010,
+    2095,
+    575,
+    4
+   ],
+   "id": null,
+   "label": "lobby_wall_south"
+  },
+  {
+   "class": "wall",
+   "box": [
+    969,
+    2050,
+    41,
+    45
+   ],
+   "id": null,
+   "label": "lobby_wall_southwest"
+  },
+  {
+   "class": "wall",
+   "box": [
+    1170,
+    1633,
+    4,
+    322
+   ],
+   "id": null,
+   "label": "inner_corridor_wall"
+  },
+  {
+   "class": "door",
+   "box": [
+    1033,
+    1600,
+    90,
+    40
+   ],
+   "id": null,
+   "label": "door_south_out"
+  },
+  {
+   "class": "door",
+   "box": [
+    1385,
+    1600,
+    90,
+    40
+   ],
+   "id": null,
+   "label": "door_south_in"
+  },
+  {
+   "class": "door",
+   "box": [
+    1560,
+    1845,
+    40,
+    80
+   ],
+   "id": null,
+   "label": "door_lobby_in"
+  },
+  {
+   "class": "door",
+   "box": [
+    1560,
+    1975,
+    40,
+    80
+   ],
+   "id": null,
+   "label": "door_lobby_out"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    733,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    733,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    787,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    787,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    841,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    841,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    895,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    895,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    949,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    949,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    1003,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    1003,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    1057,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    1057,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    1111,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    1111,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    1165,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    1165,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    1219,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    1219,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    1273,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    1273,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    1328,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    1328,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    958,
+    1382,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "object",
+   "box": [
+    1034,
+    1382,
+    47,
+    47
+   ],
+   "id": null,
+   "label": "table_with_chairs"
+  },
+  {
+   "class": "symbol",
+   "box": [
+    1033,
+    1600,
+    90,
+    40
+   ],
+   "id": null,
+   "label": "door_swing_out"
+  },
+  {
+   "class": "symbol",
+   "box": [
+    1385,
+    1600,
+    90,
+    40
+   ],
+   "id": null,
+   "label": "door_swing_in"
+  },
+  {
+   "class": "symbol",
+   "box": [
+    1560,
+    1845,
+    40,
+    80
+   ],
+   "id": null,
+   "label": "door_swing_lobby_in"
+  },
+  {
+   "class": "symbol",
+   "box": [
+    1560,
+    1975,
+    40,
+    80
+   ],
+   "id": null,
+   "label": "door_swing_lobby_out"
+  }
+ ]
+}

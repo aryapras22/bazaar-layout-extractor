@@ -1,4 +1,4 @@
-"""Add door swing symbols from the vector data to data/plan5/truth.json and data/plan6/truth.json.
+"""Add door swing symbols from the vector data to data/plan5/truth_px.json and data/plan6/truth_px.json.
 
 The PDFs draw a door leaf's swing as a stroke-only path of one Bezier curve (a quarter circle, so its
 box is square). Chairs, tables and icons are filled shapes or closed multi-curve paths, so the single
@@ -58,7 +58,7 @@ def symbols(boxes):
 
 for name, spec in PLANS.items():
     clip, zoom = spec["clip"], spec["zoom"]
-    path = f"data/{name}/truth.json"
+    path = f"data/{name}/truth_px.json"
     truth = json.load(open(path))
     truth["items"] = [item for item in truth["items"] if item["class"] != "door"]
     page = pymupdf.open(f"data/{name}/source.pdf")[0]

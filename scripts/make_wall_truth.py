@@ -1,4 +1,4 @@
-"""Add the diagonal wall segments from the vector data to data/plan5/truth.json and data/plan6/truth.json.
+"""Add the diagonal wall segments from the vector data to data/plan5/truth_px.json and data/plan6/truth_px.json.
 
 Walls are stroke-only lines and rectangle edges at least 0.5 pt wide and 8 pt long; stall dividers are
 0.19 pt and booth outlines are filled shapes, so width and fill separate them. Only slanted ones (more
@@ -34,7 +34,7 @@ def segments(drawing):
 
 for name, spec in PLANS.items():
     clip, zoom = spec["clip"], spec["zoom"]
-    path = f"data/{name}/truth.json"
+    path = f"data/{name}/truth_px.json"
     truth = json.load(open(path))
     truth["items"] = [item for item in truth["items"] if item["class"] not in ("wall", "diagonal wall")]
     walls = []

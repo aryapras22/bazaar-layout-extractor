@@ -1,4 +1,4 @@
-"""Write data/plan6/truth.json from the vector data in data/plan6/source.pdf.
+"""Write data/plan6/truth_px.json from the vector data in data/plan6/source.pdf.
 
 A booth is a small white or black filled rectangle with exactly one ID label (letters then digits)
 centred inside it. Rectangles holding two labels are skipped as ambiguous. Pixel boxes use the same
@@ -51,6 +51,6 @@ truth = {
     "image": {"height": round(CLIP.height * ZOOM), "origin": "top-left", "unit": "px", "width": round(CLIP.width * ZOOM)},
     "items": items,
 }
-with open("data/plan6/truth.json", "w") as f:
+with open("data/plan6/truth_px.json", "w") as f:
     json.dump(truth, f, indent=1)
 print(len(items), "booths; skipped ambiguous rectangles:", skipped)

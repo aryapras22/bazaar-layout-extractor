@@ -53,6 +53,28 @@ LEARNING/              notes: tile detection, polygon-masked OCR, reading degrad
 
 Truth for plans 5 and 6 comes from the PDF vector data. Run order matters: the booth truth script first (`make_plan5_truth.py` or `make_plan6_truth.py`), then `make_wall_truth.py`, then `make_door_truth.py`, because the later scripts append to `truth.json`. PyMuPDF's `Rect.intersects` is false for zero-height rects, so compare bounds by hand. Plans 5 and 6 truth were not checked by eye. `output/` and `bin/` are generated and gitignored.
 
+## Metre truth (data/planN/truth.json)
+
+`truth.json` of plans 1, 2, 3, 5 and 6 was remade as one object in metres for the crowd simulation and the 3D viewer, under the tracing instructions (hall, lobby, wall, doors, gates, booths, one `tables` entry per chair, stage, kids, columns, pilasters, fixtures, closed). The earlier pixel truth that `score.py` and `robustness.py` read is now `data/planN/truth_px.json`; pass that path to the scorer. The truth scripts `make_plan5_truth.py`, `make_plan6_truth.py`, `make_wall_truth.py` and `make_door_truth.py` write `truth_px.json`.
+
+```
+pip install pymupdf opencv-python-headless scipy pillow numpy
+for p in 1 2 3 5 6; do python3 scripts/make_metre_truth_plan$p.py; done   # writes data/planN/truth.json
+python3 scripts/check_metre_truth.py                                       # key order, overlaps, route from gate to every booth
+python3 scripts/render_metre_truth.py data/plan1/truth.json out.png 11     # draw it to compare with layout.png
+```
+
+Origin is the hall's top-left corner at (1, 1). Plans 1 to 3 convert `truth_px.json` and `seats.json`; plans 5 and 6 read the PDF vectors. Every audit is in each file's `meta.note`.
+
+- Scales: plan 1 33.6 px/m (6 x 12 m stage), plan 3 33.5 px/m (printed 3 x 8.25 m stage, 2 m booths), plan 6 5.167 pt/m (printed 3 m booths, 24 x 14 m stage area). Plans 2 and 5 print no size. Plan 2 assumes A booths 2.5 m, F 2 m and the I blocks 5 m (25.6 px/m, hall 67 m wide like plan 1). Plan 5 assumes 3 m booths (1.82 pt/m). Both are one constant in their script (`SCALE`, `SCALE_PT`).
+- The legends have no food class, so every booth is `goods`, except plan 6 where the FNB zone (S1 to S15) and COFFEE SHOP are `fnb` and FITTING ROOM is `fit`.
+- `tables` holds every chair: plan 1 744 (544 around tables, 200 audience), plan 2 104, plan 3 91 (36 chairs and the 55 audience cells), plan 6 40 benches, plan 5 none.
+- Plans 2 and 5 draw no stage and no audience block, so they keep an empty stage rectangle and a 2 x 2 m `kids` corner box. Plan 6 has a 6 x 10 m stage and a 24 x 14 m stage area as `kids`.
+- Plan 3 has no outer wall, door wall or lobby. The GATE bar is the door, the hall ends at the gate line and the strip east of it is the lobby.
+- Plan 1 J1 to J4 and K1 to K10 stand in the lobby, outside the hall polygon. The checker reports them as notes.
+- Plan 5 hall is traced from the wall lines as Hall B, the pre-function strip, the connecting corridor and Hall A. Six plan 5 labels (L41, L44, C26, C27, B20, B22) are outlined text and were read by eye; one cell prints no label (U1).
+- Not traced: plan 2 thin line stubs, plan 5 office partitions and pillars, plan 6 toilet and cafe rooms south of the wall.
+
 ## How to run
 
 From the project root. The scorer and robustness script need `cv2`, which the default `python3` lacks; use the conda env `floor-plan-extractor` or `floor-plan-extractor-apple`.

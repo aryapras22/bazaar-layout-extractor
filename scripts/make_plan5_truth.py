@@ -1,4 +1,4 @@
-"""Write data/plan5/truth.json from the vector data in data/plan5/source.pdf.
+"""Write data/plan5/truth_px.json from the vector data in data/plan5/source.pdf.
 
 Booths are coloured blocks cut into stalls by thin divider lines. The coloured fills are painted white
 on a blank canvas at the layout.png zoom, every stroked line is drawn over them in black, and each
@@ -88,6 +88,6 @@ truth = {
     "image": {"height": height, "origin": "top-left", "unit": "px", "width": width},
     "items": items,
 }
-with open("data/plan5/truth.json", "w") as f:
+with open("data/plan5/truth_px.json", "w") as f:
     json.dump(truth, f, indent=1)
 print(len(items), "booths;", len(crowded), "cells with several labels:", crowded[:8])
