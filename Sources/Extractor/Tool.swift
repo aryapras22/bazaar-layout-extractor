@@ -18,6 +18,7 @@ struct Options {
     var upscaleSmall: Bool = false
     var verifyDoors: Bool = false
     var modelIds: Bool = false
+    var vlmFix: String = "off"
 }
 
 func parseOptions(_ args: [String]) -> Options? {
@@ -33,6 +34,7 @@ func parseOptions(_ args: [String]) -> Options? {
     var upscaleSmall = false
     var verifyDoors = false
     var modelIds = false
+    var vlmFix = "off"
 
     var i = 1
     while i < args.count {
@@ -67,6 +69,10 @@ func parseOptions(_ args: [String]) -> Options? {
         case "--verify-doors":
             verifyDoors = true
             i += 1
+        case "--vlm-fix":
+            guard i + 1 < args.count, ["off", "fm", "mlx"].contains(args[i + 1]) else { return nil }
+            vlmFix = args[i + 1]
+            i += 2
         case "--model-ids":
             modelIds = true
             i += 1
@@ -87,14 +93,14 @@ func parseOptions(_ args: [String]) -> Options? {
         planPath: positional[0], legendPath: positional[1], outDir: outDir,
         repair: repair, reread: reread, bridge: bridge, regroup: regroup,
         featurePrint: featurePrint, judgeMode: judgeMode, layers: layers, upscaleSmall: upscaleSmall,
-        verifyDoors: verifyDoors, modelIds: modelIds
+        verifyDoors: verifyDoors, modelIds: modelIds, vlmFix: vlmFix
     )
 }
 
 public enum ExtractTool {
     public static func run(arguments: [String]) async throws {
         guard let opts = parseOptions(arguments) else {
-            fputs("usage: fp-extract layout.png legend.png [--out dir] [--no-repair] [--no-reread] [--no-bridge] [--no-regroup] [--feature-print] [--judge off|fm|mlx] [--layers booth,wall,door,seat] [--upscale-small] [--verify-doors] [--model-ids]\n", stderr)
+            fputs("usage: fp-extract layout.png legend.png [--out dir] [--no-repair] [--no-reread] [--no-bridge] [--no-regroup] [--feature-print] [--judge off|fm|mlx] [--layers booth,wall,door,seat] [--upscale-small] [--verify-doors] [--model-ids] [--vlm-fix off|fm|mlx]\n", stderr)
             exit(2)
         }
         let outDir = URL(fileURLWithPath: opts.outDir)
@@ -213,6 +219,8 @@ public enum ExtractTool {
 
         items = items.map { scaledBack($0, by: upscale) }.filter { opts.layers.contains(Layer.of($0)) }
         if opts.verifyDoors { dropUnconfirmedDoors(&items, planPath: opts.planPath, outDir: outDir) }
+        let vlmFix = opts.vlmFix == "off" ? nil : await runVlmFix(
+            image: originalImage, items: items, classNames: classes.map(\.name), backend: opts.vlmFix, outDir: outDir)
 
         let swift4Rep = report(items)
         let result = Result(image: ImageInfo(width: originalImage.width, height: originalImage.height), legend: entries, items: items, report: swift4Rep)
@@ -243,6 +251,11 @@ public enum ExtractTool {
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         try encoder.encode(result).write(to: outDir.appendingPathComponent("layout.json"))
         try encoder.encode(diffReport).write(to: outDir.appendingPathComponent("report_diff.json"))
+        if let vlmFix {
+            try encoder.encode(vlmFix).write(to: outDir.appendingPathComponent("vlm_fix.json"))
+            let valid = vlmFix.proposals.filter { $0.valid && $0.action != "keep" }.count
+            FileHandle.standardError.write(Data("note: vlm fix (\(vlmFix.status)) checked \(vlmFix.proposals.count) items, proposed \(valid) changes\n".utf8))
+        }
         for layer in opts.layers.sorted() {
             let file = LayerFile(layer: layer.rawValue, image: ImageInfo(width: originalImage.width, height: originalImage.height), items: items.filter { Layer.of($0) == layer })
             try encoder.encode(file).write(to: outDir.appendingPathComponent(layer.file))
