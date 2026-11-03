@@ -172,10 +172,11 @@ struct SuggestedFix: Codable {
 }
 
 struct DiffReport: Codable {
-    var swift3ItemsPerClass: [String: Int]
-    var swift4ItemsPerClass: [String: Int]
-    var swift3IdsRead: Int
-    var swift4IdsRead: Int
+    /// Counts after the layers ran, before the ID stage; the plain counts are the final ones.
+    var baselineItemsPerClass: [String: Int]
+    var itemsPerClass: [String: Int]
+    var baselineIdsRead: Int
+    var idsRead: Int
     var flaggedBefore: Int
     var flaggedAfter: Int
     var blankTiles: RereadStats
@@ -185,10 +186,10 @@ struct DiffReport: Codable {
     var judge: JudgeReport
 
     enum CodingKeys: String, CodingKey {
-        case swift3ItemsPerClass = "swift3_items_per_class"
-        case swift4ItemsPerClass = "swift4_items_per_class"
-        case swift3IdsRead = "swift3_ids_read"
-        case swift4IdsRead = "swift4_ids_read"
+        case baselineItemsPerClass = "baseline_items_per_class"
+        case itemsPerClass = "items_per_class"
+        case baselineIdsRead = "baseline_ids_read"
+        case idsRead = "ids_read"
         case flaggedBefore = "flagged_before"
         case flaggedAfter = "flagged_after"
         case blankTiles = "blank_tiles_recovered"

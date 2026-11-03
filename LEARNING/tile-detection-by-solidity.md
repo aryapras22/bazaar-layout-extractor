@@ -1,6 +1,6 @@
 # Finding tiles that have text and diagonal edges
 
-`extract_swift3.swift` finds booth tiles by legend colour, then measures each candidate shape. Two measurements decide whether a shape is a tile: how it handles the label text, and how it checks that the shape is compact.
+The booth layer (`Tiles.swift`) finds booth tiles by legend colour, then measures each candidate shape. Two measurements decide whether a shape is a tile: how it handles the label text, and how it checks that the shape is compact.
 
 ## What it does
 

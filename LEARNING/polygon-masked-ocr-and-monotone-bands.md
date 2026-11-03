@@ -1,6 +1,6 @@
 # Recovering missed booth labels with polygon masks and collinear bands
 
-`extract_swift4.swift` recovers booth labels that crop OCR missed in `extract_swift3.swift` through two passes: polygon-masked upscaled re-reading in `rereadTiles` and collinear band ordering in `repairIds`.
+The ID stage of the pipeline (`PlanRun.readIds`) recovers booth labels that plain crop OCR missed through two passes: polygon-masked upscaled re-reading in `rereadTiles` and collinear band ordering in `repairIds`.
 
 ## Why initial crop OCR misses sloped and small tiles
 
@@ -16,7 +16,7 @@ When a booth class wraps around four walls of a hall, its coordinates are non-mo
 
 ## Text-masked ink and group-level VLM labelling
 
-Page-level OCR text boxes are masked out of `ink` before `longRuns`, and unconfirmed single-line wall segments require a minimum stroke of 2 pixels so 1-pixel dimension lines with text gaps (such as `"4"` corridor width arrows) do not split into false wall segments. Unclaimed object components use a 2-pixel dilation bridge (`rx: 2, ry: 2`) so 4-chair table clusters stay connected without merging across 5-pixel inter-table gaps, and store simplified convex-hull polygons so `render_swift4` draws octagon table outlines instead of bounding rectangles. When `--judge fm` or `--judge mlx` is enabled, `Judge.swift` caches by `regroupObjects` group ID and evaluates one composite crop (left: tight zoom, right: context with red bounding box) per group against structural categories (`table_with_chairs`, `audience_seating`, `stairs`, `door`, `pillar`, `wall`, `noise`).
+Page-level OCR text boxes are masked out of `ink` before `longRuns`, and unconfirmed single-line wall segments require a minimum stroke of 2 pixels so 1-pixel dimension lines with text gaps (such as `"4"` corridor width arrows) do not split into false wall segments. Unclaimed object components use a 2-pixel dilation bridge (`rx: 2, ry: 2`) so 4-chair table clusters stay connected without merging across 5-pixel inter-table gaps, and store simplified convex-hull polygons so a renderer can draw octagon table outlines instead of bounding rectangles. When `--judge fm` or `--judge mlx` is enabled, `Judge.swift` caches by `regroupObjects` group ID and evaluates one composite crop (left: tight zoom, right: context with red bounding box) per group against structural categories (`table_with_chairs`, `audience_seating`, `stairs`, `door`, `pillar`, `wall`, `noise`).
 
 ## Pitfalls
 

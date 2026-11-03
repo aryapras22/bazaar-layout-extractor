@@ -1,6 +1,12 @@
 """Score fp-extract output against the truth files.
 
-usage: score.py [layout.json truth.json]...   (default: the swift5 outputs for plans 1 to 3, 5 and 6, run from the project root)
+usage: score.py [--layer booth,wall,door,seat] [layout.json truth.json]...
+Default: output/extractor/planN/layout.json for plans 1 to 3, 5 and 6, run from the project root. --layer prints only the lines
+of those pipelines, so one pipeline can be improved and read on its own:
+  booth  tiles, tile IDs and class names
+  wall   walls, diagonal walls, pillars
+  door   doors, gates
+  seat   objects, chairs, tables, chair-to-table links
 
 Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Tiles match on box and ID only,
 and class names are counted separately. Walls are thin and fragmented, so they use pixel coverage.
@@ -24,11 +30,11 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from truth_loader import load_truth  # noqa: E402
 
 PAIRS = [
-    ("output/swift5/plan1/layout.json", "data/plan1/truth.json"),
-    ("output/swift5/plan2/layout.json", "data/plan2/truth.json"),
-    ("output/swift5/plan3/layout.json", "data/plan3/truth.json"),
-    ("output/swift5/plan5/layout.json", "data/plan5/truth.json"),
-    ("output/swift5/plan6/layout.json", "data/plan6/truth.json"),
+    ("output/extractor/plan1/layout.json", "data/plan1/truth.json"),
+    ("output/extractor/plan2/layout.json", "data/plan2/truth.json"),
+    ("output/extractor/plan3/layout.json", "data/plan3/truth.json"),
+    ("output/extractor/plan5/layout.json", "data/plan5/truth.json"),
+    ("output/extractor/plan6/layout.json", "data/plan6/truth.json"),
 ]
 NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "gate", "symbol", "boundary", "chair", "table"}
 WALL_SLACK = 6
@@ -85,6 +91,16 @@ def wall_scores(truth, engine, shape):
     return recall, precision
 
 
+LAYERS = ("booth", "wall", "door", "seat")
+CLASS_LAYER = {"object": "seat", "pillar": "wall", "door": "door", "gate": "door"}
+shown = set(LAYERS)
+
+
+def say(layer, text):
+    if layer in shown:
+        print(text)
+
+
 def row(name, found, truth_n, engine_n):
     precision = found / engine_n if engine_n else float("nan")
     return f"  {name:<8} {found:>4}/{truth_n:<4} recall {found / truth_n if truth_n else float('nan'):>6.1%}   engine {engine_n:>4}  precision {precision:>6.1%}"
@@ -102,7 +118,7 @@ def score_tables(truth_items, engine_items, t_chairs, e_chairs, chair_pairs):
     if not t_tables and not e_tables:
         return
     pairs = greedy_match(t_tables, e_tables, 0.5)
-    print(row("table", len(pairs), len(t_tables), len(e_tables)))
+    say("seat", row("table", len(pairs), len(t_tables), len(e_tables)))
     shifts, sizes, turns = [], [], []
     for ti, ei in pairs:
         t, e = t_tables[ti], e_tables[ei]
@@ -112,13 +128,13 @@ def score_tables(truth_items, engine_items, t_chairs, e_chairs, chair_pairs):
             sizes.append(max(abs(a - b) for a, b in zip(e["table_size"], t["table_size"])))
             turns.append(angle_gap(e["angle"], t["angle"]))
     if shifts:
-        print(f"  table geometry px: centre off median {np.median(shifts):.1f} max {max(shifts):.1f}, "
+        say("seat", f"  table geometry px: centre off median {np.median(shifts):.1f} max {max(shifts):.1f}, "
               f"size off median {np.median(sizes):.1f} max {max(sizes):.1f}, angle off median {np.median(turns):.1f} max {max(turns):.1f} deg")
     engine_to_truth = {e_tables[ei].get("table"): t_tables[ti].get("table") for ti, ei in pairs}
     right = sum(1 for ti, ei in chair_pairs
                 if (t_chairs[ti].get("table") is None and e_chairs[ei].get("table") is None)
                 or (e_chairs[ei].get("table") is not None and engine_to_truth.get(e_chairs[ei]["table"]) == t_chairs[ti].get("table")))
-    print(f"  chair table links right {right}/{len(chair_pairs)} matched chairs")
+    say("seat", f"  chair table links right {right}/{len(chair_pairs)} matched chairs")
 
 
 def score(layout_path, truth_path):
@@ -131,29 +147,29 @@ def score(layout_path, truth_path):
     t_tiles = [i for i in truth_items if i["class"] not in NON_TILE]
     e_tiles = [i for i in engine_items if i["class"] not in NON_TILE]
     pairs = greedy_match(t_tiles, e_tiles, 0.5)
-    print(row("tiles", len(pairs), len(t_tiles), len(e_tiles)))
+    say("booth", row("tiles", len(pairs), len(t_tiles), len(e_tiles)))
     same_class = sum(1 for ti, ei in pairs if t_tiles[ti]["class"] == e_tiles[ei]["class"])
     derived = "source" in truth
-    print(f"  tile class names equal {same_class}/{len(pairs)}" + ("   (truth class names come from the ID letters)" if derived else ""))
+    say("booth", f"  tile class names equal {same_class}/{len(pairs)}" + ("   (truth class names come from the ID letters)" if derived else ""))
     ids_truth = [t for t in t_tiles if t.get("id")]
     exact = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and e_tiles[ei].get("id") == t_tiles[ti]["id"])
     with_suggestion = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and t_tiles[ti]["id"] in (e_tiles[ei].get("id"), e_tiles[ei].get("suggested_id")))
-    print(f"  tile ids exact {exact}/{len(ids_truth)}, with suggested_id {with_suggestion}/{len(ids_truth)}")
+    say("booth", f"  tile ids exact {exact}/{len(ids_truth)}, with suggested_id {with_suggestion}/{len(ids_truth)}")
 
     for cls in ("object", "pillar", "door", "gate"):
         t = [i for i in truth_items if i["class"] == cls]
         e = [i for i in engine_items if i["class"] == cls and i.get("kind") not in ("chair", "table")]
         pairs = greedy_match(t, e, 0.3)
-        print(row(cls, len(pairs), len(t), len(e)))
+        say(CLASS_LAYER[cls], row(cls, len(pairs), len(t), len(e)))
         if cls == "object" and t:
             judged = [(ti, ei) for ti, ei in pairs if "seat" in e[ei]]
             right = sum(1 for ti, ei in judged if e[ei]["seat"] == (t[ti].get("label") in SEAT_LABELS))
-            print(f"  seat flag right {right}/{len(judged)} judged, {len(pairs) - len(judged)} matched objects not judged")
+            say("seat", f"  seat flag right {right}/{len(judged)} judged, {len(pairs) - len(judged)} matched objects not judged")
             negatives = [(ti, ei) for ti, ei in judged if t[ti].get("label") not in SEAT_LABELS]
-            print(f"  seat flag on matched negatives {sum(1 for ti, ei in negatives if not e[ei]['seat'])}/{len(negatives)} right")
+            say("seat", f"  seat flag on matched negatives {sum(1 for ti, ei in negatives if not e[ei]['seat'])}/{len(negatives)} right")
             matched = {ei for _, ei in pairs}
             extra = [i for k, i in enumerate(e) if k not in matched]
-            print(f"  unmatched objects flagged seat {sum(1 for i in extra if i.get('seat'))}/{len(extra)}")
+            say("seat", f"  unmatched objects flagged seat {sum(1 for i in extra if i.get('seat'))}/{len(extra)}")
 
     seats_path = truth_path.replace("truth.json", "seats.json")
     t = [i for i in truth_items if i["class"] == "chair"]
@@ -162,7 +178,7 @@ def score(layout_path, truth_path):
     if t:
         e = [i for i in engine_items if i["class"] == "object" and i.get("kind") == "chair"]
         chair_pairs = greedy_match(t, e, 0.5)
-        print(row("chair", len(chair_pairs), len(t), len(e)))
+        say("seat", row("chair", len(chair_pairs), len(t), len(e)))
         score_tables(truth_items, engine_items, t, e, chair_pairs)
 
     t_diagonal = [i for i in truth_items if i["class"] == "diagonal wall"]
@@ -173,16 +189,23 @@ def score(layout_path, truth_path):
         for item in t_diagonal:
             own = segment_mask([item], shape, 0)
             found += (own & covered).sum() >= 0.5 * max(own.sum(), 1)
-        print(f"  diagonal wall found {found}/{len(t_diagonal)}   engine diagonal walls {len(e_diagonal)}")
+        say("wall", f"  diagonal wall found {found}/{len(t_diagonal)}   engine diagonal walls {len(e_diagonal)}")
 
     t_walls = [i for i in truth_items if i["class"] == "wall"]
     e_walls = [i for i in engine_items if i["class"] == "wall"]
     recall, precision = wall_scores(t_walls, e_walls, shape)
-    print(f"  wall     pixel recall {recall:.1%}   pixel precision {precision:.1%}   (truth {len(t_walls)}, engine {len(e_walls)})")
+    say("wall", f"  wall     pixel recall {recall:.1%}   pixel precision {precision:.1%}   (truth {len(t_walls)}, engine {len(e_walls)})")
 
 
 def main():
+    global shown
     args = sys.argv[1:]
+    if args[:1] == ["--layer"]:
+        shown = set(args[1].split(","))
+        unknown = shown - set(LAYERS)
+        if unknown:
+            sys.exit(f"unknown layer {sorted(unknown)}, use {','.join(LAYERS)}")
+        args = args[2:]
     pairs = list(zip(args[0::2], args[1::2])) if args else PAIRS
     for layout_path, truth_path in pairs:
         score(layout_path, truth_path)
