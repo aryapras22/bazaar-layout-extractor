@@ -129,9 +129,11 @@ private func vlmTargets(_ items: [Item], layer: Layer) -> [(index: Int, partner:
     }
 }
 
-/// The seat layer keeps each chair as its own item and also counts it inside its chair group, so that pair overlaps by design.
+/// The seat layer keeps each chair and each table as its own item and also counts them inside their chair group,
+/// so a chair, its table and their group overlap by design.
 private func isChairInGroup(_ a: Item, _ b: Item) -> Bool {
-    Set([a.kind, b.kind]) == Set(["chair", "chair_group"])
+    let pair = Set([a.kind, b.kind])
+    return pair.count == 2 && pair.isSubset(of: ["chair", "chair_group", "table"])
 }
 
 private func overlapShare(_ a: CGRect, _ b: CGRect) -> Double {

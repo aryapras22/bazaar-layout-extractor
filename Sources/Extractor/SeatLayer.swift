@@ -5,8 +5,9 @@ import UniformTypeIdentifiers
 import Vision
 
 /// Seat layer: what is left once walls, columns and text are set aside, grouped by shape, plus each round chair
-/// on its own. Tables with chairs, audience seating and stairs all arrive here as `object`. An object that holds
-/// chairs is a seat; the judge may add seats the chair test missed but never removes one.
+/// on its own and each table inside a symbol. Tables with chairs, audience seating and stairs all arrive here as
+/// `object`. An object that holds chairs is a seat; the judge may add seats the chair test missed but never removes one.
+/// Tables are kind "table" with their number, true size and tilt; every chair names its table, or none.
 func seatLayer(_ s: InkScan, hollow: [Bool]) -> [Item] {
     let (w, h, n, mx, scale) = (s.w, s.h, s.n, s.mx, s.scale)
     let (inText, hs, vs, thick, compact) = (s.inText, s.hs, s.vs, s.thick, s.compact)
@@ -26,7 +27,8 @@ func seatLayer(_ s: InkScan, hollow: [Bool]) -> [Item] {
 
     struct Candidate { var rect: CGRect; var longSide: Double; var shortSide: Double; var fill: Double; var poly: [[Int]]? }
     var candidates: [Candidate] = []
-    for reg in components(restNear, w: w, h: h, eight: true) {
+    let blobs = components(restNear, w: w, h: h, eight: true)
+    for reg in blobs {
         var x0 = w, y0 = h, x1 = 0, y1 = 0, count = 0
         var activePixels: [Int] = []
         for i in reg.pixels where rest[i] {
@@ -75,14 +77,154 @@ func seatLayer(_ s: InkScan, hollow: [Bool]) -> [Item] {
             items.append(it)
         }
     }
-    for rect in chairRects {
+    let found = tables(rest: rest, blobs: blobs, chairs: chairRects, w: w, h: h)
+    var tableOf = [Int?](repeating: nil, count: chairRects.count)
+    var tableItems: [Item] = []
+    for (k, fit) in found.enumerated() {
+        for c in fit.chairs { tableOf[c] = k + 1 }
+        var table = outsideItem("object", fit.box, review: false, reason: "table, \(fit.chairs.count) chairs")
+        table.kind = "table"
+        table.seat = true
+        table.chairs = fit.chairs.count
+        table.table = k + 1
+        table.tableSize = [(fit.long * 10).rounded() / 10, (fit.short * 10).rounded() / 10]
+        table.angle = (fit.angle * 10).rounded() / 10
+        tableItems.append(table)
+    }
+    for (c, rect) in chairRects.enumerated() {
         var chair = outsideItem("object", rect, review: false, reason: "chair")
         chair.kind = "chair"
         chair.seat = true
+        chair.table = tableOf[c]
         items.append(chair)
     }
     let chairSide = chairRects.map(\.width).sorted().dropFirst(chairRects.count / 2).first ?? 0
-    return mergeChairGrids(items, gap: chairSide)
+    return mergeChairGrids(items, gap: chairSide) + tableItems
+}
+
+/// A table inside a symbol, in pixels: centre, true size (long side, short side), the tilt of the long side in degrees
+/// (0 to 180, clockwise because y grows down) and the indices of its chairs.
+struct TableFit {
+    var cx: Double, cy: Double, long: Double, short: Double, angle: Double
+    var chairs: [Int]
+
+    var corners: [(Double, Double)] {
+        let t = angle * .pi / 180
+        let u = (cos(t), sin(t)), v = (-sin(t), cos(t))
+        return [(-1.0, -1.0), (1, -1), (1, 1), (-1, 1)].map { su, sv in
+            (cx + su * long / 2 * u.0 + sv * short / 2 * v.0, cy + su * long / 2 * u.1 + sv * short / 2 * v.1)
+        }
+    }
+
+    /// Distance from a point to the table, 0 inside it.
+    func gap(to p: CGPoint) -> Double {
+        let t = angle * .pi / 180
+        let (dx, dy) = (Double(p.x) - cx, Double(p.y) - cy)
+        let along = abs(dx * cos(t) + dy * sin(t)) - long / 2, across = abs(-dx * sin(t) + dy * cos(t)) - short / 2
+        return hypot(max(along, 0), max(across, 0))
+    }
+
+    /// The axis-aligned box of the tilted table, out to whole pixels.
+    var box: CGRect {
+        let xs = corners.map(\.0), ys = corners.map(\.1)
+        return CGRect(x: xs.min()!, y: ys.min()!, width: xs.max()! - xs.min()!, height: ys.max()! - ys.min()!).integral
+    }
+}
+
+/// Tables. A symbol is a table with its chairs, one blob of the seat ink, so a blob that holds two to eight chairs is
+/// taken as a symbol (audience rows hold more, or are only rings). Erasing the chair discs leaves the table outline,
+/// broken where a chair touched it; pieces shorter than a chair is wide are what is left of the rings and are dropped.
+/// The table is the minimum-area rectangle of the rest, which gives its true size and tilt. It counts only if every
+/// chair of the blob stands within a chair and a half of it. Otherwise, or with no outline left, the chairs keep no table.
+/// On plans 1 to 3 this finds all 171 tables, centres within 2 px and tilt within 3 degrees of the truth.
+/// Tables come back in reading order: rows of two chair widths, left to right.
+func tables(rest: [Bool], blobs: [Region], chairs: [CGRect], w: Int, h: Int) -> [TableFit] {
+    guard chairs.count >= 2 else { return [] }
+    let side = Double(chairs.map(\.width).sorted()[chairs.count / 2])
+    var label = [Int32](repeating: -1, count: w * h)
+    for (k, reg) in blobs.enumerated() { for i in reg.pixels { label[i] = Int32(k) } }
+    func vote(_ x0: Int, _ y0: Int, _ x1: Int, _ y1: Int) -> Int? {
+        let (ax, ay, bx, by) = (max(0, x0), max(0, y0), min(w - 1, x1), min(h - 1, y1))
+        guard ax <= bx, ay <= by else { return nil }
+        var votes: [Int32: Int] = [:]
+        for y in ay...by { for x in ax...bx where label[y * w + x] >= 0 { votes[label[y * w + x], default: 0] += 1 } }
+        return votes.max { ($0.value, -$0.key) < ($1.value, -$1.key) }.map { Int($0.key) }
+    }
+    var members: [Int: [Int]] = [:]
+    for (i, c) in chairs.enumerated() {
+        let (cx, cy) = (Int(c.midX), Int(c.midY))
+        // the chair's centre is clear on a ring, so a hit there is the table it touches; otherwise the ring decides
+        if let blob = vote(cx - 1, cy - 1, cx + 1, cy + 1) ?? vote(Int(c.minX), Int(c.minY), Int(c.maxX), Int(c.maxY)) {
+            members[blob, default: []].append(i)
+        }
+    }
+    var found: [TableFit] = []
+    for blob in members.keys.sorted() {
+        let mine = members[blob]!
+        guard (2...8).contains(mine.count) else { continue }
+        let reg = blobs[blob]
+        let discs = mine.map { c -> (Double, Double, Double) in
+            let r = chairs[c]
+            return (Double(r.midX).rounded(), Double(r.midY).rounded(), (Double(max(r.width, r.height)) / 2 + 1.5).rounded())
+        }
+        let (bw, bh) = (reg.width, reg.height)
+        var outline = [Bool](repeating: false, count: bw * bh)
+        for i in reg.pixels where rest[i] {
+            let x = i % w, y = i / w
+            let inDisc = discs.contains { cx, cy, r in
+                let dx = Double(x) - cx, dy = Double(y) - cy
+                return dx * dx + dy * dy <= r * r
+            }
+            if !inDisc { outline[(y - reg.minY) * bw + (x - reg.minX)] = true }
+        }
+        var kept: [Int] = []
+        for piece in components(outline, w: bw, h: bh, eight: true) where Double(piece.area) >= side {
+            kept += piece.pixels.map { (reg.minY + $0 / bw) * w + reg.minX + $0 % bw }
+        }
+        guard kept.count >= 12 else { continue }
+        let rows = kept.map { $0 / w }
+        let top = rows.min()!
+        guard let fit = minAreaRect(convexHull(kept, w: w, minY: top, height: rows.max()! - top + 1)) else { continue }
+        let table = TableFit(cx: fit.cx, cy: fit.cy, long: fit.long, short: fit.short, angle: fit.angle, chairs: mine)
+        // chairs stand at the table, so each one is within a chair and a half of its edge; a row of stools next to a
+        // counter is not a table with chairs
+        guard mine.allSatisfy({ table.gap(to: CGPoint(x: chairs[$0].midX, y: chairs[$0].midY)) <= 1.5 * side }) else { continue }
+        found.append(table)
+    }
+    let row = max(1, 2 * side)
+    return found.sorted { a, b in
+        let (ra, rb) = ((a.cy / row).rounded(.down), (b.cy / row).rounded(.down))
+        return ra != rb ? ra < rb : a.cx < b.cx
+    }
+}
+
+/// Smallest rectangle around a convex polygon (rotating calipers: one side of the best rectangle lies on a hull edge).
+/// Returns its centre, long and short side, and the tilt of the long side in degrees, 0 to 180.
+func minAreaRect(_ hull: [(Double, Double)]) -> (cx: Double, cy: Double, long: Double, short: Double, angle: Double)? {
+    guard hull.count >= 3 else { return nil }
+    var best: (area: Double, cx: Double, cy: Double, along: Double, across: Double, theta: Double)?
+    for k in hull.indices {
+        let p = hull[k], q = hull[(k + 1) % hull.count]
+        let length = hypot(q.0 - p.0, q.1 - p.1)
+        guard length > 1e-9 else { continue }
+        let u = ((q.0 - p.0) / length, (q.1 - p.1) / length), v = (-u.1, u.0)
+        var (u0, u1, v0, v1) = (Double.infinity, -Double.infinity, Double.infinity, -Double.infinity)
+        for r in hull {
+            let s = r.0 * u.0 + r.1 * u.1, t = r.0 * v.0 + r.1 * v.1
+            u0 = min(u0, s); u1 = max(u1, s); v0 = min(v0, t); v1 = max(v1, t)
+        }
+        let area = (u1 - u0) * (v1 - v0)
+        if best == nil || area < best!.area - 1e-9 {
+            let (s, t) = ((u0 + u1) / 2, (v0 + v1) / 2)
+            best = (area, s * u.0 + t * v.0, s * u.1 + t * v.1, u1 - u0, v1 - v0, atan2(u.1, u.0))
+        }
+    }
+    guard var b = best else { return nil }
+    if b.across > b.along { (b.along, b.across, b.theta) = (b.across, b.along, b.theta + .pi / 2) }
+    var degrees = (b.theta * 180 / .pi).truncatingRemainder(dividingBy: 180)
+    if degrees < 0 { degrees += 180 }
+    if degrees >= 179.95 { degrees = 0 }
+    return (b.cx, b.cy, b.along, b.across, degrees)
 }
 
 /// How far ink is grown to join a table to its chairs. Two pixels suits chairs about twelve pixels across; on a

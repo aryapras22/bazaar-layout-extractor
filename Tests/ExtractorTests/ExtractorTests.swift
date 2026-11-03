@@ -485,6 +485,51 @@ private func inkWithRings(centers: [(Int, Int)], radius: Int, size: Int) -> [Boo
     #expect(objectJoinRadius(chairs: chairs(side: 6, count: 3)) == 2)
 }
 
+@Test func aTableIsTheOutlineLeftOnceItsChairsAreErased() {
+    let size = 200
+    let around = [(75, 70), (105, 70), (75, 119), (105, 119)]
+    let audienceRow = (0..<10).map { (20 + 16 * $0, 170) }
+    var ink = inkWithRings(centers: around + audienceRow, radius: 6, size: size)
+    for x in 60...119 { for y in [80, 81, 108, 109] { ink[y * size + x] = true } }
+    for y in 80...109 { for x in [60, 61, 118, 119] { ink[y * size + x] = true } }
+    let found = chairs(ink: ink, w: size, h: size, page: 2000)
+    #expect(found.count == 14)
+    let join = objectJoinRadius(chairs: found)
+    let blobs = components(morph(ink, w: size, h: size, rx: join, ry: join, erode: false), w: size, h: size, eight: true)
+    let fits = tables(rest: ink, blobs: blobs, chairs: found, w: size, h: size)
+    #expect(fits.count == 1)
+    guard let table = fits.first else { return }
+    #expect(abs(table.cx - 89.5) < 0.01 && abs(table.cy - 94.5) < 0.01)
+    #expect(abs(table.long - 60) < 0.01 && abs(table.short - 30) < 0.01)
+    #expect(abs(table.angle) < 1e-6)
+    // the four chairs around it, not the ten of the audience row
+    #expect(Set(table.chairs.map { Int(found[$0].midY) }) == [70, 119])
+    #expect(table.box == CGRect(x: 59, y: 79, width: 61, height: 31))
+}
+
+@Test func theSmallestRectangleFindsTheTrueSizeAndTiltOfATable() {
+    for degrees in [30.0, 120.0] {
+        let t = degrees * .pi / 180
+        let (u, v) = ((cos(t), sin(t)), (-sin(t), cos(t)))
+        let corners = [(-1.0, -1.0), (1, -1), (1, 1), (-1, 1)].map { a, b in
+            (50 + a * 15 * u.0 + b * 5 * v.0, 40 + a * 15 * u.1 + b * 5 * v.1)
+        }
+        let fit = minAreaRect(corners)
+        #expect(fit != nil)
+        guard let fit else { continue }
+        #expect(abs(fit.cx - 50) < 1e-6 && abs(fit.cy - 40) < 1e-6)
+        #expect(abs(fit.long - 30) < 1e-6 && abs(fit.short - 10) < 1e-6)
+        #expect(abs(fit.angle - degrees) < 1e-6)
+    }
+}
+
+@Test func aChairFarFromTheTableIsNoChairOfIt() {
+    let table = TableFit(cx: 100, cy: 100, long: 40, short: 20, angle: 90, chairs: [])
+    #expect(table.gap(to: CGPoint(x: 100, y: 100)) == 0)
+    #expect(abs(table.gap(to: CGPoint(x: 115, y: 100)) - 5) < 1e-9)
+    #expect(abs(table.gap(to: CGPoint(x: 100, y: 130)) - 10) < 1e-9)
+}
+
 @Test func outlineKeepsLinesBlurHasLightenedButNotAFlatGreyFill() {
     let (w, h) = (60, 40)
     var rgba = [UInt8](repeating: 255, count: w * h * 4)

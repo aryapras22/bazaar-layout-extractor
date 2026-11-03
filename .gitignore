@@ -5,3 +5,4 @@ bin/
 output/
 .env
 __pycache__/
+output/seat_mirror/

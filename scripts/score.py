@@ -4,7 +4,8 @@ usage: score.py [layout.json truth.json]...   (default: the swift5 outputs for p
 
 Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Tiles match on box and ID only,
 and class names are counted separately. Walls are thin and fragmented, so they use pixel coverage.
-Objects leave out single chairs (kind "chair"); those are scored as "chair" against the seats of the truth.
+Objects leave out single chairs (kind "chair") and tables (kind "table"); chairs are scored as "chair" against the seats of
+the truth, tables as "table" (box IoU 0.5, then centre, size and angle), and each matched chair on whether it names the right table.
 
 The truth is data/planN/truth.json (metres, read through truth_loader.py and frame.json) or a pixel truth with an "items"
 list (truth_px.json, or the moved copies of robustness.py). Against the metre truth the tiles are the booths, doors are the
@@ -89,6 +90,37 @@ def row(name, found, truth_n, engine_n):
     return f"  {name:<8} {found:>4}/{truth_n:<4} recall {found / truth_n if truth_n else float('nan'):>6.1%}   engine {engine_n:>4}  precision {precision:>6.1%}"
 
 
+def angle_gap(a, b):
+    return abs((a - b + 90) % 180 - 90)
+
+
+def score_tables(truth_items, engine_items, t_chairs, e_chairs, chair_pairs):
+    """Tables match on box IoU 0.5. A matched chair has the right table when the engine's table of that chair is the
+    match of the truth's table, or when neither gives it a table (audience rows, loose seats)."""
+    t_tables = [i for i in truth_items if i["class"] == "table"]
+    e_tables = [i for i in engine_items if i["class"] == "object" and i.get("kind") == "table"]
+    if not t_tables and not e_tables:
+        return
+    pairs = greedy_match(t_tables, e_tables, 0.5)
+    print(row("table", len(pairs), len(t_tables), len(e_tables)))
+    shifts, sizes, turns = [], [], []
+    for ti, ei in pairs:
+        t, e = t_tables[ti], e_tables[ei]
+        if "centre" in t and "table_size" in e:
+            ex, ey = e["box"][0] + e["box"][2] / 2, e["box"][1] + e["box"][3] / 2
+            shifts.append(np.hypot(ex - t["centre"][0], ey - t["centre"][1]))
+            sizes.append(max(abs(a - b) for a, b in zip(e["table_size"], t["table_size"])))
+            turns.append(angle_gap(e["angle"], t["angle"]))
+    if shifts:
+        print(f"  table geometry px: centre off median {np.median(shifts):.1f} max {max(shifts):.1f}, "
+              f"size off median {np.median(sizes):.1f} max {max(sizes):.1f}, angle off median {np.median(turns):.1f} max {max(turns):.1f} deg")
+    engine_to_truth = {e_tables[ei].get("table"): t_tables[ti].get("table") for ti, ei in pairs}
+    right = sum(1 for ti, ei in chair_pairs
+                if (t_chairs[ti].get("table") is None and e_chairs[ei].get("table") is None)
+                or (e_chairs[ei].get("table") is not None and engine_to_truth.get(e_chairs[ei]["table"]) == t_chairs[ti].get("table")))
+    print(f"  chair table links right {right}/{len(chair_pairs)} matched chairs")
+
+
 def score(layout_path, truth_path):
     layout = json.load(open(layout_path))
     truth = load_truth(truth_path)
@@ -110,7 +142,7 @@ def score(layout_path, truth_path):
 
     for cls in ("object", "pillar", "door", "gate"):
         t = [i for i in truth_items if i["class"] == cls]
-        e = [i for i in engine_items if i["class"] == cls and i.get("kind") != "chair"]
+        e = [i for i in engine_items if i["class"] == cls and i.get("kind") not in ("chair", "table")]
         pairs = greedy_match(t, e, 0.3)
         print(row(cls, len(pairs), len(t), len(e)))
         if cls == "object" and t:
@@ -129,8 +161,9 @@ def score(layout_path, truth_path):
         t = json.load(open(seats_path))["items"]
     if t:
         e = [i for i in engine_items if i["class"] == "object" and i.get("kind") == "chair"]
-        pairs = greedy_match(t, e, 0.5)
-        print(row("chair", len(pairs), len(t), len(e)))
+        chair_pairs = greedy_match(t, e, 0.5)
+        print(row("chair", len(chair_pairs), len(t), len(e)))
+        score_tables(truth_items, engine_items, t, e, chair_pairs)
 
     t_diagonal = [i for i in truth_items if i["class"] == "diagonal wall"]
     if t_diagonal:

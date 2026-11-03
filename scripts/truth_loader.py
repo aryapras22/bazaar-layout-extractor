@@ -13,7 +13,8 @@ What the metre truth becomes:
                        TENANT SPACE -> "boundary", the rest -> "object" with the label in lower case
   stage                "Stage" (skipped when the plan has none)
   doors                "door" boxes of the opening in the wall
-  tables               a "table" box (the axis-aligned box of the tilted table) and a "chair" box per chair, both with their table number
+  tables               a "table" box (the axis-aligned box of the tilted table, with its centre, true size in pixels and angle)
+                       and a "chair" box per chair, both with their table number
   block pilasters, columns   "pillar"
   wall, wall pilasters, rails, hall edges   "wall" boxes (hall edges are 0.3 m wide)
 Not in the metre truth, so not scored any more: diagonal walls, gates, object groups, swing-symbol boxes.
@@ -67,7 +68,9 @@ def load_truth(path):
         items.append({"class": "door", "box": rect(d), "id": None, "label": d["id"], "role": d["role"]})
     for t in data["tables"]:
         if t["kind"] == "table":
-            items.append({"class": "table", "box": centred(t), "id": None, "table": t["table"]})
+            items.append({"class": "table", "box": centred(t), "id": None, "table": t["table"],
+                          "table_size": [t["rect"][0] * scale, t["rect"][1] * scale], "angle": t["angle"],
+                          "centre": [px_x(t["cx"]), px_y(t["cy"])]})
         else:
             items.append({"class": "chair", "box": centred(t), "id": None, "table": t["table"]})
     for p in data["pilasters"]:

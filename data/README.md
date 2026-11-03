@@ -109,7 +109,9 @@ The notebook `notebooks/render_truth.ipynb` draws every plan next to `layout.png
 `scripts/score.py`, `scripts/robustness.py` and `scripts/scale_stress.py` read `truth.json` through `scripts/truth_loader.py`, which converts it to pixel items with `frame.json`.
 
 - Booths become tiles with their ID, doors the openings in the door wall, tables entries chairs and tables, block pilasters and columns pillars, and the door wall, wall pilasters and hall edges walls.
+- Tables are scored on box IoU 0.5, then centre, size and angle against `rect` and `angle`. Each matched chair is scored on whether it names the right table (both none counts as right).
 - Diagonal walls, gates, object groups and swing-symbol boxes are not in `truth.json`, so they are no longer scored.
+- `scripts/seat_layer_mirror.py` is a Python copy of the seat layer (chairs, tables, links). It runs without macOS and scores itself, so a seat-layer change can be tried here first.
 - A file with an `items` list (`truth_px.json`, or the moved copies `robustness.py` writes) loads as it is.
 
 `truth_px.json` for plans 5 and 6 comes from `scripts/make_plan5_truth.py`, `make_plan6_truth.py`, `make_wall_truth.py` and `make_door_truth.py`, run in that order.
