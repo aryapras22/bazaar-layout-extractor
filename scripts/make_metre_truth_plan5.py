@@ -119,7 +119,10 @@ gates = [{"id": "Entrance", "sx": mt.r2(F.x(182.0)), "sy": mt.r2(F.y(463.0))}]  
 exit_pt = {"id": "Exit", "sx": mt.r2(F.x(140.5)), "sy": mt.r2(F.y(463.0))}      # head of the red OUT arrow
 
 # ---- no stage, no seats, no audience block: empty stage, kids is a 2 x 2 m box in a free corner
-stage = {"x0": 0, "x1": 0, "y0": 0, "y1": 0, "face": "y1"}
+# the one large box drawn with an outline and no fill, no label and no booths: the rounded box at the top of Hall B (with a seat icon inside
+# and a screen icon below it), 37.6 x 14 m, found in the PDF vectors
+box = next(d["rect"] for d in drawings if d.get("fill") is None and 68 < d["rect"].width < 69 and 25 < d["rect"].height < 26 and 195 < d["rect"].x0 < 205)
+stage = {**mt.rect_m(F.x(box.x0), F.y(box.y0), F.x(box.x1), F.y(box.y1)), "face": "y1"}  # the screen icon is south of it
 kids = None
 for vx, vy, dx, dy in ((hall[7][0], hall[7][1], 1, -1), (hall[0][0], hall[0][1], 1, 1), (hall[1][0], hall[1][1], -1, 1)):
     for step in range(0, 12):
@@ -140,15 +143,15 @@ truth = {
     "pantia": [], "lobbyBlock": {"x0": 0, "x1": 0, "y0": 0, "y1": 0}, "columns": [],
     "pilasters": [], "fixtures": [], "arrows": [], "closed": [],
 }
-by_type, n_tables, n_walls = mt.counts(truth)
+by_type, seating_summary, n_walls = mt.counts(truth)
 truth["meta"]["note"] = (
     "Scale 1.82 pt/m (9.1 px/m on layout.png), an estimate: the plan prints no size. Booth cells repeat every 5.46 pt; taken as 3 m the swing doors measure 1.0 to 1.3 m. "
     "Correct SCALE_PT in scripts/make_metre_truth_plan5.py if the real booth size differs. Coordinates come from the PDF vector data. Origin: hall bounding top-left at (1,1). "
-    f"{by_type} (the colour legend names countries, not food, so none is fnb; 299 cells labelled in the PDF text, H03, D28 and J20 are printed twice inside one cell; L41, L44, C26, C27, B20 and B22 print their label as outlines and were read by eye; U1 is the unlabeled cell right of D22); no seats are drawn, tables is empty; {n_walls} wall (the south wall of Hall A). "
+    f"{by_type} (the colour legend names countries, not food, so none is fnb; 299 cells labelled in the PDF text, H03, D28 and J20 are printed twice inside one cell; L41, L44, C26, C27, B20 and B22 print their label as outlines and were read by eye; U1 is the unlabeled cell right of D22); no tables or chairs are drawn, tables is empty; {n_walls} wall (the south wall of Hall A). "
     "The hall polygon joins Hall B with the pre-function strip, the connecting corridor and Hall A, drawn from the wall lines; the octagon room, the toilet and office blocks and the room block east of the corridor are outside it. "
     "Door A to D are the four double doors in the two gaps of Hall A's south wall: the red OUT arrows mark A and D (exit), the green IN arrows B and C (entrance). "
     "The lobby is the 11 m band below the wall, cut at the office row; gates sit at the tail of the green arrow at Door C, exitPt at the head of the red arrow at Door A. "
-    "There is no stage and no audience block drawn (the rounded seminar zone in Hall B is unlabelled and left out), so stage is empty and kids is a 2 x 2 m corner box. "
+    "No stage is labelled. The one large box drawn as an empty outline (no fill, no label, no booths) is the rounded box at the top of Hall B, 37.6 x 14 m, with a seat icon inside and a screen icon below it; it is traced as the stage, facing y1 toward the screen icon. This is a guess from the box and the icons. No audience block is drawn, so kids is a 2 x 2 m corner box. "
     "Left out: pillars, office and VIP room partitions along the west of Hall B (as thin as booth dividers), icons, the F&B counters 1 to 5, WANINDO, the other doors, the legend."
 )
 mt.finish(truth, "plan5", {"px_per_m": SCALE_PT * ZOOM, "origin_px": [(F.ox - CLIP.x0) * ZOOM, (F.oy - CLIP.y0) * ZOOM]})

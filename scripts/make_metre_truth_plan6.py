@@ -105,18 +105,24 @@ stage = {**mt.rect_m(F.x(51.3), F.y(175.5), F.x(82.9), F.y(227.0)), "face": "x1"
 area = next(pymupdf.Rect(d["rect"]) for d in drawings if 123 < d["rect"].width < 126 and 70 < d["rect"].height < 74 and d.get("fill") is None)
 kids = mrect(area)
 
-# ---- seats: the benches of the picnic sets in the FNB zone (the table between each pair of benches is not listed)
-bench_keys, seats = set(), []
+# ---- tables and chairs: the 20 picnic sets in the FNB zone, each a table (1.6 x 0.7 m) between two benches (1.6 x 0.35 m).
+# A bench is a chair of the table next to it.
+parts = {}
 for d in drawings:
     fill, r = d.get("fill"), d["rect"]
-    if fill and tuple(round(c, 2) for c in fill) == (0.8, 0.4, 0.0) and 1.5 < r.height < 2.1 and 7 < r.width < 9 and r.intersects(HALL):
-        key = (round(r.x0, 1), round(r.y0, 1))
-        if key in bench_keys:
-            continue
-        bench_keys.add(key)
-        seats.append({"cx": mt.r2(F.x((r.x0 + r.x1) / 2)), "cy": mt.r2(F.y((r.y0 + r.y1) / 2)),
-                      "w": mt.r2(r.width / SCALE), "h": mt.r2(r.height / SCALE)})
-tables = mt.sort_reading_order(seats, lambda t: (t["cx"], t["cy"]))
+    if fill and tuple(round(c, 2) for c in fill) == (0.8, 0.4, 0.0) and 1.5 < r.height < 4 and 7 < r.width < 9 and r.intersects(HALL):
+        parts[(round(r.x0, 1), round(r.y0, 1))] = r
+set_tables = sorted((r for r in parts.values() if r.height > 3), key=lambda r: (round(r.y0), r.x0))
+tables = []
+for number, table in enumerate(set_tables, 1):
+    cx, cy = (table.x0 + table.x1) / 2, (table.y0 + table.y1) / 2
+    tables.append({"kind": "table", "table": number, "cx": mt.r2(F.x(cx)), "cy": mt.r2(F.y(cy)), "w": mt.r2(table.width / SCALE),
+                   "h": mt.r2(table.height / SCALE), "rect": [mt.r2(table.width / SCALE), mt.r2(table.height / SCALE)], "angle": 0})
+    benches = sorted((r for r in parts.values() if r.height < 3 and abs(r.x0 - table.x0) < 0.5 and abs((r.y0 + r.y1) / 2 - cy) < 4), key=lambda r: r.y0)
+    assert len(benches) == 2, (number, len(benches))
+    for bench in benches:
+        tables.append({"kind": "chair", "table": number, "cx": mt.r2(F.x((bench.x0 + bench.x1) / 2)), "cy": mt.r2(F.y((bench.y0 + bench.y1) / 2)),
+                       "w": mt.r2(bench.width / SCALE), "h": mt.r2(bench.height / SCALE)})
 
 # ---- columns and pilasters: black 1 m squares on the top and bottom wall lines, 4 round black dots
 pilasters, columns, square_keys = [], [], set()
@@ -160,13 +166,13 @@ truth = {
     "pantia": [], "lobbyBlock": {"x0": 0, "x1": 0, "y0": 0, "y1": 0}, "columns": columns,
     "pilasters": pilasters, "fixtures": fixtures, "arrows": [], "closed": [],
 }
-by_type, n_tables, n_walls = mt.counts(truth)
+by_type, seating_summary, n_walls = mt.counts(truth)
 truth["meta"]["note"] = (
     "Scale 5.167 pt/m (20.67 px/m on layout.png) from the printed 24 x 14 m stage area (124 x 72 pt) and 6 x 10 m stage, checked on the printed 3 m booths (15.5 pt) and the 12 x 8 m workshop. "
     "Coordinates come from the PDF vector data. Origin: hall top-left at (1,1). "
     f"{by_type} (S1 to S15 in the FNB zone are fnb; U-ids are booths with no printed ID: "
     + ", ".join(f"{k} {v}" for k, v in sorted(unlabeled_names.items(), key=lambda kv: int(kv[0][1:]))) + "); "
-    f"{n_tables} seats in tables (picnic-set benches in the FNB zone, 2 per set; the table between them is not listed); {n_walls} wall (the south wall; the hall has no other drawn partition). "
+    f"{seating_summary}: the 20 picnic sets of the FNB zone, a table with a bench on each side, each bench a chair of that table; {n_walls} wall (the south wall; the hall has no other drawn partition). "
     "Sponsor booths with a printed ID are booths. B38 and B39 are printed twice (beauty zone and mom and baby zone). "
     "Two rectangles hold a hidden second label; the one matching the zone prefix is used (B75 not A59, M21 not D78). "
     "The south wall opens in two 12 m gaps, each split by a 1 m column into two doors of about 5.5 m: the left two carry the OUT arrows (exit), the right two the IN arrows (entrance). "

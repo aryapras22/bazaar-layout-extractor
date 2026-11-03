@@ -7,8 +7,11 @@ come out at 2.0 m and the hall at 67.3 x 63.3 m, the same as plan 1's hall. 25.6
 import json
 import sys
 
+import cv2
+
 sys.path.insert(0, "scripts")
 import metre_truth as mt
+import seating
 
 SCALE = 25.6
 HALL_PX = (17, 16, 1737, 1633)  # inner faces of the outer walls: x0, y0, x1, y1
@@ -55,13 +58,12 @@ for n, f in enumerate(fixtures):
     f.update(snapped[len(ids) + n])
 booths = mt.sort_reading_order(booths, lambda b: (b["cx"], b["cy"]))
 
-# ---- seats: every chair is one entry (26 tables x 4 chairs, checked by eye)
-chairs = json.load(open("data/plan2/seats.json"))["items"]
-chair_px = sorted(c["box"][2] for c in chairs)[len(chairs) // 2]
-chair_m = mt.r2(chair_px / SCALE)
-tables = mt.sort_reading_order(
-    [{"cx": mt.r2(F.x(x + w / 2)), "cy": mt.r2(F.y(y + h / 2)), "w": chair_m, "h": chair_m} for x, y, w, h in (c["box"] for c in chairs)],
-    lambda t: (t["cx"], t["cy"]))
+# ---- tables and chairs: 26 tilted tables with 4 round chairs each; chair boxes are the checked seats.json, tables are fitted in the image
+chairs_px = [c["box"] for c in json.load(open("data/plan2/seats.json"))["items"]]
+gray = cv2.imread("data/plan2/layout.png", cv2.IMREAD_GRAYSCALE)
+table_fits, owner = seating.find_tables(gray < 110, chairs_px)
+chair_m = mt.r2(sorted(c[2] for c in chairs_px)[len(chairs_px) // 2] / SCALE)
+tables = seating.entries(F, table_fits, owner, chairs_px, chair_m)
 
 # ---- walls: the entrance vestibule inside the lobby
 T = 0.3
@@ -72,8 +74,12 @@ pilasters = [
     {"kind": "wall", **mt.rect_m(x_west - T / 2, y_south - T / 2, F.x(1585), y_south + T / 2)},
 ]
 
-# ---- no stage, no audience block: stage is empty and kids is the 2 x 2 m corner box the instructions ask for
-stage = {"x0": 0, "x1": 0, "y0": 0, "y1": 0, "face": "y1"}
+# ---- the big red Unlabeled block is the only large empty box on the plan: it is traced as the stage.
+# No audience block is drawn, so kids is the 2 x 2 m corner box the instructions ask for
+big = max(fixtures, key=lambda f: (f["x1"] - f["x0"]) * (f["y1"] - f["y0"]))  # the red box, 11.7 x 15.7 m, drawn with no label
+fixtures.remove(big)
+stage = {k: big[k] for k in ("x0", "x1", "y0", "y1")}
+stage["face"] = "x1"  # open floor lies to its right
 kids = mt.rect_m(1.2, 1.2, 3.2, 3.2)
 
 world = {"w": mt.r2(max(p[0] for p in lobby + hall) + 1), "h": mt.r2(max(p[1] for p in lobby + hall) + 1)}
@@ -84,15 +90,16 @@ truth = {
     "pantia": [], "lobbyBlock": {"x0": 0, "x1": 0, "y0": 0, "y1": 0}, "columns": [],
     "pilasters": pilasters, "fixtures": fixtures, "arrows": [], "closed": [],
 }
-by_type, n_tables, n_walls = mt.counts(truth)
+by_type, seating_summary, n_walls = mt.counts(truth)
 truth["meta"]["note"] = (
     "Scale 25.6 px/m, an estimate: the plan prints no size. Booth pitch is 64 px for A, B and C, 51 px for F and 126.5 px for the I blocks; "
     "A as 2.5 m, F as 2 m and I as 5 x 5 m agree within 2%, the swing doors then measure 2.0 m and the hall 67.3 x 63.3 m like plan 1. "
     "Correct SCALE in scripts/make_metre_truth_plan2.py if the real booth size differs. Origin: hall inner top-left at (1,1). "
-    f"{by_type} (I1 to I9 are the Interactive spaces, counted as goods; the legend has no food class); {n_tables} seats in tables (26 tables x 4 chairs, one entry per chair); "
+    f"{by_type} (I1 to I9 are the Interactive spaces, counted as goods; the legend has no food class); {seating_summary}: each of the 26 tilted tables is fitted to its drawn outline and keeps its 4 chairs; "
     f"{n_walls} walls (door wall, 2 vestibule). Door A (OUT) is the exit and Door B (IN) the entrance, matching the printed OUT and IN. "
-    "There is no stage, so stage is an empty rectangle, and no audience block, so kids is the 2 x 2 m corner box. "
-    "The two red Unlabeled blocks are fixtures. Left out as unclear: two thin line stubs (one near B7 to B12, one L near F30), "
+    "The plan prints no stage. The large red Unlabeled block (11.7 x 15.7 m, no label, the one big empty box) is traced as the stage, facing x1 where the floor is open; "
+    "this is a guess from the box alone. No audience block is drawn, so kids is the 2 x 2 m corner box. "
+    "The thin red Unlabeled bar is a fixture. Left out as unclear: two thin line stubs (one near B7 to B12, one L near F30), "
     "the small slanted wall near A4, each C corner pair (C1/C2 and so on) is an L cut by a diagonal and is traced as two rectangles, the horizontal arm keeping the corner square. Hall polygon is the outer wall inner face."
 )
 mt.finish(truth, "plan2", {"px_per_m": SCALE, "origin_px": [HALL_PX[0], HALL_PX[1]]})

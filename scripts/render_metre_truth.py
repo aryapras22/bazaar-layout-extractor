@@ -41,8 +41,17 @@ for f in t["fixtures"]:
 for b in t["booths"]:
     R(b, fill=(150, 215, 150) if b["type"] == "goods" else (250, 180, 90) if b["type"] == "fnb" else (200, 170, 230), outline=(30, 90, 30))
     d.text(P(b["cx"] - b["w"] / 2 + 0.1, b["cy"] - 0.3), b["id"], fill=(0, 0, 0))
+import math
 for tb in t["tables"]:
-    R(tb, fill=(110, 160, 230), outline=(0, 0, 120))
+    if tb["kind"] == "table":
+        long_side, short_side = tb["rect"]
+        a = math.radians(tb["angle"])
+        u, v = (math.cos(a), math.sin(a)), (-math.sin(a), math.cos(a))
+        pts = [P(tb["cx"] + sx * long_side / 2 * u[0] + sy * short_side / 2 * v[0], tb["cy"] + sx * long_side / 2 * u[1] + sy * short_side / 2 * v[1])
+               for sx, sy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
+        d.polygon(pts, fill=(200, 220, 250), outline=(0, 0, 120))
+    else:
+        R(tb, fill=(250, 190, 110), outline=(120, 60, 0))
 for p in t["pilasters"]:
     R(p, fill=(0, 0, 0))
 for c in t["columns"]:

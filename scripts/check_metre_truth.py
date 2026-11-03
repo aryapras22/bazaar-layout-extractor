@@ -20,8 +20,8 @@ for number in plans:
         print(f"plan{number}: PROBLEM keys are {list(truth)}")
         failed = True
     problems, notes = mt.check(truth)
-    kinds, n_tables, n_walls = mt.counts(truth)
-    print(f"plan{number}: {kinds}; {n_tables} tables; {n_walls} walls; {len(truth['pilasters'])} pilasters; "
+    kinds, seating, n_walls = mt.counts(truth)
+    print(f"plan{number}: {kinds}; {seating}; {n_walls} walls; {len(truth['pilasters'])} pilasters; "
           f"{len(truth['fixtures'])} fixtures; {len(truth['columns'])} columns; {len(truth['doors'])} doors")
     for note in notes:
         print("  note:", note)

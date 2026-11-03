@@ -6,8 +6,11 @@ Scale: the 12 x 6 m stage measures 403 x 201 px outline to outline (33.6 px/m), 
 import json
 import sys
 
+import cv2
+
 sys.path.insert(0, "scripts")
 import metre_truth as mt
+import seating
 
 SCALE = 33.6
 HALL_PX = (59, 80, 2289, 2209)  # inner faces of the outer walls: x0, y0, x1, y1
@@ -63,14 +66,14 @@ for offset, f in enumerate(fixtures[:-2]):
     f.update(snapped[len(booth_meta) + offset])
 booths = mt.sort_reading_order(booths, lambda b: (b["cx"], b["cy"]))
 
-# ---- tables: every chair is one entry (seats.json, checked by eye: 136 tables x 4 chairs + 2 audience grids of 100)
+# ---- tables and chairs: 136 table symbols (a tilted rectangle with 4 round chairs) and two 10 x 10 audience chair grids.
+# Chair boxes are the checked seats.json; each table is fitted to its outline in the image (scripts/seating.py).
 audience = next(i["box"] for i in old if i["class"] == "object" and i.get("label") == "audience_seating")
-chairs = json.load(open("data/plan1/seats.json"))["items"]
-chair_px = sorted(c["box"][2] for c in chairs)[len(chairs) // 2]
-chair_m = mt.r2(chair_px / SCALE)  # the median chair is 9 to 10 px wide, a round seat of about 0.3 m
-tables = [{"cx": mt.r2(F.x(x + w / 2)), "cy": mt.r2(F.y(y + h / 2)), "w": chair_m, "h": chair_m}
-          for x, y, w, h in (c["box"] for c in chairs)]
-tables = mt.sort_reading_order(tables, lambda t: (t["cx"], t["cy"]))
+chairs_px = [c["box"] for c in json.load(open("data/plan1/seats.json"))["items"]]
+gray = cv2.imread("data/plan1/layout.png", cv2.IMREAD_GRAYSCALE)
+table_fits, owner = seating.find_tables(gray < 140, chairs_px)
+chair_m = mt.r2(sorted(c[2] for c in chairs_px)[len(chairs_px) // 2] / SCALE)
+tables = seating.entries(F, table_fits, owner, chairs_px, chair_m)
 kids = F.rect(audience[0], audience[1], audience[0] + audience[2], audience[1] + audience[3])
 
 # ---- stage, walls, pillars
@@ -102,11 +105,11 @@ truth = {
     "pantia": [], "lobbyBlock": {"x0": 0, "x1": 0, "y0": 0, "y1": 0}, "columns": [],
     "pilasters": pilasters, "fixtures": fixtures, "arrows": [], "closed": [],
 }
-by_type, n_tables, n_walls = mt.counts(truth)
+by_type, seating_summary, n_walls = mt.counts(truth)
 truth["meta"]["note"] = (
     f"Scale 33.6 px/m from the 6 x 12 m stage (403 x 201 px outline to outline), checked on the 3 x 3 m stage extension "
     f"(101 px) and 3 x 3 m booths (100.5 px pitch). Origin: hall inner top-left at (1,1). {by_type} (the legend has no food class, "
-    f"so none is fnb); {n_tables} seats in tables (one entry per chair: 136 table symbols x 4 chairs = 544, plus 200 audience chairs; table cores are not listed); {n_walls} walls (door wall, 2 vestibule, 3 seating enclosure). "
+    f"so none is fnb); {seating_summary}: each of the 136 tilted tables is fitted to its drawn outline (kind table, with its size and tilt) and keeps its 4 chairs (kind chair, table N); the 2 x 100 audience chairs have table null; {n_walls} walls (door wall, 2 vestibule, 3 seating enclosure). "
     "Door A is the exit and Door B the entrance: Door B opens into the vestibule that holds the foyer entrance door, Door A into the open foyer that holds the foyer exit door. "
     "kids holds the two 10 x 10 audience chair grids (200 chairs). 27 hollow square wall pillars are pilasters of kind block. "
     "J1 to J4 and K1 to K10 stand in the lobby, outside the hall polygon, and are kept because they are drawn. "

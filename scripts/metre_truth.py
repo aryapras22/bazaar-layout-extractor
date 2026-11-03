@@ -338,9 +338,14 @@ def finish(truth, name, frame, expect_outside=()):
 
 
 def counts(truth):
+    """(booths by type, seating summary, number of walls)."""
     kinds = {}
     for booth in truth["booths"]:
         kinds[booth["type"]] = kinds.get(booth["type"], 0) + 1
     walls = 1 + sum(1 for p in truth["pilasters"] if p["kind"] == "wall")
     parts = [f"{n} {k}" for k, n in sorted(kinds.items())]
-    return ", ".join(parts), len(truth["tables"]), walls
+    tables = sum(1 for t in truth["tables"] if t["kind"] == "table")
+    chairs = [t for t in truth["tables"] if t["kind"] == "chair"]
+    loose = sum(1 for t in chairs if t["table"] is None)
+    seating = f"{tables} tables, {len(chairs)} chairs ({len(chairs) - loose} at tables, {loose} in audience rows)"
+    return ", ".join(parts), seating, walls

@@ -29,7 +29,7 @@ PAIRS = [
     ("output/swift5/plan5/layout.json", "data/plan5/truth.json"),
     ("output/swift5/plan6/layout.json", "data/plan6/truth.json"),
 ]
-NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "gate", "symbol", "boundary", "chair"}
+NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "gate", "symbol", "boundary", "chair", "table"}
 WALL_SLACK = 6
 SEAT_LABELS = {"table_with_chairs", "audience_seating", "audience_seating_block"}
 

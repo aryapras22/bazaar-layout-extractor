@@ -16,6 +16,8 @@ from scipy import ndimage as ndi
 
 sys.path.insert(0, "scripts")
 import metre_truth as mt
+import seating
+import cv2
 
 SCALE = 33.5
 HALL_PX = (24, 23, 3391, 964)  # outer edge of the plan, x0, y0, x1, y1
@@ -47,11 +49,12 @@ for item in old:
 snapped = mt.snap_rects(boxes)
 booths = mt.sort_reading_order([mt.booth_entry(i, "goods", snapped[n]) for n, i in enumerate(ids)], lambda b: (b["cx"], b["cy"]))
 
-# ---- seats: 9 tables x 4 chairs from seats.json, and the 55 audience cells (5 columns of 11) found in the image
-chairs = json.load(open("data/plan3/seats.json"))["items"]
-chair_px = sorted(c["box"][2] for c in chairs)[len(chairs) // 2]
-seats = [{"cx": mt.r2(F.x(x + w / 2)), "cy": mt.r2(F.y(y + h / 2)), "w": mt.r2(chair_px / SCALE), "h": mt.r2(chair_px / SCALE)}
-         for x, y, w, h in (c["box"] for c in chairs)]
+# ---- tables and chairs: 9 vertical tables with 4 round chairs each (seats.json, tables fitted in the image),
+# and the 55 audience cells of the 5 x 11 block found in the image; the audience cells belong to no table
+chairs_px = [c["box"] for c in json.load(open("data/plan3/seats.json"))["items"]]
+gray = cv2.cvtColor(layout.astype(np.uint8), cv2.COLOR_RGB2GRAY)
+table_fits, owner = seating.find_tables(gray < 110, chairs_px)
+chair_m = mt.r2(sorted(c[2] for c in chairs_px)[len(chairs_px) // 2] / SCALE)
 sub = layout[418:608, 468:618]
 blue = (sub[:, :, 2] > 180) & (sub[:, :, 0] < 150) & (sub[:, :, 1] > 130) & (sub[:, :, 1] < 190)
 labels, _ = ndi.label(blue)
@@ -59,11 +62,10 @@ cells = []
 for index, sl in enumerate(ndi.find_objects(labels), 1):
     w, h = sl[1].stop - sl[1].start, sl[0].stop - sl[0].start
     if w >= 8 and h >= 12:
-        cells.append((sl[1].start + 468, sl[0].start + 418, w, h))
+        cells.append([sl[1].start + 468, sl[0].start + 418, w, h])
 assert len(cells) == 55, len(cells)
-for x, y, w, h in cells:
-    seats.append({"cx": mt.r2(F.x(x + w / 2)), "cy": mt.r2(F.y(y + h / 2)), "w": mt.r2(13 / SCALE), "h": mt.r2(14 / SCALE)})
-tables = mt.sort_reading_order(seats, lambda t: (t["cx"], t["cy"]))
+sizes = [(chair_m, chair_m)] * len(chairs_px) + [(mt.r2(13 / SCALE), mt.r2(14 / SCALE))] * len(cells)
+tables = seating.entries(F, table_fits, owner + [None] * len(cells), chairs_px + cells, chair_m, sizes)
 audience = next(i["box"] for i in old if i.get("label") == "audience_seating_block")
 kids = F.rect(audience[0], audience[1], audience[0] + audience[2], audience[1] + audience[3])
 
@@ -130,11 +132,11 @@ truth = {
     "pantia": [], "lobbyBlock": {"x0": 0, "x1": 0, "y0": 0, "y1": 0}, "columns": [],
     "pilasters": pilasters, "fixtures": fixtures, "arrows": [], "closed": [],
 }
-by_type, n_tables, n_walls = mt.counts(truth)
+by_type, seating_summary, n_walls = mt.counts(truth)
 truth["meta"]["note"] = (
     "Scale 33.5 px/m from the printed 3 x 8.25 m stage (101 x 274 px outline to outline), checked on the printed 2 m H booths (67 px pitch). "
-    f"Origin: plan top-left at (1,1). {by_type} (H1 to H86 with 19 numbers not printed); {n_tables} seats in tables "
-    "(9 tables x 4 chairs = 36, plus the 55 audience cells of the 5 x 11 block); 31 square columns of 1 m as pilasters of kind block; "
+    f"Origin: plan top-left at (1,1). {by_type} (H1 to H86 with 19 numbers not printed); {seating_summary}: "
+    "9 vertical tables fitted to their drawn outline, each with its 4 chairs, plus the 55 audience cells of the 5 x 11 block as chairs with table null; 31 square columns of 1 m as pilasters of kind block; "
     f"{n_walls} wall. The plan draws no outer wall, door wall or lobby. The red GATE bar at the end of the 4 m aisle is the only entrance feature, "
     "so the hall ends at the GATE line, the wall is that line over the full height (0.5 m, as thick as the drawn bar), the one door is the 3.6 m GATE with role both, "
     "and the lobby is the 7.7 m strip east of it. Real floor continues around the bar; that is a simplification. Gates and exitPt sit 5 m apart in the lobby on free floor, "
