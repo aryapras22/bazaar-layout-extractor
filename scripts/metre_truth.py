@@ -263,6 +263,25 @@ def check(truth, expect_outside=()):
                 if math.hypot(column["x"] - nearest_x, column["y"] - nearest_y) < column["d"] / 2 - 0.05:
                     problems.append(f"booth {booth['id']} lies on a column at {column['x']},{column['y']}")
 
+    # tables and chairs: every chair names a table that exists, tables are numbered 1..n, nothing sits on a booth, wall, pillar, fixture or the stage,
+    # and everything stands on the hall or lobby floor
+    table_numbers = [t["table"] for t in truth["tables"] if t["kind"] == "table"]
+    if table_numbers != list(range(1, len(table_numbers) + 1)):
+        problems.append("table numbers are not 1..n in order")
+    for t in truth["tables"]:
+        if t["kind"] == "chair" and t["table"] is not None and t["table"] not in table_numbers:
+            problems.append(f"chair at {t['cx']},{t['cy']} names table {t['table']}, which does not exist")
+        if not (in_polygon((t["cx"], t["cy"]), truth["hall"]) or in_polygon((t["cx"], t["cy"]), truth["lobby"])):
+            problems.append(f"{t['kind']} at {t['cx']},{t['cy']} is outside the hall and lobby")
+        for kind, item in [("booth", b) for b in booths] + solids:
+            ox, oy = overlap(t, item)
+            if ox > 0.1 and oy > 0.1:
+                problems.append(f"{t['kind']} at {t['cx']},{t['cy']} lies on {kind} {item.get('id') or item.get('label') or ''}")
+                break
+    empty = sorted(set(table_numbers) - {t["table"] for t in truth["tables"] if t["kind"] == "chair"})
+    if empty:
+        notes.append(f"tables without chairs: {empty[:10]}")
+
     # route: gates -> booth -> exit
     floor, blocked, res = raster(truth)
     walk = floor & ~blocked
