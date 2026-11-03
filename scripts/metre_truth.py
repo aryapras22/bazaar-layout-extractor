@@ -301,8 +301,13 @@ def check(truth, expect_outside=()):
 
 # ---------------------------------------------------------------- output
 
-def finish(truth, name, expect_outside=()):
-    """Order the keys, run the checks, print the report, write data/<name>/truth.json."""
+def finish(truth, name, frame, expect_outside=()):
+    """Order the keys, run the checks, print the report, write data/<name>/truth.json and data/<name>/frame.json.
+
+    frame is {"px_per_m": ..., "origin_px": [x, y]}: the layout.png pixel of the metre point (1, 1), so that
+    pixel = (metres - 1) * px_per_m + origin_px. truth.json has no pixel scale; scripts/truth_loader.py reads
+    frame.json to turn the truth back into pixel boxes for the scorer and the notebooks.
+    """
     truth = {key: truth[key] for key in KEY_ORDER}
     problems, notes = check(truth, expect_outside)
     print(name, "booths", len(truth["booths"]), "tables", len(truth["tables"]), "pilasters", len(truth["pilasters"]),
@@ -323,6 +328,12 @@ def finish(truth, name, expect_outside=()):
     lines.append("}")
     with open(f"data/{name}/truth.json", "w") as f:
         f.write("\n".join(lines) + "\n")
+    width, height = Image.open(f"data/{name}/layout.png").size
+    sidecar = {"px_per_m": round(frame["px_per_m"], 4), "origin_px": [round(v, 2) for v in frame["origin_px"]],
+               "image": {"width": width, "height": height}}
+    with open(f"data/{name}/frame.json", "w") as f:
+        json.dump(sidecar, f, indent=1)
+        f.write("\n")
     return truth, problems
 
 

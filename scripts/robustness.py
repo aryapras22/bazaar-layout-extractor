@@ -4,6 +4,7 @@ usage: robustness.py [plan numbers] [transform names]   e.g. robustness.py 1,2,3
 Geometric transforms (resize, rotate, pad) move the truth boxes and segments with the image; photometric
 ones (JPEG, blur, noise) are applied to plan and legend alike, as a scan would; `faded` is applied to the
 plan only, so its colours drift from the legend. Needs `swift build -c release --product fp-extract`.
+The truth is the metre truth of data/planN/truth.json converted to pixel items (truth_loader.py); the moved copies are pixel files.
 Set FP_EXTRACT to test another binary. Writes under output/robustness and prints one table. Run from the project root.
 """
 import json
@@ -15,6 +16,9 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from truth_loader import load_truth  # noqa: E402
 
 
 def resize(f):
@@ -83,9 +87,9 @@ def metrics(text):
     ids = re.search(r"tile ids exact (\d+)/(\d+)", text)
     wall = re.search(r"wall\s+pixel recall ([\d.]+)%", text)
     diagonal = re.search(r"diagonal wall found (\d+)/(\d+)", text)
-    return [frac("tiles"), f"{ids.group(1)}/{ids.group(2)}" if ids else "-", frac("object"), frac("pillar"),
+    return [frac("tiles"), f"{ids.group(1)}/{ids.group(2)}" if ids else "-", frac("chair"), frac("pillar"),
             f"{wall.group(1)}%" if wall and "(truth 0" not in text else "-",
-            f"{diagonal.group(1)}/{diagonal.group(2)}" if diagonal else "-"]
+            f"{diagonal.group(1)}/{diagonal.group(2)}" if diagonal else "-"]  # diagonal has no metre truth: always "-"
 
 
 plans = [int(n) for n in (sys.argv[1] if len(sys.argv) > 1 else "1,2,3,5,6").split(",")]
@@ -96,7 +100,7 @@ rows = []
 for n in plans:
     plan = cv2.imread(f"data/plan{n}/layout.png")
     legend = cv2.imread(f"data/plan{n}/legend.png")
-    truth = json.load(open(f"data/plan{n}/truth.json"))
+    truth = load_truth(f"data/plan{n}/truth.json")  # pixel items, converted from the metre truth
     for name in names:
         stem = work / f"plan{n}_{name}"
         image, key, moved = plan, legend, truth
@@ -122,7 +126,7 @@ for n in plans:
         rows.append([f"plan{n}", name, *metrics(scored)])
         print(" ".join(rows[-1]), flush=True)
 
-header = ["plan", "transform", "tiles", "ids", "objects", "pillars", "wall px", "diagonal"]
+header = ["plan", "transform", "tiles", "ids", "chairs", "pillars", "wall px", "diagonal"]
 table = "| " + " | ".join(header) + " |\n|" + "---|" * len(header) + "\n"
 table += "".join("| " + " | ".join(row) + " |\n" for row in rows)
 (work / "report.md").write_text(table)

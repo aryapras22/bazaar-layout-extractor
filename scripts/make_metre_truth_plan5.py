@@ -151,4 +151,4 @@ truth["meta"]["note"] = (
     "There is no stage and no audience block drawn (the rounded seminar zone in Hall B is unlabelled and left out), so stage is empty and kids is a 2 x 2 m corner box. "
     "Left out: pillars, office and VIP room partitions along the west of Hall B (as thin as booth dividers), icons, the F&B counters 1 to 5, WANINDO, the other doors, the legend."
 )
-mt.finish(truth, "plan5")
+mt.finish(truth, "plan5", {"px_per_m": SCALE_PT * ZOOM, "origin_px": [(F.ox - CLIP.x0) * ZOOM, (F.oy - CLIP.y0) * ZOOM]})

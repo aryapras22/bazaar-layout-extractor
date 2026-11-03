@@ -95,4 +95,4 @@ truth["meta"]["note"] = (
     "The two red Unlabeled blocks are fixtures. Left out as unclear: two thin line stubs (one near B7 to B12, one L near F30), "
     "the small slanted wall near A4, each C corner pair (C1/C2 and so on) is an L cut by a diagonal and is traced as two rectangles, the horizontal arm keeping the corner square. Hall polygon is the outer wall inner face."
 )
-mt.finish(truth, "plan2")
+mt.finish(truth, "plan2", {"px_per_m": SCALE, "origin_px": [HALL_PX[0], HALL_PX[1]]})

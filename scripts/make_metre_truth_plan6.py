@@ -14,6 +14,7 @@ sys.path.insert(0, "scripts")
 import metre_truth as mt
 
 SCALE = 15.5 / 3  # pt per metre
+CLIP_ORIGIN, ZOOM = (20, 60), 4.0  # layout.png is the PDF clipped at (20, 60) and drawn at zoom 4
 HALL_PT = (25.8, 148.8, 582.4, 612.6)
 F = mt.Frame(SCALE, HALL_PT[0], HALL_PT[1])
 page = pymupdf.open("data/plan6/source.pdf")[0]
@@ -174,6 +175,6 @@ truth["meta"]["note"] = (
     "Left out: doors on the north wall, the red-brown and grey zone fills around the stage, the thick line along the stage area, the toilet and cafe rooms south of the wall, "
     "the foyer items (sustainability corner, donation box, ambience installation, peach bars), and the objects outside the east wall (giant maps)."
 )
-mt.finish(truth, "plan6")
+mt.finish(truth, "plan6", {"px_per_m": SCALE * ZOOM, "origin_px": [(HALL_PT[0] - CLIP_ORIGIN[0]) * ZOOM, (HALL_PT[1] - CLIP_ORIGIN[1]) * ZOOM]})
 if resolved:
     print("  resolved double labels:", resolved)

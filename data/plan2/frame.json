@@ -1,0 +1,11 @@
+{
+ "px_per_m": 25.6,
+ "origin_px": [
+  17,
+  16
+ ],
+ "image": {
+  "width": 1750,
+  "height": 2106
+ }
+}

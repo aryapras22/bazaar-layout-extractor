@@ -4,7 +4,13 @@ usage: score.py [layout.json truth.json]...   (default: the swift5 outputs for p
 
 Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Tiles match on box and ID only,
 and class names are counted separately. Walls are thin and fragmented, so they use pixel coverage.
-Objects leave out single chairs (kind "chair"); those are scored as "chair" against data/planN/seats.json when it exists.
+Objects leave out single chairs (kind "chair"); those are scored as "chair" against the seats of the truth.
+
+The truth is data/planN/truth.json (metres, read through truth_loader.py and frame.json) or a pixel truth with an "items"
+list (truth_px.json, or the moved copies of robustness.py). Against the metre truth the tiles are the booths, doors are the
+openings of the door wall, chairs are the "tables" entries, pillars are block pilasters and columns, and walls are the door
+wall, wall pilasters and the hall edges. Diagonal walls, gates and object groups have no metre truth and print 0 truth items.
+Chairs come from data/planN/seats.json only when the truth has no chairs of its own.
 """
 import json
 import os
@@ -13,6 +19,9 @@ import sys
 import cv2
 import numpy as np
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from truth_loader import load_truth  # noqa: E402
+
 PAIRS = [
     ("output/swift5/plan1/layout.json", "data/plan1/truth.json"),
     ("output/swift5/plan2/layout.json", "data/plan2/truth.json"),
@@ -20,7 +29,7 @@ PAIRS = [
     ("output/swift5/plan5/layout.json", "data/plan5/truth.json"),
     ("output/swift5/plan6/layout.json", "data/plan6/truth.json"),
 ]
-NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "gate", "symbol", "boundary"}
+NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "gate", "symbol", "boundary", "chair"}
 WALL_SLACK = 6
 SEAT_LABELS = {"table_with_chairs", "audience_seating", "audience_seating_block"}
 
@@ -82,7 +91,7 @@ def row(name, found, truth_n, engine_n):
 
 def score(layout_path, truth_path):
     layout = json.load(open(layout_path))
-    truth = json.load(open(truth_path))
+    truth = load_truth(truth_path)
     engine_items, truth_items = layout["items"], truth["items"]
     shape = (layout["image"]["height"], layout["image"]["width"])
     print(f"{layout_path} vs {truth_path}")
@@ -92,7 +101,8 @@ def score(layout_path, truth_path):
     pairs = greedy_match(t_tiles, e_tiles, 0.5)
     print(row("tiles", len(pairs), len(t_tiles), len(e_tiles)))
     same_class = sum(1 for ti, ei in pairs if t_tiles[ti]["class"] == e_tiles[ei]["class"])
-    print(f"  tile class names equal {same_class}/{len(pairs)}")
+    derived = "source" in truth
+    print(f"  tile class names equal {same_class}/{len(pairs)}" + ("   (truth class names come from the ID letters)" if derived else ""))
     ids_truth = [t for t in t_tiles if t.get("id")]
     exact = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and e_tiles[ei].get("id") == t_tiles[ti]["id"])
     with_suggestion = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and t_tiles[ti]["id"] in (e_tiles[ei].get("id"), e_tiles[ei].get("suggested_id")))
@@ -114,8 +124,10 @@ def score(layout_path, truth_path):
             print(f"  unmatched objects flagged seat {sum(1 for i in extra if i.get('seat'))}/{len(extra)}")
 
     seats_path = truth_path.replace("truth.json", "seats.json")
-    if os.path.exists(seats_path):
+    t = [i for i in truth_items if i["class"] == "chair"]
+    if not t and os.path.exists(seats_path):
         t = json.load(open(seats_path))["items"]
+    if t:
         e = [i for i in engine_items if i["class"] == "object" and i.get("kind") == "chair"]
         pairs = greedy_match(t, e, 0.5)
         print(row("chair", len(pairs), len(t), len(e)))

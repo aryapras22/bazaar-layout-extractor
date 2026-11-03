@@ -114,4 +114,4 @@ truth["meta"]["note"] = (
     "Left out: the north bay doors, the west and east emergency doors (not on the door wall), the thin inner layout rectangle, the lobby walls (the lobby polygon edge is the wall), "
     "the EMERGENCY EXIT label. Hall polygon is the outer wall inner face."
 )
-mt.finish(truth, "plan1")
+mt.finish(truth, "plan1", {"px_per_m": SCALE, "origin_px": [HALL_PX[0], HALL_PX[1]]})

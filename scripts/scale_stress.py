@@ -11,6 +11,9 @@ from pathlib import Path
 
 import cv2
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from truth_loader import load_truth  # noqa: E402
+
 plans = [int(n) for n in (sys.argv[1] if len(sys.argv) > 1 else "1,5,6").split(",")]
 factors = [int(k) for k in (sys.argv[2] if len(sys.argv) > 2 else "2,3").split(",")]
 work = Path("output/stress")
@@ -19,7 +22,7 @@ work.mkdir(parents=True, exist_ok=True)
 for n in plans:
     image = cv2.imread(f"data/plan{n}/layout.png")
     height, width = image.shape[:2]
-    truth = json.load(open(f"data/plan{n}/truth.json"))
+    truth = load_truth(f"data/plan{n}/truth.json")
     for k in factors:
         left, top = width * (k - 1) // 2, height * (k - 1) // 2
         padded = cv2.copyMakeBorder(image, top, height * k - height - top, left, width * k - width - left,

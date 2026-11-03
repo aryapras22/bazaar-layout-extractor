@@ -4,6 +4,11 @@ from pathlib import Path
 import cv2
 import numpy as np
 
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from truth_loader import load_truth  # noqa: E402
+
 ROOT = Path("/Users/arya/projects/ada/bazaar/floor-plan-extractor/legend-only")
 OUTPUT_BASE = ROOT / "output/vlm_renders"
 OUTPUT_BASE.mkdir(parents=True, exist_ok=True)
@@ -36,7 +41,7 @@ def iou(a, b):
 def determine_coord_mode(items, truth_path, W, H):
     if not truth_path or not truth_path.exists():
         return "rel1000_xyxy"
-    truth_items = json.loads(truth_path.read_text())["items"]
+    truth_items = load_truth(str(truth_path))["items"]
     truth_booths = [t for t in truth_items if t.get("id")]
     best_mode = "rel1000_xyxy"
     best_found = -1

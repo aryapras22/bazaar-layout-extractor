@@ -142,4 +142,4 @@ truth["meta"]["note"] = (
     f"{len(tenant_rects)} of them, so thin slivers along slanted edges stay open. The stage faces x1 where the audience block stands; kids is that block. "
     "Left out: dimension arrows, the dashed stage surround, the red and green dashed circles at the gate, the 'MR. DIY' and 'PRODESIGN' text."
 )
-mt.finish(truth, "plan3")
+mt.finish(truth, "plan3", {"px_per_m": SCALE, "origin_px": [HALL_PX[0], HALL_PX[1]]})
