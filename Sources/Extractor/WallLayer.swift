@@ -40,13 +40,13 @@ func wallLayer(_ s: InkScan) -> WallResult {
     for s in confidentSegs {
         items.append(outsideItem("wall", s.rect, review: false, reason: nil))
     }
-    for s in reviewSegs {
-        items.append(outsideItem("wall", s.rect, review: true, reason: "single line, not confirmed as a wall"))
-    }
-
     let minTotal = Int(0.4 * Double(mx))
     let tolerance = max(3, Int((0.006 * Double(mx)).rounded()))
     var wallBands = bands(confidentSegs, tolerance: tolerance, minTotal: minTotal)
+    // Plan 1: when the hall edges are double-line walls, long 1-2 px single lines (length >= 3 * longest, stroke <= 3) are inner hall borders or symbol outlines, not walls.
+    for s in reviewSegs where wallBands.isEmpty || s.length < 3 * longest || min(Int(s.rect.width), Int(s.rect.height)) >= 4 {
+        items.append(outsideItem("wall", s.rect, review: true, reason: "single line, not confirmed as a wall"))
+    }
     var fallback = false
     if wallBands.isEmpty {
         fallback = true
