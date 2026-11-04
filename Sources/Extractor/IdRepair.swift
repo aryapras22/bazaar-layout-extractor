@@ -240,6 +240,7 @@ func repairIds(_ items: inout [Item], classPrefixes: [String: String], ruleCount
                (1...(curMax + 1)).contains(n), !effectivePresent.contains(n)
             {
                 items[idx].suggestedId = "\(prefix)\(n)"
+                items[idx].id = items[idx].suggestedId
                 items[idx].fixRule = "ocr-confusion"
                 items[idx].fixReason = "\"\(String(raw))\" has leading digit \"\(raw[0])\" confused with prefix \"\(prefix)\""
                 effectivePresent.insert(n)
@@ -289,6 +290,7 @@ func repairIds(_ items: inout [Item], classPrefixes: [String: String], ruleCount
         var resolvedByOCR = Set<Int>()
         for m in ocrMatched where usedGapsCounts[m.gap] == 1 {
             items[m.idx].suggestedId = "\(prefix)\(m.gap)"
+            items[m.idx].id = items[m.idx].suggestedId
             items[m.idx].fixRule = "ocr-confusion"
             items[m.idx].fixReason = "OCR substitution on \"\(m.raw)\" lands uniquely on gap \(prefix)\(m.gap)"
             gapSet.remove(m.gap)
