@@ -5,7 +5,7 @@ Default: output/extractor/planN/layout.json for plans 1 to 3, 5 and 6, run from 
 of those pipelines, so one pipeline can be improved and read on its own:
   booth  tiles, tile IDs and class names
   wall   walls, diagonal walls, pillars
-  door   doors, gates
+  door   doors (swing symbols), openings, gates
   seat   objects, chairs, tables, chair-to-table links
 
 Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Tiles match on box and ID only,
@@ -13,6 +13,8 @@ and class names are counted separately. Walls are thin and fragmented, so they u
 Objects leave out single chairs (kind "chair"), chair groups and tables (kind "table"); engine tiles left over by the booth
 pass that match a truth object are counted as fixtures and left out of tile precision; chairs are scored as "chair" against the seats of
 the truth, tables as "table" (box IoU 0.5, then centre, size and angle), and each matched chair on whether it names the right table.
+Swing symbols ("door") match a truth door when they cover half its box; openings match one when the boxes touch and
+their spans along the wall overlap by half.
 
 The truth is data/planN/truth.json (metres, read through truth_loader.py and frame.json) or a pixel truth with an "items"
 list (truth_px.json, or the moved copies of robustness.py). Against the metre truth the tiles are the booths, doors are the
@@ -37,7 +39,7 @@ PAIRS = [
     ("output/extractor/plan5/layout.json", "data/plan5/truth.json"),
     ("output/extractor/plan6/layout.json", "data/plan6/truth.json"),
 ]
-NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "gate", "symbol", "boundary", "chair", "table"}
+NON_TILE = {"object", "wall", "diagonal wall", "pillar", "door", "opening", "gate", "symbol", "boundary", "chair", "table"}
 WALL_SLACK = 6
 SEAT_LABELS = {"table_with_chairs", "audience_seating", "audience_seating_block"}
 
@@ -94,6 +96,32 @@ def wall_scores(truth, engine, shape):
 
 FIXTURE_IOU = 0.5  # plan 1: Entrance and Stage tiles match the truth objects at IoU 0.65 to 0.97
 DOOR_COVER = 0.5  # plans 1 and 2: the truth is the opening band, the engine box is the whole swing symbol around it
+OPENING_ALONG = 0.5  # plans 1 and 2: the truth box is a metre wall thick, the engine opening only the drawn wall band
+
+
+def along_match(truth, engine, threshold):
+    """Match an engine opening to a truth opening when the boxes touch and their spans along the wall (the long side
+    of the truth box) overlap by at least threshold of their union."""
+    scored = []
+    for ti, t in enumerate(truth):
+        tx, ty, tw, th = t["box"]
+        for ei, e in enumerate(engine):
+            ex, ey, ew, eh = e["box"]
+            ix = min(tx + tw, ex + ew) - max(tx, ex)
+            iy = min(ty + th, ey + eh) - max(ty, ey)
+            if ix <= 0 or iy <= 0:
+                continue
+            along = ix / (max(tx + tw, ex + ew) - min(tx, ex)) if tw >= th else iy / (max(ty + th, ey + eh) - min(ty, ey))
+            scored.append((along, ti, ei))
+    used_t, used_e, pairs = set(), set(), []
+    for along, ti, ei in sorted(scored, reverse=True):
+        if along < threshold:
+            break
+        if ti not in used_t and ei not in used_e:
+            used_t.add(ti)
+            used_e.add(ei)
+            pairs.append((ti, ei))
+    return pairs
 
 
 def cover_match(truth, engine, threshold):
@@ -194,6 +222,9 @@ def score(layout_path, truth_path):
         if cls == "door":
             pairs = cover_match(t, e, DOOR_COVER)
             say("door", f"  door     {len(pairs):>4}/{len(t):<4} recall {len(pairs) / len(t) if t else float('nan'):>6.1%}   swing symbols not in truth {len(e) - len(pairs)}")
+            openings = [i for i in engine_items if i["class"] == "opening"]
+            pairs = along_match(t, openings, OPENING_ALONG)
+            say("door", f"  opening  {len(pairs):>4}/{len(t):<4} recall {len(pairs) / len(t) if t else float('nan'):>6.1%}   openings not in truth {len(openings) - len(pairs)}")
             continue
         pairs = greedy_match(t, e, 0.3)
         say(CLASS_LAYER[cls], row(cls, len(pairs), len(t), len(e)))

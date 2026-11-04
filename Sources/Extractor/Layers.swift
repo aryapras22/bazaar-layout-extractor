@@ -11,7 +11,7 @@ enum Layer: String, CaseIterable, Comparable {
     static func of(_ item: Item) -> Layer {
         switch item.cls {
         case "wall", "pillar": return .wall
-        case "door": return .door
+        case "door", "opening": return .door
         case "object": return .seat
         default: return .booth
         }

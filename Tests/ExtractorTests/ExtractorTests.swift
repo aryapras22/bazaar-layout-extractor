@@ -240,7 +240,22 @@ private func squareRegion(_ x0: Int, _ y0: Int, side: Int, w: Int) -> Region {
     #expect(Layer.of(tile("wall", nil)) == .wall)
     #expect(Layer.of(tile("pillar", nil)) == .wall)
     #expect(Layer.of(tile("door", nil)) == .door)
+    #expect(Layer.of(tile("opening", nil)) == .door)
     #expect(Layer.of(tile("object", nil)) == .seat)
+}
+
+@Test func openingIsTheUnwalledRunOfABandUnderASwing() {
+    func wall(_ x0: Int, _ x1: Int) -> Item {
+        outsideItem("wall", CGRect(x: x0, y: 100, width: x1 - x0, height: 8), review: false, reason: nil)
+    }
+    let band = Band(c0: 100, c1: 107, lo: 0, hi: 400, total: 380, horizontal: true, confident: true)
+    let swing = CGRect(x: 180, y: 80, width: 60, height: 50)
+    let gapped = WallResult(items: [wall(0, 185), wall(235, 400)], bands: [band], fallback: false)
+    #expect(opening(at: swing, walls: gapped)?.box == [185, 100, 50, 8])
+    let closed = WallResult(items: [wall(0, 400)], bands: [band], fallback: false)
+    #expect(opening(at: swing, walls: closed) == nil)
+    let endOfWall = WallResult(items: [wall(0, 185)], bands: [Band(c0: 100, c1: 107, lo: 0, hi: 200, total: 185, horizontal: true, confident: true)], fallback: false)
+    #expect(opening(at: swing, walls: endOfWall) == nil)
 }
 
 @Test func layersOptionTakesNamesAndRejectsUnknownOnes() {

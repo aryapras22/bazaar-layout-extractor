@@ -19,12 +19,46 @@ func doorLayer(_ s: InkScan, walls: WallResult) -> [Item] {
         return false
     }
     let arcs = finder.arcs().filter { $0.bad <= 0.3 && $0.interior <= 0.35 && $0.r >= 4.5 * $0.stroke && touchesWall($0) }
-    return swingSymbols(dominant(arcs)).map { group in
+    let swings = swingSymbols(dominant(arcs)).map { group in
         let rect = group.map(\.rect).reduce(CGRect.null) { $0.union($1) }
         let radius = group.map(\.r).max() ?? 0
         return outsideItem("door", rect.insetBy(dx: -1, dy: -1), review: true,
                            reason: "swing symbol, \(group.count) arc" + (group.count == 1 ? "" : "s") + ", r=\(Int(radius))")
     }
+    return swings + swings.compactMap { opening(at: $0.rect, walls: walls) }
+}
+
+/// The opening a swing symbol stands in: a wall band that runs through the symbol and past it on both sides, with
+/// no confirmed wall along at least half of the symbol's width. The box is that unwalled run across the band.
+func opening(at swing: CGRect, walls: WallResult) -> Item? {
+    let solid = walls.items.filter { $0.cls == "wall" && !$0.needsReview && $0.segment == nil }
+    for band in walls.bands {
+        let (across, along) = band.horizontal
+            ? (Int(swing.minY)...Int(swing.maxY), Int(swing.minX)..<Int(swing.maxX))
+            : (Int(swing.minX)...Int(swing.maxX), Int(swing.minY)..<Int(swing.maxY))
+        guard across.overlaps(band.c0...band.c1), band.lo < along.lowerBound, band.hi >= along.upperBound else { continue }
+        var walled = [Bool](repeating: false, count: along.count)
+        for wall in solid {
+            let r = wall.rect
+            let (wallAcross, wallAlong) = band.horizontal ? (Int(r.minY)...Int(r.maxY), Int(r.minX)..<Int(r.maxX))
+                                                          : (Int(r.minX)...Int(r.maxX), Int(r.minY)..<Int(r.maxY))
+            guard wallAcross.overlaps(band.c0...band.c1) else { continue }
+            for k in wallAlong.clamped(to: along) { walled[k - along.lowerBound] = true }
+        }
+        var best = 0..<0, start: Int?
+        for k in 0...walled.count {
+            if k < walled.count, !walled[k] { if start == nil { start = k }; continue }
+            if let s = start, k - s > best.count { best = s..<k }
+            start = nil
+        }
+        guard best.count * 2 >= along.count else { continue }
+        let (a, b) = (along.lowerBound + best.lowerBound, along.lowerBound + best.upperBound)
+        let rect = band.horizontal
+            ? CGRect(x: a, y: band.c0, width: b - a, height: band.c1 - band.c0 + 1)
+            : CGRect(x: band.c0, y: a, width: band.c1 - band.c0 + 1, height: b - a)
+        return outsideItem("opening", rect, review: true, reason: "gap in a wall band under a swing symbol")
+    }
+    return nil
 }
 
 /// Corners of jamb posts and gate boxes also fit small arcs. Next to a swing at least a third larger they are
