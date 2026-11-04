@@ -59,8 +59,13 @@ final class PlanRun {
         try FileManager.default.createDirectory(at: outDir, withIntermediateDirectories: true)
 
         let original = try loadImage(URL(fileURLWithPath: opts.planPath))
+        let legendImage = try loadImage(URL(fileURLWithPath: opts.legendPath))
+        return try await load(opts, outDir: outDir, original: original, legend: legendImage)
+    }
+
+    static func load(_ opts: Options, outDir: URL, original: CGImage, legend: CGImage) async throws -> PlanRun {
         var plan = original
-        var legendImage = try loadImage(URL(fileURLWithPath: opts.legendPath))
+        var legendImage = legend
         if let clean = smoothedIfNoisy(legendImage, threshold: 0.04) {
             note("note: pixel noise found in the legend, smoothing it before reading it")
             legendImage = clean
