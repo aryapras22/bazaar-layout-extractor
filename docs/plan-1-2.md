@@ -70,14 +70,15 @@ Write it as a sixth stage in `PlanRun` (`export`, off by default) and score it w
 
 ## 5. Exit criteria
 
-| | Now (old) | Target |
+| | Baseline at 810379a (plan 1, plan 2) | Target |
 |---|---|---|
-| booth ids | 154/154, 208/209 | 154/154, 209/209 |
-| tile precision | 92%, 100% | 100% on both, extras counted as fixtures |
-| walls | 89/81, 98/86 | recall 90 or more, precision 90 or more |
-| pillars (plan 1) | about 23/27 | 27/27 |
-| doors | 3/6, 4/4 swing symbols | 2/2 openings on both |
-| objects, tables, chairs | 137/141, 26/26 | no misses, all links right |
+| booth ids | 154/154 exact, 154/154 with suggested_id; 208/209 exact, 209/209 with suggested_id | 154/154, 209/209 exact |
+| tile precision | 95.2% (fixtures 6/6 left out); 100% | 100% on both, extras counted as fixtures |
+| walls, metre truth | recall 77.3%, precision 64.3%; recall 96.7%, precision 74.4% | recall 90 or more on the door wall and hall edges |
+| walls, truth_px | recall 89.1%, precision 81.0%; recall 97.7%, precision 85.5% | precision 90 or more, recall 89 or more |
+| pillars (plan 1) | 22/27, 23 engine | 27/27, no false pillar |
+| doors | 2/2 with 9 swing symbols not in truth; 2/2 with 2 | 2/2 on both |
+| objects, tables, chairs | fixtures 6/6; tables 136/136 and 26/26; chairs 736/744 and 104/104; links 736/736 and 104/104 | all links right |
 | metre export | none | passes `check_metre_truth.py`, within 0.3 m of the truth on booths |
 
 ## 6. Guardrails

@@ -231,6 +231,11 @@ def score(layout_path, truth_path):
     e_walls = [i for i in engine_items if i["class"] == "wall"]
     recall, precision = wall_scores(t_walls, e_walls, shape)
     say("wall", f"  wall     pixel recall {recall:.1%}   pixel precision {precision:.1%}   (truth {len(t_walls)}, engine {len(e_walls)})")
+    pixel_truth_path = os.path.join(os.path.dirname(truth_path), "truth_px.json")
+    if os.path.basename(truth_path) == "truth.json" and os.path.exists(pixel_truth_path):
+        t_pixel_walls = [i for i in json.load(open(pixel_truth_path))["items"] if i["class"] == "wall"]
+        recall, precision = wall_scores(t_pixel_walls, e_walls, shape)
+        say("wall", f"  wall px  pixel recall {recall:.1%}   pixel precision {precision:.1%}   (truth_px {len(t_pixel_walls)}, engine {len(e_walls)})")
 
 
 def main():
