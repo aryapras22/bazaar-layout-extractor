@@ -17,6 +17,8 @@ public struct PlanItem: Sendable {
     public let segment: [Int]?
     public let width: Double?
     public let kind: String?
+    /// The legend colour of the class this item was matched to, or grey for items that are not legend classes.
+    public let legendRgb: [Int]
 }
 
 public struct PlanReading: Sendable {
@@ -60,7 +62,7 @@ public enum PlanExtractor {
 
         let items = run.items.map {
             PlanItem(cls: $0.cls, box: $0.box, id: $0.id, needsReview: $0.needsReview,
-                     segment: $0.segment, width: $0.width, kind: $0.kind)
+                     segment: $0.segment, width: $0.width, kind: $0.kind, legendRgb: $0.legendRgb)
         }
         let swatches = run.entries.map { LegendSwatch(label: $0.label, rgb: $0.colors.first ?? [128, 128, 128]) }
         return PlanReading(imageWidth: plan.width, imageHeight: plan.height, legend: swatches, items: items)
