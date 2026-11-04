@@ -49,7 +49,7 @@ struct OutsideLayers {
 func outsideLayers(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> OutsideLayers {
     let scan = await scanInk(image, px, claimed: claimed)
     let walls = wallLayer(scan)
-    let columns = columnLayer(scan)
+    let columns = columnLayer(scan, bands: walls.bands)
     return OutsideLayers(
         walls: walls.items,
         columns: columns.items,

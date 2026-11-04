@@ -129,12 +129,14 @@ func slantedWalls(_ s: InkScan) -> [Item] {
 }
 
 /// Column part of the wall layer: solid squares, and hollow squares crossed by a wall line.
-func columnLayer(_ s: InkScan) -> (items: [Item], hollow: [Bool]) {
+func columnLayer(_ s: InkScan, bands: [Band] = []) -> (items: [Item], hollow: [Bool]) {
     let (w, h, n, mx, longest) = (s.w, s.h, s.n, s.mx, s.longest)
     let (rawInk, inText, textBoxes, pillars) = (s.rawInk, s.inText, s.textBoxes, s.solidRegions)
     var items: [Item] = []
 
     for reg in pillars {
+        // Plan 1: the upside-down stage block (403 x 205 grey fill) has no readable label, so only its size rules it out.
+        if reg.width > Int(0.04 * Double(mx)) || reg.height > Int(0.04 * Double(mx)) { continue }
         let center = CGPoint(x: Double(reg.minX + reg.maxX) / 2, y: Double(reg.minY + reg.maxY) / 2)
         if textBoxes.contains(where: { $0.contains(center) }) { continue }
         let rect = CGRect(x: reg.minX, y: reg.minY, width: reg.width, height: reg.height)
@@ -150,8 +152,11 @@ func columnLayer(_ s: InkScan) -> (items: [Item], hollow: [Bool]) {
     let cores = morph(morph(filled, w: w, h: h, rx: coreRadius, ry: coreRadius, erode: true),
                       w: w, h: h, rx: coreRadius, ry: coreRadius, erode: false)
     var hollow = [Bool](repeating: false, count: n)
+    var squareSides: [Int] = []
+    var merged: [Region] = []
     for reg in components(cores, w: w, h: h, eight: true) {
         let side = Double(max(reg.width, reg.height))
+        if side > 0.02 * Double(mx) { merged.append(reg) }
         guard side >= 0.005 * Double(mx), side <= 0.02 * Double(mx),
               Double(max(reg.width, reg.height)) <= 1.5 * Double(min(reg.width, reg.height)),
               reg.fill >= 0.8,
@@ -159,8 +164,68 @@ func columnLayer(_ s: InkScan) -> (items: [Item], hollow: [Bool]) {
         let center = CGPoint(x: Double(reg.minX + reg.maxX) / 2, y: Double(reg.minY + reg.maxY) / 2)
         if textBoxes.contains(where: { $0.contains(center) }) { continue }
         for i in reg.pixels { hollow[i] = true }
+        squareSides.append(max(reg.width, reg.height))
         let rect = CGRect(x: reg.minX, y: reg.minY, width: reg.width, height: reg.height)
         items.append(outsideItem("pillar", rect, review: true, reason: "hollow square, confirm it is a pillar"))
+    }
+
+    // A square drawn against a symbol outline (plan 1: the north-wall squares touch an entrance box) fuses with it
+    // into one core that is too big for the pass above. Look for the same size of square inside such a core: a
+    // window whose four edges are all ink.
+    if !squareSides.isEmpty {
+        let side = squareSides.sorted()[squareSides.count / 2]
+        let edge = max(2, Int((0.001 * Double(mx)).rounded()))
+        func inked(_ x: Int, _ y: Int, alongX: Bool) -> Bool {
+            (0..<edge).contains { k in
+                let (px, py) = alongX ? (x, y + k) : (x + k, y)
+                return px < w && py < h && loopInk[py * w + px]
+            }
+        }
+        func edgeIsInk(_ x: Int, _ y: Int, alongX: Bool) -> Bool {
+            (0..<side).allSatisfy { inked(alongX ? x + $0 : x, alongX ? y : y + $0, alongX: alongX) }
+        }
+        // Plan 1: a wall line or two cross a pillar (about a third of the inside), while grey fill (the stage) or
+        // stairs (plan 6) fill most of it or have ink running perpendicular to the wall.
+        func isHollow(_ x: Int, _ y: Int, horizontalWall: Bool) -> Bool {
+            var inkCount = 0
+            for yy in (y + edge)..<(y + side - edge) {
+                for xx in (x + edge)..<(x + side - edge) where yy < h && xx < w && loopInk[yy * w + xx] { inkCount += 1 }
+            }
+            let inside = (side - 2 * edge) * (side - 2 * edge)
+            guard inkCount * 2 < inside else { return false }
+            let clearSpan = (y + edge)..<(y + side - edge)
+            if horizontalWall {
+                return !( (x + edge)..<(x + side - edge) ).contains { xx in
+                    clearSpan.allSatisfy { yy in yy < h && xx < w && loopInk[yy * w + xx] }
+                }
+            } else {
+                let clearX = (x + edge)..<(x + side - edge)
+                return !clearSpan.contains { yy in
+                    clearX.allSatisfy { xx in yy < h && xx < w && loopInk[yy * w + xx] }
+                }
+            }
+        }
+        for reg in merged {
+            var found: [CGRect] = []
+            for y in reg.minY...max(reg.minY, reg.maxY - side + 1) {
+                for x in reg.minX...max(reg.minX, reg.maxX - side + 1) {
+                    let rect = CGRect(x: x, y: y, width: side, height: side)
+                    guard let band = bands.first(where: { b in
+                        b.horizontal
+                            ? (Int(rect.minY)...Int(rect.maxY)).overlaps(b.c0...b.c1) && (Int(rect.minX)...Int(rect.maxX)).overlaps(b.lo...b.hi)
+                            : (Int(rect.minX)...Int(rect.maxX)).overlaps(b.c0...b.c1) && (Int(rect.minY)...Int(rect.maxY)).overlaps(b.lo...b.hi)
+                    }) else { continue }
+                    guard edgeIsInk(x, y, alongX: true), edgeIsInk(x, y, alongX: false),
+                          edgeIsInk(x + side - edge, y, alongX: false),
+                          edgeIsInk(x, y + side - edge, alongX: true), isHollow(x, y, horizontalWall: band.horizontal) else { continue }
+                    if found.contains(where: { $0.insetBy(dx: -Double(side) / 2, dy: -Double(side) / 2).intersects(rect) }) { continue }
+                    let center = CGPoint(x: rect.midX, y: rect.midY)
+                    if textBoxes.contains(where: { $0.contains(center) }) { continue }
+                    found.append(rect)
+                    items.append(outsideItem("pillar", rect, review: true, reason: "hollow square against a symbol outline, confirm it is a pillar"))
+                }
+            }
+        }
     }
 
     // Round columns are rings, often with a bar across, so the bar splits the inside into two holes that the
