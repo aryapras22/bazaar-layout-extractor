@@ -91,6 +91,30 @@ def wall_scores(truth, engine, shape):
     return recall, precision
 
 
+DOOR_COVER = 0.5  # plans 1 and 2: the truth is the opening band, the engine box is the whole swing symbol around it
+
+
+def cover_match(truth, engine, threshold):
+    """Match an engine box to a truth box when it covers at least threshold of the truth box area."""
+    scored = []
+    for ti, t in enumerate(truth):
+        tx, ty, tw, th = t["box"]
+        for ei, e in enumerate(engine):
+            ex, ey, ew, eh = e["box"]
+            ix = max(0, min(tx + tw, ex + ew) - max(tx, ex))
+            iy = max(0, min(ty + th, ey + eh) - max(ty, ey))
+            scored.append((ix * iy / (tw * th), ti, ei))
+    used_t, used_e, pairs = set(), set(), []
+    for cover, ti, ei in sorted(scored, reverse=True):
+        if cover < threshold:
+            break
+        if ti not in used_t and ei not in used_e:
+            used_t.add(ti)
+            used_e.add(ei)
+            pairs.append((ti, ei))
+    return pairs
+
+
 LAYERS = ("booth", "wall", "door", "seat")
 CLASS_LAYER = {"object": "seat", "pillar": "wall", "door": "door", "gate": "door"}
 shown = set(LAYERS)
@@ -159,6 +183,10 @@ def score(layout_path, truth_path):
     for cls in ("object", "pillar", "door", "gate"):
         t = [i for i in truth_items if i["class"] == cls]
         e = [i for i in engine_items if i["class"] == cls and i.get("kind") not in ("chair", "table")]
+        if cls == "door":
+            pairs = cover_match(t, e, DOOR_COVER)
+            say("door", f"  door     {len(pairs):>4}/{len(t):<4} recall {len(pairs) / len(t) if t else float('nan'):>6.1%}   swing symbols not in truth {len(e) - len(pairs)}")
+            continue
         pairs = greedy_match(t, e, 0.3)
         say(CLASS_LAYER[cls], row(cls, len(pairs), len(t), len(e)))
         if cls == "object" and t:
