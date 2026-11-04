@@ -10,7 +10,8 @@ of those pipelines, so one pipeline can be improved and read on its own:
 
 Tiles and objects use greedy box IoU matching (tiles 0.5, others 0.3). Tiles match on box and ID only,
 and class names are counted separately. Walls are thin and fragmented, so they use pixel coverage.
-Objects leave out single chairs (kind "chair") and tables (kind "table"); chairs are scored as "chair" against the seats of
+Objects leave out single chairs (kind "chair"), chair groups and tables (kind "table"); engine tiles left over by the booth
+pass that match a truth object are counted as fixtures and left out of tile precision; chairs are scored as "chair" against the seats of
 the truth, tables as "table" (box IoU 0.5, then centre, size and angle), and each matched chair on whether it names the right table.
 
 The truth is data/planN/truth.json (metres, read through truth_loader.py and frame.json) or a pixel truth with an "items"
@@ -91,6 +92,7 @@ def wall_scores(truth, engine, shape):
     return recall, precision
 
 
+FIXTURE_IOU = 0.5  # plan 1: Entrance and Stage tiles match the truth objects at IoU 0.65 to 0.97
 DOOR_COVER = 0.5  # plans 1 and 2: the truth is the opening band, the engine box is the whole swing symbol around it
 
 
@@ -171,7 +173,13 @@ def score(layout_path, truth_path):
     t_tiles = [i for i in truth_items if i["class"] not in NON_TILE]
     e_tiles = [i for i in engine_items if i["class"] not in NON_TILE]
     pairs = greedy_match(t_tiles, e_tiles, 0.5)
-    say("booth", row("tiles", len(pairs), len(t_tiles), len(e_tiles)))
+    matched_tiles = {ei for _, ei in pairs}
+    leftover = [e for k, e in enumerate(e_tiles) if k not in matched_tiles]
+    t_fixtures = [i for i in truth_items if i["class"] == "object"]
+    fixture_pairs = greedy_match(t_fixtures, leftover, FIXTURE_IOU)
+    say("booth", row("tiles", len(pairs), len(t_tiles), len(e_tiles) - len(fixture_pairs)))
+    if t_fixtures:
+        say("booth", f"  fixtures found {len(fixture_pairs)}/{len(t_fixtures)}   (engine tiles matching a truth object, left out of tile precision)")
     same_class = sum(1 for ti, ei in pairs if t_tiles[ti]["class"] == e_tiles[ei]["class"])
     derived = "source" in truth
     say("booth", f"  tile class names equal {same_class}/{len(pairs)}" + ("   (truth class names come from the ID letters)" if derived else ""))
@@ -182,7 +190,7 @@ def score(layout_path, truth_path):
 
     for cls in ("object", "pillar", "door", "gate"):
         t = [i for i in truth_items if i["class"] == cls]
-        e = [i for i in engine_items if i["class"] == cls and i.get("kind") not in ("chair", "table")]
+        e = [i for i in engine_items if i["class"] == cls and i.get("kind") not in ("chair", "table", "chair_group")]
         if cls == "door":
             pairs = cover_match(t, e, DOOR_COVER)
             say("door", f"  door     {len(pairs):>4}/{len(t):<4} recall {len(pairs) / len(t) if t else float('nan'):>6.1%}   swing symbols not in truth {len(e) - len(pairs)}")
