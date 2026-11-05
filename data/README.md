@@ -4,7 +4,9 @@ Each plan folder (`plan1`, `plan2`, `plan3`, `plan5`, `plan6`) holds the inputs 
 
 ```
 layout.png      the floor plan image
+layout.pdf      PDF version of layout
 legend.png      its legend
+legend.pdf      PDF version of legend
 source.pdf      the vector source (plans 5 and 6 only)
 truth.json      the plan traced in metres, for the crowd simulation and the 3D viewer
 frame.json      pixel scale and origin of truth.json on layout.png

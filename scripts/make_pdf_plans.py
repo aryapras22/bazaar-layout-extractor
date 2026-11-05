@@ -1,8 +1,9 @@
-"""Render data/plan5 (cosmo) and data/plan6 (women-fest) from their source.pdf into layout.png and legend.png.
+"""Render data/plan5 and plan6 from source.pdf into layout.png and legend.png, and generate layout.pdf and legend.pdf for every plan.
 
-Rects are in PDF points. The legend of each plan is printed inside or beside the plan, so the layout
-crop is the plan area only and the legend is cut separately. Run from the project root.
+Rects are in PDF points. Run from the project root:
+conda run -n floor-plan-extractor-apple python scripts/make_pdf_plans.py
 """
+from pathlib import Path
 import pymupdf
 
 PLANS = {
@@ -11,8 +12,24 @@ PLANS = {
 }
 
 for name, spec in PLANS.items():
-    page = pymupdf.open(f"data/{name}/source.pdf")[0]
+    source_pdf = Path(f"data/{name}/source.pdf")
+    if source_pdf.exists():
+        page = pymupdf.open(str(source_pdf))[0]
+        for part in ("layout", "legend"):
+            pix = page.get_pixmap(matrix=pymupdf.Matrix(spec["zoom"], spec["zoom"]), clip=pymupdf.Rect(*spec[part]))
+            pix.save(f"data/{name}/{part}.png")
+            print(name, part, pix.width, "x", pix.height)
+
+for plan_dir in sorted(Path("data").glob("plan*")):
     for part in ("layout", "legend"):
-        pix = page.get_pixmap(matrix=pymupdf.Matrix(spec["zoom"], spec["zoom"]), clip=pymupdf.Rect(*spec[part]))
-        pix.save(f"data/{name}/{part}.png")
-        print(name, part, pix.width, "x", pix.height)
+        png_path = plan_dir / f"{part}.png"
+        if not png_path.exists():
+            continue
+        pdf_path = plan_dir / f"{part}.pdf"
+        img = pymupdf.Pixmap(str(png_path))
+        doc = pymupdf.open()
+        page = doc.new_page(width=img.width, height=img.height)
+        page.insert_image(pymupdf.Rect(0, 0, img.width, img.height), filename=str(png_path))
+        doc.save(str(pdf_path), deflate=True, garbage=4)
+        print(f"wrote {pdf_path} ({img.width}x{img.height})")
+
