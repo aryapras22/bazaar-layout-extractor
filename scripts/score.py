@@ -4,7 +4,7 @@ usage: score.py [--layer booth,wall,door,seat] [layout.json truth.json]...
 Default: output/extractor/planN/layout.json for plans 1 to 3, 5 and 6, run from the project root. --layer prints only the lines
 of those pipelines, so one pipeline can be improved and read on its own:
   booth  tiles, tile IDs and class names
-  wall   walls, diagonal walls, pillars
+  wall   walls, diagonal walls
   door   doors (swing symbols), openings, gates
   seat   objects, chairs, tables, chair-to-table links
 
@@ -146,7 +146,7 @@ def cover_match(truth, engine, threshold):
 
 
 LAYERS = ("booth", "wall", "door", "seat")
-CLASS_LAYER = {"object": "seat", "pillar": "wall", "door": "door", "gate": "door"}
+CLASS_LAYER = {"object": "seat", "door": "door", "gate": "door"}
 shown = set(LAYERS)
 
 
@@ -216,7 +216,7 @@ def score(layout_path, truth_path):
     with_suggestion = sum(1 for ti, ei in pairs if t_tiles[ti].get("id") and t_tiles[ti]["id"] in (e_tiles[ei].get("id"), e_tiles[ei].get("suggested_id")))
     say("booth", f"  tile ids exact {exact}/{len(ids_truth)}, with suggested_id {with_suggestion}/{len(ids_truth)}")
 
-    for cls in ("object", "pillar", "door", "gate"):
+    for cls in ("object", "door", "gate"):
         t = [i for i in truth_items if i["class"] == cls]
         e = [i for i in engine_items if i["class"] == cls and i.get("kind") not in ("chair", "table", "chair_group")]
         if cls == "door":

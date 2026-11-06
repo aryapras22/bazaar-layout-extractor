@@ -52,9 +52,12 @@ func outsideLayers(_ image: CGImage, _ px: Pixels, claimed: [Bool]) async -> Out
     let scan = await scanInk(image, px, claimed: claimed)
     let walls = wallLayer(scan)
     let columns = columnLayer(scan, bands: walls.bands)
-    return OutsideLayers(
-        walls: walls.items,
-        columns: columns.items,
-        doors: doorLayer(scan, walls: walls),
-        seats: seatLayer(scan, hollow: columns.hollow))
+    let doors = doorLayer(scan, walls: walls)
+    let swings = doors.filter { $0.cls == "door" }.map(\.rect)
+    // Columns are not read as items, but the seat layer still needs their ink out of the way. The arcs of a swing
+    // symbol look like a chair group to the seat layer, so objects inside a swing box are dropped.
+    let seats = seatLayer(scan, hollow: columns.hollow).filter { item in
+        item.cls != "object" || !swings.contains { $0.insetBy(dx: -2, dy: -2).contains(item.rect) }
+    }
+    return OutsideLayers(walls: walls.items, columns: [], doors: doors, seats: seats)
 }
