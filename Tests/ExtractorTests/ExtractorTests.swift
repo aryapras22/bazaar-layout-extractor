@@ -1,4 +1,6 @@
 import Foundation
+import ImageIO
+import UniformTypeIdentifiers
 import Testing
 @testable import Extractor
 
@@ -48,30 +50,61 @@ private func ring(size: Int, gapAt: Int? = nil) -> [Bool] {
 
 @Test func symbolLibraryHoldsFortyThreeEntriesWithExpectedCountsPerLayer() throws {
     let jsonURL = URL(fileURLWithPath: #filePath)
-        .deletingLastPathComponent() // ExtractorTests.swift
-        .deletingLastPathComponent() // ExtractorTests
-        .deletingLastPathComponent() // Tests
-        .deletingLastPathComponent() // legend-only
-        .deletingLastPathComponent() // floor-plan-extractor
-        .deletingLastPathComponent() // bazaar
-        .appendingPathComponent("BazaarSimulator")
-        .appendingPathComponent("BazaarSimulator")
-        .appendingPathComponent("Core")
-        .appendingPathComponent("Resources")
-        .appendingPathComponent("Legends")
-        .appendingPathComponent("symbols")
+        .deletingLastPathComponent()
+        .appendingPathComponent("Fixtures")
         .appendingPathComponent("legends.json")
 
     let legend = try SymbolLegend.load(from: jsonURL)
     #expect(legend.entries.count == 43)
-
-    let uniqueIds = Set(legend.entries.map(\.id))
-    #expect(uniqueIds.count == 43)
+    #expect(Set(legend.entries.map(\.id)).count == 43)
 
     #expect(legend.entries(for: .wall).count == 4)
     #expect(legend.entries(for: .door).count == 9)
     #expect(legend.entries(for: .seat).count == 6)
     #expect(legend.entries(for: .misc).count == 24)
+    #expect(legend.entries.filter { $0.color != nil }.count == 10)
+}
+
+private func blackSquare() -> CGImage {
+    let context = CGContext(
+        data: nil, width: 64, height: 64, bitsPerComponent: 8, bytesPerRow: 0,
+        space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue)!
+    context.setFillColor(CGColor(gray: 1, alpha: 1))
+    context.fill(CGRect(x: 0, y: 0, width: 64, height: 64))
+    context.setFillColor(CGColor(gray: 0, alpha: 1))
+    context.fill(CGRect(x: 16, y: 16, width: 32, height: 32))
+    return context.makeImage()!
+}
+
+private func legendWithSquare(color: [Int]?) throws -> SymbolLegend {
+    let directory = FileManager.default.temporaryDirectory.appendingPathComponent("symbols-\(UUID().uuidString)")
+    try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+    let destination = CGImageDestinationCreateWithURL(
+        directory.appendingPathComponent("square.png") as CFURL, UTType.png.identifier as CFString, 1, nil)!
+    CGImageDestinationAddImage(destination, blackSquare(), nil)
+    #expect(CGImageDestinationFinalize(destination))
+    let entry = SymbolEntry(id: "column.solid_square", name: "Column", layer: "wall", file: "square.png", color: color)
+    return SymbolLegend(entries: [entry], directory: directory)
+}
+
+@Test func symbolWithoutAColourIsNeverVetoedByTheCandidateColour() async throws {
+    let legend = try legendWithSquare(color: nil)
+    let matcher = SymbolMatcher(legend: legend)
+
+    let match = await matcher.match(crop: blackSquare(), candidates: legend.entries, candidateColor: [200, 50, 50])
+
+    #expect(match?.symbolClass == "column.solid_square")
+}
+
+@Test func symbolWithAColourRejectsACandidateOfAnotherColour() async throws {
+    let legend = try legendWithSquare(color: [0, 0, 255])
+    let matcher = SymbolMatcher(legend: legend)
+
+    let wrong = await matcher.match(crop: blackSquare(), candidates: legend.entries, candidateColor: [255, 0, 0])
+    let right = await matcher.match(crop: blackSquare(), candidates: legend.entries, candidateColor: [10, 10, 250])
+
+    #expect(wrong == nil)
+    #expect(right?.symbolClass == "column.solid_square")
 }
 
 @Test func confusablePrefixLetterNeedsAMuchCommonerNeighbour() {

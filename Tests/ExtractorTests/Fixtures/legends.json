@@ -1,0 +1,310 @@
+[
+  {
+    "id": "wall.double",
+    "name": "Wall, double line",
+    "layer": "wall",
+    "file": "wall.double.png"
+  },
+  {
+    "id": "wall.thin",
+    "name": "Wall, thin line",
+    "layer": "wall",
+    "file": "wall.thin.png"
+  },
+  {
+    "id": "wall.thick",
+    "name": "Wall, thick line",
+    "layer": "wall",
+    "file": "wall.thick.png"
+  },
+  {
+    "id": "wall.medium",
+    "name": "Wall, medium line",
+    "layer": "wall",
+    "file": "wall.medium.png"
+  },
+  {
+    "id": "door.single_quarter",
+    "name": "Single door, quarter arc",
+    "layer": "door",
+    "file": "door.single_quarter.png"
+  },
+  {
+    "id": "door.single_quarter_double_wall",
+    "name": "Single door, quarter arc, double wall",
+    "layer": "door",
+    "file": "door.single_quarter_double_wall.png"
+  },
+  {
+    "id": "door.single_half_disc",
+    "name": "Single door, half disc",
+    "layer": "door",
+    "file": "door.single_half_disc.png"
+  },
+  {
+    "id": "door.double_two_arcs",
+    "name": "Double door, two arcs",
+    "layer": "door",
+    "file": "door.double_two_arcs.png"
+  },
+  {
+    "id": "door.double_thin_wall",
+    "name": "Double door, arcs in thin wall",
+    "layer": "door",
+    "file": "door.double_thin_wall.png"
+  },
+  {
+    "id": "gate.butterfly",
+    "name": "Gate, butterfly",
+    "layer": "door",
+    "file": "gate.butterfly.png"
+  },
+  {
+    "id": "gate.butterfly_frame",
+    "name": "Gate, butterfly with frame",
+    "layer": "door",
+    "file": "gate.butterfly_frame.png"
+  },
+  {
+    "id": "door.row_scalloped",
+    "name": "Door row, scalloped",
+    "layer": "door",
+    "file": "door.row_scalloped.png"
+  },
+  {
+    "id": "door.bow_tie",
+    "name": "Door, bow-tie",
+    "layer": "door",
+    "file": "door.bow_tie.png"
+  },
+  {
+    "id": "table.outline",
+    "name": "Table, outline",
+    "layer": "seat",
+    "file": "table.outline.png"
+  },
+  {
+    "id": "table.outline_compact",
+    "name": "Table, outline, compact",
+    "layer": "seat",
+    "file": "table.outline_compact.png"
+  },
+  {
+    "id": "table.blue_filled",
+    "name": "Table, blue filled",
+    "layer": "seat",
+    "file": "table.blue_filled.png",
+    "color": [
+      110,
+      165,
+      221
+    ]
+  },
+  {
+    "id": "table.red_outline",
+    "name": "Table, red outline",
+    "layer": "seat",
+    "file": "table.red_outline.png",
+    "color": [
+      233,
+      136,
+      132
+    ]
+  },
+  {
+    "id": "seats.theater_circles",
+    "name": "Theater chairs, circles",
+    "layer": "seat",
+    "file": "seats.theater_circles.png"
+  },
+  {
+    "id": "seats.theater_squares",
+    "name": "Theater chairs, blue squares",
+    "layer": "seat",
+    "file": "seats.theater_squares.png",
+    "color": [
+      110,
+      163,
+      217
+    ]
+  },
+  {
+    "id": "column.hollow_square",
+    "name": "Column, hollow square",
+    "layer": "misc",
+    "file": "column.hollow_square.png"
+  },
+  {
+    "id": "column.solid_square",
+    "name": "Column, solid square",
+    "layer": "misc",
+    "file": "column.solid_square.png"
+  },
+  {
+    "id": "column.solid_square_on_wall",
+    "name": "Column, solid square, on wall",
+    "layer": "misc",
+    "file": "column.solid_square_on_wall.png"
+  },
+  {
+    "id": "column.hollow_circle",
+    "name": "Column, hollow circle",
+    "layer": "misc",
+    "file": "column.hollow_circle.png"
+  },
+  {
+    "id": "stairs.ladder",
+    "name": "Stairs, ladder",
+    "layer": "misc",
+    "file": "stairs.ladder.png"
+  },
+  {
+    "id": "stairs.boxed",
+    "name": "Stairs or escalator, boxed",
+    "layer": "misc",
+    "file": "stairs.boxed.png"
+  },
+  {
+    "id": "restroom.black_circle",
+    "name": "Restroom, black circle",
+    "layer": "misc",
+    "file": "restroom.black_circle.png"
+  },
+  {
+    "id": "restroom.framed",
+    "name": "Restroom, framed figures",
+    "layer": "misc",
+    "file": "restroom.framed.png"
+  },
+  {
+    "id": "safety.fire_point",
+    "name": "Fire point",
+    "layer": "misc",
+    "file": "safety.fire_point.png"
+  },
+  {
+    "id": "safety.emergency_exit_right",
+    "name": "Emergency exit, right",
+    "layer": "misc",
+    "file": "safety.emergency_exit_right.png"
+  },
+  {
+    "id": "safety.emergency_exit_left",
+    "name": "Emergency exit, left",
+    "layer": "misc",
+    "file": "safety.emergency_exit_left.png"
+  },
+  {
+    "id": "safety.assembly_point",
+    "name": "Assembly point",
+    "layer": "misc",
+    "file": "safety.assembly_point.png"
+  },
+  {
+    "id": "safety.ambulance",
+    "name": "Ambulance",
+    "layer": "misc",
+    "file": "safety.ambulance.png"
+  },
+  {
+    "id": "info.desk",
+    "name": "Info desk icon",
+    "layer": "misc",
+    "file": "info.desk.png"
+  },
+  {
+    "id": "arrow.entry",
+    "name": "Entry arrow",
+    "layer": "misc",
+    "file": "arrow.entry.png"
+  },
+  {
+    "id": "arrow.exit",
+    "name": "Exit arrow",
+    "layer": "misc",
+    "file": "arrow.exit.png"
+  },
+  {
+    "id": "arrow.circulation",
+    "name": "Circulation arrow",
+    "layer": "misc",
+    "file": "arrow.circulation.png"
+  },
+  {
+    "id": "zone.stage_grey",
+    "name": "Stage, grey",
+    "layer": "misc",
+    "file": "zone.stage_grey.png",
+    "color": [
+      170,
+      170,
+      170
+    ]
+  },
+  {
+    "id": "zone.stage_red",
+    "name": "Stage, red",
+    "layer": "misc",
+    "file": "zone.stage_red.png",
+    "color": [
+      184,
+      92,
+      92
+    ]
+  },
+  {
+    "id": "zone.stage_dark_grey",
+    "name": "Stage, dark grey",
+    "layer": "misc",
+    "file": "zone.stage_dark_grey.png",
+    "color": [
+      62,
+      62,
+      62
+    ]
+  },
+  {
+    "id": "zone.neighboring_unit",
+    "name": "Neighboring unit",
+    "layer": "misc",
+    "file": "zone.neighboring_unit.png",
+    "color": [
+      233,
+      224,
+      255
+    ]
+  },
+  {
+    "id": "zone.unlabeled_block",
+    "name": "Unlabeled block",
+    "layer": "misc",
+    "file": "zone.unlabeled_block.png",
+    "color": [
+      190,
+      29,
+      45
+    ]
+  },
+  {
+    "id": "zone.standing",
+    "name": "Standing zone",
+    "layer": "misc",
+    "file": "zone.standing.png",
+    "color": [
+      190,
+      191,
+      190
+    ]
+  },
+  {
+    "id": "zone.service_room",
+    "name": "Service room",
+    "layer": "misc",
+    "file": "zone.service_room.png",
+    "color": [
+      248,
+      196,
+      153
+    ]
+  }
+]

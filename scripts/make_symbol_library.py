@@ -3,6 +3,7 @@
 Reads the four symbol legend PDFs in BazaarSimulator/Core/Resources/Legends,
 extracts high-resolution symbol thumbnails, removes tinted page ground,
 and writes legends.json and 43 PNGs to Core/Resources/Legends/symbols/.
+The tests read a copy of legends.json from Tests/ExtractorTests/Fixtures.
 """
 import argparse
 import io
@@ -25,6 +26,10 @@ TINT_COLORS = [
     np.array([255, 244, 209]),  # beige
     np.array([233, 224, 255]),  # lavender
 ]
+
+# The red ground of these two rows is a sheet colour. Other rows draw red as part of the symbol.
+RED_GROUND = np.array([192, 80, 70])
+RED_GROUND_CLASSES = {"Single door, quarter arc", "Column, solid square, on wall"}
 
 CLASS_IDS = {
     "Wall, double line": "wall.double",
@@ -86,16 +91,28 @@ DISTINGUISHED_COLORS = {
 }
 
 
-def drop_tint(arr: np.ndarray) -> np.ndarray:
+def drop_tint(arr: np.ndarray, name: str) -> np.ndarray:
     res = arr.copy()
-    for tint in TINT_COLORS:
+    tints = TINT_COLORS + ([RED_GROUND] if name in RED_GROUND_CLASSES else [])
+    for tint in tints:
         diff = np.abs(res.astype(int) - tint)
         dist = np.max(diff, axis=-1)
         res[dist <= 25] = [255, 255, 255]
     return res
 
 
-def extract_symbol_library(legends_dir: Path, out_dir: Path) -> list[dict]:
+def row_match(candidates: list, row_y: float, rect_of) -> dict | None:
+    """The candidate whose box is centred on the legend row, within half the 90 pt row pitch."""
+    best, best_gap = None, 45.0
+    for candidate in candidates:
+        rect = rect_of(candidate)
+        gap = abs((rect[1] + rect[3]) / 2 - row_y)
+        if gap < best_gap:
+            best, best_gap = candidate, gap
+    return best
+
+
+def extract_symbol_library(legends_dir: Path, out_dir: Path, fixture_dir: Path) -> list[dict]:
     out_dir.mkdir(parents=True, exist_ok=True)
     entries = []
 
@@ -107,16 +124,13 @@ def extract_symbol_library(legends_dir: Path, out_dir: Path) -> list[dict]:
             images = page.get_image_info(xrefs=True)
             blocks = [b for b in page.get_text("blocks") if b[1] > 200]
             blocks.sort(key=lambda b: b[1])
-
             drawings = [
                 d
                 for d in page.get_drawings()
                 if d.get("fill") is not None and 80 <= d["rect"].x0 <= 220
             ]
-            drawings.sort(key=lambda d: d["rect"].y0)
 
-            drawing_idx = 0
-            for idx, block in enumerate(blocks):
+            for block in blocks:
                 name = block[4].strip().replace("\n", " ")
                 symbol_id = CLASS_IDS.get(name)
                 if not symbol_id:
@@ -124,33 +138,31 @@ def extract_symbol_library(legends_dir: Path, out_dir: Path) -> list[dict]:
 
                 png_name = f"{symbol_id}.png"
                 out_png_path = out_dir / png_name
+                row_y = (block[1] + block[3]) / 2
 
-                if idx < len(images):
-                    base_img = doc.extract_image(images[idx]["xref"])
+                image = row_match(images, row_y, lambda i: i["bbox"])
+                drawing = row_match(drawings, row_y, lambda d: d["rect"])
+                if image is not None:
+                    base_img = doc.extract_image(image["xref"])
                     pil_img = Image.open(io.BytesIO(base_img["image"])).convert("RGB")
-                    arr = clean_image_array(drop_tint(np.array(pil_img)), name)
+                    arr = clean_image_array(drop_tint(np.array(pil_img), name), name)
                     Image.fromarray(arr).save(out_png_path)
-                else:
-                    d = drawings[drawing_idx]
-                    drawing_idx += 1
-                    fill = [int(round(c * 255)) for c in d["fill"]]
+                elif drawing is not None:
+                    fill = [int(round(c * 255)) for c in drawing["fill"]]
                     arr = np.full((100, 100, 3), fill, dtype=np.uint8)
                     Image.fromarray(arr).save(out_png_path)
+                else:
+                    raise ValueError(f"No symbol found on the row of {name}")
 
-                color = DISTINGUISHED_COLORS.get(symbol_id, [0, 0, 0])
-                entries.append(
-                    {
-                        "id": symbol_id,
-                        "name": name,
-                        "layer": layer,
-                        "file": png_name,
-                        "color": color,
-                    }
-                )
+                entry = {"id": symbol_id, "name": name, "layer": layer, "file": png_name}
+                if symbol_id in DISTINGUISHED_COLORS:
+                    entry["color"] = DISTINGUISHED_COLORS[symbol_id]
+                entries.append(entry)
 
-    legends_json_path = out_dir / "legends.json"
-    with open(legends_json_path, "w", encoding="utf-8") as f:
-        json.dump(entries, f, indent=2)
+    for target in (out_dir, fixture_dir):
+        target.mkdir(parents=True, exist_ok=True)
+        with open(target / "legends.json", "w", encoding="utf-8") as f:
+            json.dump(entries, f, indent=2)
 
     return entries
 
@@ -175,9 +187,15 @@ def main():
         default=Path("BazaarSimulator/Core/Resources/Legends/symbols"),
         help="Output directory for legends.json and cropped PNGs",
     )
+    parser.add_argument(
+        "--fixture-dir",
+        type=Path,
+        default=Path("Tests/ExtractorTests/Fixtures"),
+        help="Where the package tests read their copy of legends.json",
+    )
     args = parser.parse_args()
 
-    entries = extract_symbol_library(args.legends_dir, args.out_dir)
+    entries = extract_symbol_library(args.legends_dir, args.out_dir, args.fixture_dir)
     print(f"Extracted {len(entries)} symbol classes into {args.out_dir}")
 
 

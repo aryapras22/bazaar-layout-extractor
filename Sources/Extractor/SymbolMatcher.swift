@@ -51,7 +51,7 @@ public actor SymbolMatcher {
             let dist = Double(distFloat)
             let shapeScore = max(0.0, 1.0 - dist)
 
-            if let entryColor = entry.color, let candidateColor, (entryColor != [0, 0, 0] || candidateColor != [0, 0, 0]) {
+            if let entryColor = entry.color, let candidateColor {
                 let rDiff = Double(entryColor[0] - candidateColor[0])
                 let gDiff = Double(entryColor[1] - candidateColor[1])
                 let bDiff = Double(entryColor[2] - candidateColor[2])
