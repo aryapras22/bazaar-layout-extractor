@@ -4,8 +4,8 @@ import ImageIO
 import UniformTypeIdentifiers
 import Vision
 
-enum Layer: String, CaseIterable, Comparable {
-    case booth, wall, door, seat
+public enum Layer: String, CaseIterable, Comparable, Sendable {
+    case booth, wall, door, seat, misc
 
     /// Walls own columns, because a column is part of the structure; furniture, round tables included, is seats.
     static func of(_ item: Item) -> Layer {
@@ -13,6 +13,7 @@ enum Layer: String, CaseIterable, Comparable {
         case "wall", "pillar": return .wall
         case "door", "opening": return .door
         case "object": return .seat
+        case "misc": return .misc
         default: return .booth
         }
     }
@@ -23,10 +24,11 @@ enum Layer: String, CaseIterable, Comparable {
         case .wall: return "walls.json"
         case .door: return "doors.json"
         case .seat: return "seats.json"
+        case .misc: return "misc.json"
         }
     }
 
-    static func < (a: Layer, b: Layer) -> Bool {
+    public static func < (a: Layer, b: Layer) -> Bool {
         Layer.allCases.firstIndex(of: a)! < Layer.allCases.firstIndex(of: b)!
     }
 }

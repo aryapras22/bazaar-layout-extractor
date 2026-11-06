@@ -46,6 +46,34 @@ private func ring(size: Int, gapAt: Int? = nil) -> [Bool] {
     #expect(fixed["NO9"] == "N09")
 }
 
+@Test func symbolLibraryHoldsFortyThreeEntriesWithExpectedCountsPerLayer() throws {
+    let jsonURL = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent() // ExtractorTests.swift
+        .deletingLastPathComponent() // ExtractorTests
+        .deletingLastPathComponent() // Tests
+        .deletingLastPathComponent() // legend-only
+        .deletingLastPathComponent() // floor-plan-extractor
+        .deletingLastPathComponent() // bazaar
+        .appendingPathComponent("BazaarSimulator")
+        .appendingPathComponent("BazaarSimulator")
+        .appendingPathComponent("Core")
+        .appendingPathComponent("Resources")
+        .appendingPathComponent("Legends")
+        .appendingPathComponent("symbols")
+        .appendingPathComponent("legends.json")
+
+    let legend = try SymbolLegend.load(from: jsonURL)
+    #expect(legend.entries.count == 43)
+
+    let uniqueIds = Set(legend.entries.map(\.id))
+    #expect(uniqueIds.count == 43)
+
+    #expect(legend.entries(for: .wall).count == 4)
+    #expect(legend.entries(for: .door).count == 9)
+    #expect(legend.entries(for: .seat).count == 6)
+    #expect(legend.entries(for: .misc).count == 24)
+}
+
 @Test func confusablePrefixLetterNeedsAMuchCommonerNeighbour() {
     let many = (1...12).map { "GD\($0)" }
     #expect(suggestions(many + ["CD28"])["CD28"] == "GD28")

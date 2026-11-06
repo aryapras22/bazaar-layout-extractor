@@ -19,6 +19,35 @@ public struct PlanItem: Sendable {
     public let kind: String?
     /// The legend colour of the class this item was matched to, or grey for items that are not legend classes.
     public let legendRgb: [Int]
+    public let chairs: Int?
+    public let symbolClass: String?
+    public let symbolScore: Double?
+
+    public init(
+        cls: String,
+        box: [Int],
+        id: String? = nil,
+        needsReview: Bool = false,
+        segment: [Int]? = nil,
+        width: Double? = nil,
+        kind: String? = nil,
+        legendRgb: [Int] = [128, 128, 128],
+        chairs: Int? = nil,
+        symbolClass: String? = nil,
+        symbolScore: Double? = nil
+    ) {
+        self.cls = cls
+        self.box = box
+        self.id = id
+        self.needsReview = needsReview
+        self.segment = segment
+        self.width = width
+        self.kind = kind
+        self.legendRgb = legendRgb
+        self.chairs = chairs
+        self.symbolClass = symbolClass
+        self.symbolScore = symbolScore
+    }
 }
 
 public struct PlanReading: Sendable {
@@ -40,7 +69,10 @@ public enum PlanExtractor {
 
     /// `onProgress` is called after each stage with a value from 0 to 1.
     public static func plan(
-        _ plan: CGImage, legend: CGImage, onProgress: @Sendable (Double) -> Void = { _ in }
+        _ plan: CGImage,
+        legend: CGImage,
+        symbols: SymbolLegend = .empty,
+        onProgress: @Sendable (Double) -> Void = { _ in }
     ) async throws -> PlanReading {
         let scratch = FileManager.default.temporaryDirectory.appendingPathComponent("plan-extractor-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: scratch, withIntermediateDirectories: true)
@@ -49,7 +81,7 @@ public enum PlanExtractor {
         var opts = Options(planPath: "", legendPath: "", outDir: scratch.path)
         opts.judgeMode = "off"
         opts.vlmFix = "off"
-        let run = try await PlanRun.load(opts, outDir: scratch, original: plan, legend: legend)
+        let run = try await PlanRun.load(opts, outDir: scratch, original: plan, legend: legend, symbols: symbols)
         onProgress(0.1)
         let claimed = try await run.findBooths()
         onProgress(0.4)
@@ -62,7 +94,8 @@ public enum PlanExtractor {
 
         let items = run.items.map {
             PlanItem(cls: $0.cls, box: $0.box, id: $0.id, needsReview: $0.needsReview,
-                     segment: $0.segment, width: $0.width, kind: $0.kind, legendRgb: $0.legendRgb)
+                     segment: $0.segment, width: $0.width, kind: $0.kind, legendRgb: $0.legendRgb,
+                     chairs: $0.chairs, symbolClass: $0.symbolClass, symbolScore: $0.symbolScore)
         }
         let swatches = run.entries.map { LegendSwatch(label: $0.label, rgb: $0.colors.first ?? [128, 128, 128]) }
         return PlanReading(imageWidth: plan.width, imageHeight: plan.height, legend: swatches, items: items)

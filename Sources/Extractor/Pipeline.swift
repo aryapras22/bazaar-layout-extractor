@@ -21,6 +21,7 @@ final class PlanRun {
     var px: Pixels
     var classes: [LegendClass]
     var upscale = 1
+    var symbols: SymbolLegend = .empty
 
     // Set by the stage named in the comment; the stages always run in order, so later stages may rely on them.
     var legendOut: LegendLayerOutput!      // booths
@@ -39,13 +40,14 @@ final class PlanRun {
     var judgeReport: JudgeReport!          // review
     var vlmFix: VlmFixReport?
 
-    init(opts: Options, outDir: URL, original: CGImage, plan: CGImage, px: Pixels, classes: [LegendClass]) {
+    init(opts: Options, outDir: URL, original: CGImage, plan: CGImage, px: Pixels, classes: [LegendClass], symbols: SymbolLegend = .empty) {
         self.opts = opts
         self.outDir = outDir
         self.originalImage = original
         self.planImage = plan
         self.px = px
         self.classes = classes
+        self.symbols = symbols
     }
 
     static func note(_ text: String) {
@@ -63,7 +65,7 @@ final class PlanRun {
         return try await load(opts, outDir: outDir, original: original, legend: legendImage)
     }
 
-    static func load(_ opts: Options, outDir: URL, original: CGImage, legend: CGImage) async throws -> PlanRun {
+    static func load(_ opts: Options, outDir: URL, original: CGImage, legend: CGImage, symbols: SymbolLegend = .empty) async throws -> PlanRun {
         var plan = original
         var legendImage = legend
         if let clean = smoothedIfNoisy(legendImage, threshold: 0.04) {
@@ -84,7 +86,7 @@ final class PlanRun {
         // because the fixed outline cut loses lines that resampling lightens.
         let tileSide = opts.upscaleSmall
             ? smallTileSide(classify(px, legend: legendClasses), w: px.width, h: px.height, area: px.area) : nil
-        let run = PlanRun(opts: opts, outDir: outDir, original: original, plan: plan, px: px, classes: legendClasses)
+        let run = PlanRun(opts: opts, outDir: outDir, original: original, plan: plan, px: px, classes: legendClasses, symbols: symbols)
         run.upscale = upscaleFactor(smallTileSide: tileSide)
         if run.upscale > 1, let bigger = upscaled(plan, by: run.upscale) {
             note("note: tiles are small, reading the plan at \(run.upscale)x")

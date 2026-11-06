@@ -42,12 +42,15 @@ struct Item: Codable {
     /// 0 to 180, clockwise from the x axis because y grows down. `box` is the axis-aligned box of the tilted table.
     var tableSize: [Double]?
     var angle: Double?
+    var symbolClass: String?
+    var symbolScore: Double?
 
     enum CodingKeys: String, CodingKey {
         case cls = "class", box, area, fillRgb = "fill_rgb", legendRgb = "legend_rgb", text, id
         case needsReview = "needs_review", reason, polygon, source, fillBox = "fill_box"
         case suggestedId = "suggested_id", fixRule = "fix_rule", fixReason = "fix_reason", seat, segment, width, kind, chairs
         case table, tableSize = "table_size", angle
+        case symbolClass = "symbol_class", symbolScore = "symbol_score"
     }
 
     var rect: CGRect { CGRect(x: box[0], y: box[1], width: box[2], height: box[3]) }
@@ -82,6 +85,8 @@ struct Item: Codable {
         try c.encodeIfPresent(table, forKey: .table)
         try c.encodeIfPresent(tableSize, forKey: .tableSize)
         try c.encodeIfPresent(angle, forKey: .angle)
+        try c.encodeIfPresent(symbolClass, forKey: .symbolClass)
+        try c.encodeIfPresent(symbolScore, forKey: .symbolScore)
     }
 }
 
