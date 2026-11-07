@@ -274,7 +274,7 @@ func chairs(ink: [Bool], w: Int, h: Int, page: Int) -> [CGRect] {
     let smallest = max(3, Int(0.001 * Double(page)))
     let largest = max(smallest, Int(0.015 * Double(page)))
 
-    struct Hole { var rect: CGRect; var diameter: Double }
+    struct Hole { var rect: CGRect; var diameter: Double; var isSquare: Bool }
     var holes: [Hole] = []
     var seen = [Bool](repeating: false, count: n)
     var stack: [Int] = []
@@ -302,7 +302,11 @@ func chairs(ink: [Bool], w: Int, h: Int, page: Int) -> [CGRect] {
         let hole = Set(members)
         let corners = [y0 * w + x0, y0 * w + x1, y1 * w + x0, y1 * w + x1]
         let fill = Double(count) / Double(bw * bh)
-        guard (0.6...0.97).contains(fill), !corners.contains(where: hole.contains) else { continue }
+        let isDisc = (0.6...0.97).contains(fill) && !corners.contains(where: hole.contains)
+        // Square audience cells fill their box, a corner pixel may be missing. They count only in a straight run of
+        // equal squares, checked below.
+        let isSquare = fill > 0.95 && corners.filter(hole.contains).count >= 3
+        guard isDisc || isSquare else { continue }
         // The ring is as thick as the ink run next to the hole, taken at the thinnest side because a table may share it.
         func run(_ x: Int, _ y: Int, _ dx: Int, _ dy: Int) -> Int {
             var (cx, cy, length) = (x + dx, y + dy, 0)
@@ -313,12 +317,23 @@ func chairs(ink: [Bool], w: Int, h: Int, page: Int) -> [CGRect] {
         let thickness = max(1, min(run(x0, myc, -1, 0), run(x1, myc, 1, 0), run(mxc, y0, 0, -1), run(mxc, y1, 0, 1)))
         holes.append(Hole(
             rect: CGRect(x: x0 - thickness, y: y0 - thickness, width: bw + 2 * thickness, height: bh + 2 * thickness),
-            diameter: Double(diameter)))
+            diameter: Double(diameter),
+            isSquare: isSquare))
     }
     return holes.filter { a in
-        holes.filter { b in
+        let near = holes.filter { b in
             abs(a.diameter - b.diameter) <= max(1.5, 0.2 * a.diameter)
                 && hypot(a.rect.midX - b.rect.midX, a.rect.midY - b.rect.midY) <= 6 * a.diameter
-        }.count >= 3
+                && (!a.isSquare || (b.isSquare && sharesLine(a.rect, b.rect, tolerance: 0.25 * a.diameter)))
+        }
+        return near.count >= (a.isSquare ? squareRunLength : 3)
     }.map(\.rect)
+}
+
+/// Squares are common (booths, boxes, a row of benches), so a square counts only in a long straight run.
+private let squareRunLength = 5
+
+/// Two boxes in one column or one row, within a tolerance.
+private func sharesLine(_ a: CGRect, _ b: CGRect, tolerance: Double) -> Bool {
+    abs(a.midX - b.midX) <= tolerance || abs(a.midY - b.midY) <= tolerance
 }

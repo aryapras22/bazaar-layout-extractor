@@ -530,7 +530,7 @@ private func inkWithRings(centers: [(Int, Int)], radius: Int, size: Int) -> [Boo
     #expect(found.allSatisfy { $0.midX < 100 })
 }
 
-@Test func squareHolesAreNotChairs() {
+@Test func aShortRowOfSquareHolesIsNotChairs() {
     let size = 100
     var ink = [Bool](repeating: false, count: size * size)
     for (cx, cy) in [(20, 20), (40, 20), (60, 20), (80, 20)] {
@@ -539,6 +539,31 @@ private func inkWithRings(centers: [(Int, Int)], radius: Int, size: Int) -> [Boo
         }
     }
     #expect(chairs(ink: ink, w: size, h: size, page: 2000).isEmpty)
+}
+
+/// Square cells in one column, each a hole with a one pixel notch at its top-left corner as printed audience cells have.
+private func inkWithSquareCells(count: Int, size: Int, dividerEvery step: Int = 14) -> [Bool] {
+    var ink = [Bool](repeating: false, count: size * size)
+    let x0 = 80, x1 = x0 + 15
+    for k in 0...count {
+        let y = 20 + k * step
+        for x in x0...x1 { ink[y * size + x] = true }
+    }
+    for y in 20...(20 + count * step) { ink[y * size + x0] = true; ink[y * size + x1] = true }
+    for k in 0..<count { ink[(21 + k * step) * size + x0 + 1] = true }
+    return ink
+}
+
+@Test func squareCellsInALongStraightRunAreChairs() {
+    let size = 200
+    let found = chairs(ink: inkWithSquareCells(count: 8, size: size), w: size, h: size, page: 2000)
+    #expect(found.count == 8)
+    #expect(found.allSatisfy { abs($0.midX - 87.5) < 2 })
+}
+
+@Test func fourSquareCellsInAColumnAreNotEnoughToBeChairs() {
+    let size = 200
+    #expect(chairs(ink: inkWithSquareCells(count: 4, size: size), w: size, h: size, page: 2000).isEmpty)
 }
 
 @Test func rowsOfChairsMergeIntoOneGridButTablesInARowStayApart() {
